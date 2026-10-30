@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#030712">
-  <meta name="description" content="Nischay Forge AI — 5-Layer Deep Verified Tool Studio">
+  <meta name="description" content="Nischay Forge AI — Pro 5-Layer Verified Studio">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg">
   <title>Nischay Forge AI — Pro 5-Layer Verified Studio</title>
@@ -39,7 +39,7 @@
     body.light-theme {
       --bg: #f8fafc;
       --bg-grid: rgba(0, 0, 0, 0.04);
-      --surface: rgba(255, 255, 255, 0.9);
+      --surface: rgba(255, 255, 255, 0.92);
       --surface-elevated: #f1f5f9;
       --border: rgba(2, 132, 199, 0.25);
       --border-subtle: rgba(0, 0, 0, 0.08);
@@ -74,7 +74,6 @@
       transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    /* वेलकम स्क्रीन */
     #welcomeScreen {
       position: fixed; inset: 0;
       background-color: var(--bg);
@@ -135,7 +134,6 @@
       transition: all 0.25s ease;
     }
     .btn-start-now:hover { transform: translateY(-2px); box-shadow: 0 14px 40px var(--accent-glow); }
-    .btn-start-now:active { transform: translateY(1px); }
 
     .topbar {
       height: 62px;
@@ -274,9 +272,14 @@
       padding: 14px; outline: none; resize: vertical; line-height: 1.5; white-space: pre;
     }
 
-    .preview-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .preview-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
     .preview-title-text { font-size: 16px; font-weight: 800; color: var(--accent); letter-spacing: -0.2px; }
-    .preview-btn-group { display: flex; gap: 6px; }
+    
+    .view-mode-bar { display: inline-flex; background: var(--surface-elevated); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 2px 4px; gap: 4px; }
+    .view-btn { background: transparent; border: none; color: var(--text-muted); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 14px; cursor: pointer; }
+    .view-btn.active { background: var(--accent); color: #fff; }
+
+    .preview-btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
     .tool-btn {
       background: var(--surface-elevated);
       border: 1px solid var(--border-subtle);
@@ -292,14 +295,19 @@
       border-radius: 14px;
       border: 1px solid var(--border-subtle);
       overflow: hidden;
+      display: flex; justify-content: center; align-items: center;
       box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
     }
     .empty-canvas { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-muted); text-align: center; padding: 20px; }
     .empty-canvas span { font-size: 38px; color: var(--accent); filter: drop-shadow(0 0 15px var(--accent-glow)); animation: floatIcon 3s ease-in-out infinite; }
     @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-    iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; opacity: 0; transition: opacity 0.4s ease; }
+    iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; opacity: 0; transition: width 0.3s ease, opacity 0.4s ease; margin: 0 auto; }
     iframe#toolFrame.visible { opacity: 1; }
+
+    iframe#toolFrame.device-mobile { width: 380px; max-width: 100%; height: 560px; border: 2px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    iframe#toolFrame.device-tablet { width: 640px; max-width: 100%; height: 540px; border: 2px solid var(--border); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    iframe#toolFrame.device-desktop { width: 100%; height: 500px; border-radius: 0; }
 
     .refine-box { margin-top: 14px; background: var(--surface-elevated); border: 1px dashed var(--border); border-radius: 14px; padding: 14px; display: none; }
     .refine-box.is-visible { display: block; animation: slideUp 0.3s ease; }
@@ -532,6 +540,7 @@
         </div>
 
         <div class="term-controls">
+          <button class="btn-term-action" id="btnFormatCode" title="कोड व्यवस्थित करें">✨ फॉर्मेट कोड</button>
           <button class="btn-term-action" id="btnApplyEdit" title="एडिट किया हुआ कोड कैनवस में चलाएं">⚡ बदलाव लागू करें</button>
           <button class="btn-term-action" id="btnCopyCode" title="यह कोड कॉपी करें">📋 कोड कॉपी करें</button>
         </div>
@@ -546,15 +555,22 @@
     <div class="glass-box" id="previewCardBox">
       <div class="preview-header-bar">
         <span class="preview-title-text" id="toolHeading">Nischay Studio Canvas</span>
+        
+        <div class="view-mode-bar" id="deviceViewBar">
+          <button class="view-btn active" data-device="desktop" title="डेस्कटॉप व्यू">💻 Desktop</button>
+          <button class="view-btn" data-device="tablet" title="टैबलेट व्यू">📱 Tablet</button>
+          <button class="view-btn" data-device="mobile" title="मोबाइल व्यू">📲 Mobile</button>
+        </div>
+
         <div class="preview-btn-group" id="toolActionBtns" style="display: none;">
+          <button class="tool-btn" id="btnShareLink" title="लाइव शेयर लिंक बनाएं">🔗 शेयर लिंक</button>
           <button class="tool-btn" id="btnOpenFull" title="पूरा बड़ा देखें">↗ बड़ा खोलें</button>
           <button class="tool-btn" id="btnSaveTool">♥ सेव</button>
           <button class="tool-btn" id="btnDownloadTool">📥 डाउनलोड</button>
         </div>
       </div>
 
-      <div class="canvas-container">
-        <!-- 5-लेयर साइबर लोडर -->
+      <div class="canvas-container" id="canvasViewport">
         <div class="forge-loader" id="forgeLoader">
           <div class="laser-scanner"></div>
           <div class="matrix-reactor">
@@ -579,7 +595,7 @@
           <span>✳</span>
           <p id="placeholderText">आपका टूल यहीं खुलेगा।<br>माइक से बोलें या लिखें, 5-लेयर बैकग्राउंड चेकिंग के बाद ही लाइव होगा।</p>
         </div>
-        <iframe id="toolFrame" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
+        <iframe id="toolFrame" class="device-desktop" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
       </div>
 
       <div class="refine-box" id="refineBox">
@@ -599,7 +615,6 @@
 
   <div class="toast" id="toastBox"></div>
 
-  <!-- स्मार्ट जावास्क्रिप्ट इंजन: पूर्ण थीम व भाषा नियंत्रण + 5-लेयर कम्पाइलर -->
   <script>
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
@@ -624,9 +639,6 @@
 
     const $ = (id) => document.getElementById(id);
 
-    // ==================================================================
-    // बहुभाषी (i18n) डिक्शनरी
-    // ==================================================================
     const translations = {
       hi: {
         welcomeTitle: "WELCOME TO NISCHAY FORGE PRO",
@@ -731,6 +743,36 @@
       showToast((newLang === 'hi') ? 'भाषा बदलकर हिंदी कर दी गई! 🇮🇳' : 'Language switched to English! 🇬🇧');
     });
 
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const frame = $('toolFrame');
+        frame.classList.remove('device-desktop', 'device-tablet', 'device-mobile');
+        frame.classList.add(`device-${btn.dataset.device}`);
+      });
+    });
+
+    $('btnFormatCode').addEventListener('click', () => {
+      let code = $('termOutput').value;
+      if (!code) return;
+      code = code.replace(/([;{}])\s*/g, '$1\n').replace(/\n\s*\n/g, '\n');
+      $('termOutput').value = code;
+      codeModules[currentTab] = code;
+      showToast('कोड को सुंदर व क्लीन फॉरमेट किया गया! ✨');
+    });
+
+    $('btnShareLink').addEventListener('click', () => {
+      if (!activeTool) return;
+      const base64Doc = btoa(unescape(encodeURIComponent(activeTool.html)));
+      const shareUrl = `data:text/html;charset=utf-8;base64,${base64Doc}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast('शेयरेबल डेटा वेब लिंक कॉपी हो गया! किसी भी ब्राउज़र में खोलें 🔗');
+      }).catch(() => {
+        showToast('लिंक कॉपी करने में असमर्थ!');
+      });
+    });
+
     function runWelcomeTypewriter() {
       let tIdx = 0, sIdx = 0;
       const t = translations[currentLang];
@@ -798,7 +840,6 @@
       showToast((nextTheme === 'light') ? 'लाइट थीम सक्रिय! ☀️' : 'डार्क थीम सक्रिय! 🌙');
     });
 
-    // प्रारंभिक सेटअप
     applyTheme(currentTheme);
     applyLanguage(currentLang);
 
@@ -849,7 +890,7 @@
   ${threeScript}
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #030712; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; min-height: 100vh; overflow-x: hidden; }
+    body { min-height: 100vh; overflow-x: hidden; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     ${cssCode}
   </style>
 </head>
@@ -906,9 +947,6 @@
       typeLoop();
     }
 
-    // ==================================================================
-    // API इंजन कॉल
-    // ==================================================================
     async function callGeminiRaw(promptText, modelName) {
       const key = getApiKey();
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName || PRIMARY_MODEL}:generateContent?key=${key}`;
@@ -928,8 +966,45 @@
     }
 
     // ==================================================================
-    // 5-लेयर डीप टेस्टिंग और ऑटो-क्लिक सैंडबॉक्स
+    // 100% सॉलिड पार्सर: कभी भी CSS खाली नहीं छोड़ेगा
     // ==================================================================
+    function parseFrontendResponse(rawText) {
+      let toolName = "Nischay Tool";
+      let pureHtml = "";
+      let pureCss = "";
+
+      // 1. नाम निकालना
+      const nameMatch = rawText.match(/===NAME===([\s\S]*?)===/i);
+      if (nameMatch) {
+        toolName = nameMatch[1].trim().replace(/[\r\n]+/g, " ");
+      }
+
+      // 2. HTML निकालना
+      const htmlMatch = rawText.match(/===HTML===([\s\S]*?)(?:===CSS===|$)/i);
+      if (htmlMatch) {
+        pureHtml = htmlMatch[1].trim();
+      } else {
+        pureHtml = rawText.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').trim();
+      }
+
+      // 3. CSS निकालना (फुलप्रूफ रेगुलर एक्सप्रेशन)
+      const cssMatch = rawText.match(/===CSS===([\s\S]*?)$/i);
+      if (cssMatch) {
+        pureCss = cssMatch[1].trim();
+      } else {
+        const styleTagMatch = rawText.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+        if (styleTagMatch) {
+          pureCss = styleTagMatch[1].trim();
+        }
+      }
+
+      // बैकस्टिक्स हटाना
+      pureHtml = pureHtml.replace(/```html|```/gi, '').trim();
+      pureCss = pureCss.replace(/```css|```/gi, '').trim();
+
+      return { toolName, pureHtml, pureCss };
+    }
+
     function runDeepSandboxTesting(fullHtmlDoc) {
       return new Promise((resolve) => {
         const testFrame = document.createElement('iframe');
@@ -1004,9 +1079,6 @@
       });
     }
 
-    // ==================================================================
-    // 5-लेयर्स मुख्य एक्जीक्यूटर पाइपलाइन
-    // ==================================================================
     async function executeBuild(customPrompt) {
       const q = customPrompt || $('promptInput').value.trim();
       if (!q) return;
@@ -1039,49 +1111,40 @@
       }, 1000);
 
       try {
-        // --- लेयर 1: UI आर्किटेक्चर (HTML + CSS) ---
-        stepText.textContent = (currentLang === 'hi') ? '⚡ लेयर 1/5: UI स्ट्रक्चर, इनपुट व रिजल्ट कंटेनर तैयार हो रहा है...' : '⚡ Layer 1/5: Synthesizing clean UI structure & result container...';
+        // --- लेयर 1: UI आर्किटेक्चर (HTML + पूर्ण CSS) ---
+        stepText.textContent = (currentLang === 'hi') ? '⚡ लेयर 1/5: आधुनिक स्टाइल व UI संरचना तैयार हो रही है...' : '⚡ Layer 1/5: Synthesizing modern tailored UI architecture...';
         fill.style.width = '20%';
-        streamText.textContent = 'LAYER 1: DOM STRUCTURE & CSS STYLING';
+        streamText.textContent = 'LAYER 1: PARSING RICH HTML & COMPLETE CSS';
 
-        const promptStep1 = `You are a Principal Frontend Architect.
-User Goal: "${q}"
+        const promptStep1 = `You are a Principal Frontend UI/UX Architect.
+User Requirement: "${q}"
 
 CRITICAL MANDATORY RULES:
-1. STRICT INTENT: Build the exact web tool asked.
-2. YOU MUST INCLUDE:
-   - Clear input elements with clear semantic IDs (e.g., id="dob", id="weight", id="txtInput").
-   - Action buttons with clear semantic IDs (e.g., id="calcBtn", id="startBtn").
-   - A DEDICATED VISIBLE RESULT AREA with clear ID (e.g., id="resultBox") to display values.
-3. No dummy code. Modern dark cyberpunk UI (#030712).
-4. No JavaScript here.
+1. COMPLETE RESPONSIVE CSS: You MUST provide extensive, beautiful modern CSS styling. Do NOT return blank CSS or comments. Style container, buttons, typography, inputs, active states, and padding.
+2. DYNAMIC THEME MATCHING:
+   - If it's a Study/Timer/Health app: Use soft, clean, elegant modern design (rounded cards, smooth shadows, relaxing colors).
+   - If it's a Calculator/Finance app: Use Apple/Stripe-level clean typography and modern card layouts.
+3. UI COMPONENTS:
+   - Semantic HTML with unique IDs on all buttons, inputs, and result containers.
+   - Do NOT write JavaScript here.
 
-Format Exactly:
+Format EXACTLY like this (DO NOT OMIT ANY SECTION):
 ===NAME===
 [Concise Tool Name]
 ===HTML===
-[Semantic HTML with inputs, buttons, and output containers]
+[Semantic HTML markup]
 ===CSS===
-[Modern responsive CSS]`;
+[Complete, rich, modern responsive CSS code styling all elements]`;
 
         const uiRaw = await callGeminiRaw(promptStep1);
-        let toolName = "Nischay Tool";
-        let pureHtml = "";
-        let pureCss = "";
+        let { toolName, pureHtml, pureCss } = parseFrontendResponse(uiRaw);
 
-        if (uiRaw.includes("===HTML===")) {
-          const parts = uiRaw.split(/===[A-Z]+===/);
-          toolName = (parts[1] || toolName).trim().replace(/[\r\n]+/g, " ");
-          pureHtml = (parts[2] || "").trim();
-          pureCss = (parts[3] || "").trim();
-        } else {
-          pureHtml = uiRaw.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').trim();
-          const sm = uiRaw.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-          if (sm) pureCss = sm[1].trim();
+        // --- हार्ड चेक: अगर CSS खाली रह गई तो जबरन बैकअप स्टाइलिंग दें ---
+        if (!pureCss || pureCss.length < 30) {
+          streamText.textContent = 'REPAIRING MISSING CSS STYLES...';
+          const cssRepairPrompt = `Create modern, beautiful CSS styles for this HTML:\n${pureHtml}\nReturn ONLY pure valid CSS. No markdown.`;
+          pureCss = (await callGeminiRaw(cssRepairPrompt)).replace(/```css|```/gi, '').trim();
         }
-
-        pureHtml = pureHtml.replace(/^```html|^```|```$/gim, '').trim();
-        pureCss = pureCss.replace(/^```css|^```|```$/gim, '').trim();
 
         // --- लेयर 2: पूर्ण जावास्क्रिप्ट लॉजिक कम्पाइलेशन ---
         stepText.textContent = (currentLang === 'hi') ? '⚙️ लेयर 2/5: हर इनपुट और बटन का 100% वर्किंग लॉजिक जोड़ा जा रहा है...' : '⚙️ Layer 2/5: Wiring up listeners and complete operational logic...';
@@ -1097,7 +1160,7 @@ ${pureHtml}
 User Request: "${q}"
 
 RULES FOR 100000% WORKING CODE:
-1. NO DUMMY/PLACEHOLDER CODE: Implement the real, complete calculation, timer, or app logic.
+1. NO DUMMY/PLACEHOLDER CODE: Implement real, complete calculation, timer, or app logic.
 2. BIND EVERY BUTTON: Select buttons and inputs by their EXACT IDs from the HTML above. Attach 'click' and 'input' event listeners.
 3. VISIBLE OUTPUT: On button click, write the computed results directly into the DOM result elements and remove any 'hidden' or 'display:none' styles.
 4. NO DOMContentLoaded: Do NOT use DOMContentLoaded or window.onload. Write code that executes immediately.
@@ -1107,20 +1170,21 @@ RULES FOR 100000% WORKING CODE:
         let pureJs = await callGeminiRaw(promptStep2);
         pureJs = pureJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
 
-        // --- लेयर 3: सिंटैक्स और अधूरापन चेकिंग ---
-        stepText.textContent = (currentLang === 'hi') ? '🔍 लेयर 3/5: सिंटैक्स चेकिंग और कोड का अधूरापन परखा जा रहा है...' : '🔍 Layer 3/5: Running static syntax and completion audit...';
+        // --- लेयर 3: तीनों फाइलों की संपूर्णता और सिंटैक्स चेकिंग ---
+        stepText.textContent = (currentLang === 'hi') ? '🔍 लेयर 3/5: HTML, CSS और JS तीनों की संपूर्णता जांची जा रही है...' : '🔍 Layer 3/5: Running tripartite code completeness audit...';
         fill.style.width = '65%';
-        streamText.textContent = 'LAYER 3: STATIC SYNTAX & COMPLETION AUDIT';
+        streamText.textContent = 'LAYER 3: VERIFYING HTML + CSS + JS INTEGRITY';
 
+        // अगर तीनों में से कोई भी हिस्सा अधूरा रह गया तो रिपेयर
         let openBraces = (pureJs.match(/\{/g) || []).length;
         let closeBraces = (pureJs.match(/\}/g) || []).length;
-        if (openBraces !== closeBraces) {
-          streamText.textContent = 'FIXING UNBALANCED SYNTAX...';
-          const fixSyntaxPrompt = `The following JavaScript has mismatched braces or is truncated:
+        if (openBraces !== closeBraces || pureJs.length < 20) {
+          streamText.textContent = 'FIXING UNBALANCED JS LOGIC...';
+          const fixSyntaxPrompt = `The following JavaScript is incomplete or has mismatched braces:
 \`\`\`javascript
 ${pureJs}
 \`\`\`
-Complete and fix the syntax so all braces match and it is 100% complete. Return ONLY valid pure JavaScript.`;
+Complete and fix the syntax so all braces match and it is 100% complete and working. Return ONLY valid pure JavaScript.`;
           pureJs = (await callGeminiRaw(fixSyntaxPrompt)).replace(/^```javascript|^```js|^```|```$/gim, '').trim();
         }
 
@@ -1189,7 +1253,7 @@ Fix the issue completely. Make sure all buttons work without throwing errors and
 
           btn.disabled = false;
           btn.querySelector('span').textContent = translations[currentLang].btnCreate;
-          showToast((currentLang === 'hi') ? `5-लेयर ऑडिट पास: ${activeTool.name} पूरी तरह वर्किंग है! 🎯` : `5-Layer verified: ${activeTool.name} is ready! 🎯`);
+          showToast((currentLang === 'hi') ? `5-लेयर ऑडिट पास: ${activeTool.name} तैयार! 🎯` : `5-Layer verified: ${activeTool.name} ready! 🎯`);
         });
 
       } catch (err) {
