@@ -1,1 +1,93 @@
-@keyframes wave{0%,100%{box-shadow:0 0 0 0 #e36d8a55}50%{box-shadow:0 0 0 10px #e36d8a00}}@keyframes floatPrompt{0%{opacity:0;transform:translate(-50%,10px) scale(.96)}12%,72%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-16px) scale(.98)}}@keyframes orbPulse{0%,100%{box-shadow:0 0 24px #8067ff22}50%{box-shadow:0 0 45px #8067ff55}}.empty-orb{animation:orbPulse 3s ease-in-out infinite}button,.primary-btn,.secondary-btn{transition:transform .16s ease,filter .16s ease}button:active{filter:brightness(1.15)}
+/* =========================================================
+   Nischay Forge - Animations & Micro-Interactions
+   ========================================================= */
+
+/* 1. ऑडियो और माइक वेव एनीमेशन */
+@keyframes wave {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+  }
+}
+
+/* 2. फ्लाइंग प्रॉम्प्ट बबल एनीमेशन */
+@keyframes floatPrompt {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 18px) scale(0.95);
+  }
+  12%, 75% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -20px) scale(0.98);
+  }
+}
+
+.flying-tag {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translate(-50%, -20px);
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 8px 30px rgba(56, 189, 248, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 70;
+  white-space: nowrap;
+  max-width: min(90vw, 550px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flying-tag.show {
+  animation: floatPrompt 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 3. लाइव पल्स और ऑरा ग्लो */
+@keyframes orbPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.45);
+    transform: scale(1.03);
+  }
+}
+
+.placeholder-mark, .empty-orb {
+  animation: orbPulse 3.5s ease-in-out infinite;
+}
+
+/* 4. लाइव टाइपराइटर कर्सर ब्लिंक */
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.terminal-cursor {
+  display: inline-block;
+  animation: cursorBlink 0.9s infinite;
+}
+
+/* 5. बटन और टैप इंटरैक्शन */
+button, .button, a {
+  transition: transform 0.16s ease, filter 0.16s ease, border-color 0.2s ease;
+}
+
+button:active, .button:active {
+  transform: scale(0.97);
+  filter: brightness(1.1);
+}
