@@ -1,3 +1,201 @@
 <!doctype html>
-<html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#070a13"><meta name="robots" content="noindex"><link rel="manifest" href="/manifest.json"><link rel="icon" type="image/svg+xml" href="/assets/app-icon.svg"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/animations.css"><title>404 — रास्ता नहीं मिला | Nischay Forge AI</title></head>
-<body class="not-found-page"><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><main class="not-found-shell"><a class="brand" href="/"><img src="/assets/nischay-mark.svg" width="40" height="40" alt=""><span class="brand-name">nischay<span>forge</span><small>AI TOOL STUDIO</small></span></a><div class="not-found-art" aria-hidden="true"><span class="orbit-404 orbit-404-a"></span><span class="orbit-404 orbit-404-b"></span><span class="not-found-nf">NF</span><span class="not-found-star">✦</span></div><span class="eyebrow"><span class="eyebrow-line"></span> ROUTE NOT FORGED</span><h1>यह रास्ता<br><span class="gradient-text">अभी बना नहीं.</span></h1><p>यह पेज कहीं और मुड़ गया होगा। स्टूडियो में लौटें—अगला आइडिया वहीं आपका इंतज़ार कर रहा है।</p><a href="/" class="button button-primary"><span>होम पर लौटें</span><span class="button-arrow">↗</span></a><span class="error-code">ERROR 404 <i></i> PAGE NOT FOUND</span><div class="not-found-foot"><span>© 2026 NISCHAY FORGE AI</span><span>NF / 404</span></div></main></body></html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070a13">
+  <meta name="robots" content="noindex">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg">
+  <title>404 — रास्ता नहीं मिला | Nischay Forge AI</title>
+  <style>
+    :root {
+      --bg: #070a13;
+      --surface: #0f172a;
+      --border: #1e293b;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    body.light-theme {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #cbd5e1;
+      --accent: #0284c7;
+      --accent-glow: rgba(2, 132, 199, 0.15);
+      --text: #0f172a;
+      --text-muted: #475569;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    /* बैकग्राउंड एम्बिएंट ग्लो */
+    .ambient {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.35;
+    }
+    .ambient-one { top: 10%; left: 10%; background: #0284c7; }
+    .ambient-two { bottom: 10%; right: 10%; background: #6366f1; }
+
+    .not-found-card {
+      position: relative;
+      z-index: 10;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 24px;
+      max-width: 460px;
+      width: 100%;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      margin-bottom: 8px;
+    }
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: #0b1120;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #38bdf8;
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .brand-text { font-size: 17px; font-weight: 800; color: var(--text); }
+    .brand-text span { color: var(--accent); }
+
+    .error-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid var(--accent);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 6vw, 36px);
+      font-weight: 900;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    h1 span {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 360px;
+    }
+
+    .btn-home {
+      background: var(--accent);
+      color: #040814;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 12px 30px;
+      border-radius: 30px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      box-shadow: 0 8px 25px var(--accent-glow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-home:active { transform: scale(0.96); }
+
+    .not-found-foot {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .not-found-foot i {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <main class="not-found-card">
+    <a class="brand-wrap" href="./index.html">
+      <div class="brand-logo">N</div>
+      <div class="brand-text">nischay<span>forge</span></div>
+    </a>
+
+    <span class="error-tag">ROUTE NOT FORGED</span>
+
+    <h1>यह रास्ता<br><span>अभी बना नहीं.</span></h1>
+
+    <p>यह पेज कहीं और मुड़ गया होगा। स्टूडियो में लौटें—अगला टूल आइडिया वहीं आपका इंतज़ार कर रहा है।</p>
+
+    <a href="./index.html" class="btn-home">
+      <span>होम / स्टूडियो पर लौटें</span>
+      <span>↗</span>
+    </a>
+
+    <div class="not-found-foot">
+      <span>ERROR 404</span>
+      <i></i>
+      <span>PAGE NOT FOUND</span>
+    </div>
+  </main>
+
+  <script>
+    // थीम सिंक (अगर स्टूडियो में लाइट थीम चुनी हो)
+    const savedTheme = localStorage.getItem('nischay_theme') || 'dark';
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-theme');
+    }
+  </script>
+</body>
+</html>
