@@ -4,15 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#070a13">
-  <meta name="description" content="बोलकर या लिखकर अपने लिए काम का वेब टूल बनाइए—Nischay Forge AI में।">
+  <meta name="description" content="Nischay Forge AI — प्रोफ़ेशनल वेब टूल और कोड स्टूडियो।">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg">
-  <title>Nischay Forge AI — Multi-Tab Code Studio</title>
+  <title>Nischay Forge AI — Pro Tool Studio</title>
 
   <style>
-    /* ===================================================
-       1. कलर्स और थीम वेरिएबल्स
-       =================================================== */
     :root {
       --bg: #070a13;
       --surface: #0f172a;
@@ -26,7 +23,7 @@
       --input-bg: #070a13;
       --nav-link: #94a3b8;
       --danger: #ef4444;
-      
+
       --c-html: #f97316;
       --c-css: #38bdf8;
       --c-js: #facc15;
@@ -50,390 +47,120 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background 0.25s ease, color 0.25s ease; }
 
-    /* ===================================================
-       2. वेलकम स्क्रीन
-       =================================================== */
+    /* 1. वेलकम स्क्रीन */
     #welcomeScreen {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at 50% 15%, #1e293b, var(--bg) 75%);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-      transition: opacity 0.4s ease, visibility 0.4s ease;
+      position: fixed; inset: 0; background: radial-gradient(circle at 50% 15%, #1e293b, var(--bg) 75%);
+      z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 24px; text-align: center; transition: opacity 0.4s ease, visibility 0.4s ease;
     }
     #welcomeScreen.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid var(--accent);
-      border-radius: 999px;
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      margin-bottom: 24px;
-    }
-    .hero-title-big {
-      font-size: clamp(30px, 7vw, 50px);
-      line-height: 1.2;
-      font-weight: 900;
-      color: var(--text);
-      margin-bottom: 16px;
-      min-height: 65px;
-    }
-    .hero-title-big span {
-      background: linear-gradient(135deg, #38bdf8, #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .hero-subtitle {
-      font-size: clamp(14px, 4vw, 17px);
-      color: var(--text-muted);
-      max-width: 480px;
-      line-height: 1.6;
-      margin-bottom: 36px;
-      min-height: 52px;
-    }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); border-radius: 999px; color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 24px; }
+    .hero-title-big { font-size: clamp(30px, 7vw, 50px); line-height: 1.2; font-weight: 900; color: var(--text); margin-bottom: 16px; min-height: 65px; }
+    .hero-title-big span { background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-subtitle { font-size: clamp(14px, 4vw, 17px); color: var(--text-muted); max-width: 480px; line-height: 1.6; margin-bottom: 36px; min-height: 52px; }
     .cursor-blink { display: inline-block; width: 3px; background: var(--accent); margin-left: 4px; animation: blink 0.8s infinite; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    .btn-start-now { background: #38bdf8; color: #040814; font-size: 16px; font-weight: 800; padding: 16px 42px; border-radius: 40px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; box-shadow: 0 12px 35px var(--accent-glow); }
 
-    .btn-start-now {
-      background: #38bdf8;
-      color: #040814;
-      font-size: 16px;
-      font-weight: 800;
-      padding: 16px 42px;
-      border-radius: 40px;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 12px 35px var(--accent-glow);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .btn-start-now:active { transform: scale(0.96); }
-
-    /* ===================================================
-       3. टॉपबार
-       =================================================== */
-    .topbar {
-      height: 60px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 16px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
+    /* 2. टॉपबार */
+    .topbar { height: 60px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 50; }
     .topbar-left { display: flex; align-items: center; gap: 12px; }
-    .drawer-toggle {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      padding: 8px;
-    }
+    .drawer-toggle { background: transparent; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 8px; }
     .drawer-toggle span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
     .brand-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .brand-logo { width: 34px; height: 34px; border-radius: 8px; background: #0f172a; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
     .brand-text { font-size: 16px; font-weight: 800; color: var(--text); }
     .brand-text span { color: var(--accent); }
     .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .lib-pill {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text);
-      background: var(--surface-elevated);
-      border: 1px solid var(--border);
-      padding: 5px 12px;
-      border-radius: 20px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .lib-pill { font-size: 12px; font-weight: 700; color: var(--text); background: var(--surface-elevated); border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
     .lib-pill span { background: var(--accent); color: #000; border-radius: 10px; padding: 1px 6px; font-size: 11px; }
 
-    /* ===================================================
-       4. साइड मेन्यू ड्रॉअर
-       =================================================== */
+    /* 3. साइड ड्रॉअर */
     .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; }
     .drawer-overlay.active { display: block; }
-    .menu-drawer {
-      position: fixed;
-      top: 0;
-      left: -320px;
-      width: 300px;
-      height: 100%;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      z-index: 110;
-      transition: left 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      flex-direction: column;
-      box-shadow: 10px 0 40px rgba(0,0,0,0.5);
-    }
+    .menu-drawer { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: var(--surface); border-right: 1px solid var(--border); z-index: 110; transition: left 0.28s ease; display: flex; flex-direction: column; }
     .menu-drawer.open { left: 0; }
     .drawer-head { padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .drawer-head h3 { font-size: 15px; font-weight: 800; color: var(--accent); }
     .btn-close-drawer { background: transparent; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; padding: 4px; }
-
     .drawer-settings { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
     .setting-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--text); }
     .setting-btn { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
-
     .drawer-nav { display: flex; flex-direction: column; padding: 12px 10px; gap: 4px; flex: 1; overflow-y: auto; }
     .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: var(--nav-link) !important; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600; }
     .nav-item.active { background: var(--surface-elevated); color: var(--accent) !important; }
     .drawer-foot { padding: 14px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
 
-    /* ===================================================
-       5. मुख्य स्टूडियो और इनपुट
-       =================================================== */
+    /* 4. मुख्य इनपुट सेक्शन */
     main { max-width: 900px; margin: 0 auto; padding: 20px 14px 120px; display: flex; flex-direction: column; gap: 20px; }
-    
-    .glass-box {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    }
-
+    .glass-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
     .prompt-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .prompt-label { font-size: 14px; font-weight: 700; color: var(--text); }
-    
-    .btn-reset-prompt {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: var(--danger);
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 12px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.2s;
-    }
+    .btn-reset-prompt { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px; cursor: pointer; }
     .btn-reset-prompt:hover { background: var(--danger); color: #fff; }
 
-    textarea.prompt-text {
-      width: 100%;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      color: var(--text);
-      font-size: 14px;
-      outline: none;
-      resize: vertical;
-      min-height: 100px;
-    }
+    textarea.prompt-text { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; color: var(--text); font-size: 14px; outline: none; resize: vertical; min-height: 100px; }
     textarea.prompt-text:focus { border-color: var(--accent); }
     .prompt-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
     .prompt-counter { font-size: 11px; color: var(--text-muted); }
-    .prompt-actions { display: flex; align-items: center; gap: 8px; width: 100%; justify-content: flex-end; margin-top: 12px; }
-    
-    .btn-create {
-      background: var(--accent);
-      color: #040814;
-      border: none;
-      font-size: 15px;
-      font-weight: 800;
-      padding: 12px 28px;
-      border-radius: 24px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 6px 20px var(--accent-glow);
-    }
+    .btn-create { background: var(--accent); color: #040814; border: none; font-size: 15px; font-weight: 800; padding: 12px 28px; border-radius: 24px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px var(--accent-glow); }
     .btn-create:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .quick-chips { display: flex; gap: 8px; overflow-x: auto; padding-top: 10px; scrollbar-width: none; }
     .chip { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; padding: 6px 12px; border-radius: 20px; white-space: nowrap; cursor: pointer; }
     .chip:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* ===================================================
-       6. नया मल्टी-टैब कोड टर्मिनल (HTML, CSS, JS अलग-अलग)
-       =================================================== */
-    .terminal-box {
-      background: #040711;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12px;
-    }
-    .terminal-header {
-      background: #0b1120;
-      border-bottom: 1px solid var(--border);
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    
-    /* HTML, CSS, JS टैब्स */
-    .code-tabs {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .code-tab-btn {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid transparent;
-      color: #94a3b8;
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.2s ease;
-    }
-    .code-tab-btn.active[data-tab="html"] {
-      background: rgba(249, 115, 22, 0.15);
-      color: var(--c-html);
-      border-color: var(--c-html);
-    }
-    .code-tab-btn.active[data-tab="css"] {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--c-css);
-      border-color: var(--c-css);
-    }
-    .code-tab-btn.active[data-tab="js"] {
-      background: rgba(250, 204, 21, 0.15);
-      color: var(--c-js);
-      border-color: var(--c-js);
-    }
+    /* 5. प्रो-कोड टर्मिनल बार (HTML | CSS | JS अलग-अलग) */
+    .terminal-box { background: #040711; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+    .terminal-header { background: #0b1120; border-bottom: 1px solid var(--border); padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .code-tabs { display: flex; align-items: center; gap: 6px; }
+    .code-tab-btn { background: rgba(255,255,255,0.05); border: 1px solid transparent; color: #94a3b8; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+    .code-tab-btn.active[data-tab="html"] { background: rgba(249, 115, 22, 0.2); color: var(--c-html); border-color: var(--c-html); }
+    .code-tab-btn.active[data-tab="css"] { background: rgba(56, 189, 248, 0.2); color: var(--c-css); border-color: var(--c-css); }
+    .code-tab-btn.active[data-tab="js"] { background: rgba(250, 204, 21, 0.2); color: var(--c-js); border-color: var(--c-js); }
 
-    .btn-copy-code {
-      background: var(--surface-elevated);
-      border: 1px solid var(--border);
-      color: #38bdf8;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .btn-copy-code:hover { background: #38bdf8; color: #040814; }
+    .term-controls { display: flex; align-items: center; gap: 8px; }
+    .btn-term-action { background: var(--surface-elevated); border: 1px solid var(--border); color: #38bdf8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-term-action:hover { background: #38bdf8; color: #040814; }
 
-    .terminal-code { 
-      padding: 12px; 
-      max-height: 180px; 
-      overflow-y: auto; 
-      white-space: pre-wrap; 
-      line-height: 1.5; 
-      color: #4ade80; 
-    }
+    .terminal-content-area { position: relative; }
+    textarea.terminal-editor { width: 100%; height: 180px; background: transparent; border: none; color: #4ade80; font-family: inherit; font-size: inherit; padding: 12px; outline: none; resize: vertical; line-height: 1.5; white-space: pre; }
 
-    /* प्रीव्यू कार्ड */
+    /* 6. प्रीव्यू व कैनवस */
     .preview-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .preview-title-text { font-size: 15px; font-weight: 800; color: var(--accent); }
     .preview-btn-group { display: flex; gap: 6px; }
     .tool-btn { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    .canvas-container {
-      position: relative;
-      min-height: 480px;
-      background: #020617;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-    }
+    .canvas-container { position: relative; min-height: 480px; background: #020617; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
     .empty-canvas { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-muted); text-align: center; padding: 20px; }
     .empty-canvas span { font-size: 34px; }
+    iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; }
 
-    /* लोडर */
-    .forge-loader {
-      position: absolute;
-      inset: 0;
-      background: rgba(4, 7, 17, 0.95);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      z-index: 20;
-    }
+    /* 7. रीफ़ाइन बॉक्स (टूल को और सुधारने के लिए) */
+    .refine-box { margin-top: 14px; background: var(--surface-elevated); border: 1px dashed var(--accent); border-radius: 12px; padding: 12px; display: none; }
+    .refine-box.is-visible { display: block; }
+    .refine-row { display: flex; gap: 8px; margin-top: 8px; }
+    .refine-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none; }
+    .btn-refine { background: var(--accent); color: #000; border: none; font-size: 12px; font-weight: 800; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+
+    /* 8. लोडर */
+    .forge-loader { position: absolute; inset: 0; background: rgba(4, 7, 17, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 20; }
     .forge-loader.is-active { display: flex; }
-    .loader-ring {
-      width: 64px;
-      height: 64px;
-      border: 4px solid rgba(56, 189, 248, 0.15);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.85s linear infinite;
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
+    .loader-ring { width: 64px; height: 64px; border: 4px solid rgba(56, 189, 248, 0.15); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.85s linear infinite; box-shadow: 0 0 20px var(--accent-glow); }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-    .loader-step-text { font-size: 14px; font-weight: 800; color: var(--accent); letter-spacing: 0.5px; }
+    .loader-step-text { font-size: 14px; font-weight: 800; color: var(--accent); }
     .loader-progress-bar { width: 220px; height: 5px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
     .loader-progress-fill { width: 0%; height: 100%; background: var(--accent); transition: width 0.35s ease; box-shadow: 0 0 10px var(--accent); }
 
-    iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; }
-
-    /* 7. नीचे का वॉइस डॉक */
-    .bottom-dock {
-      position: fixed;
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 24px);
-      max-width: 580px;
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: 35px;
-      padding: 6px 10px 6px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      z-index: 60;
-    }
+    /* 9. वॉइस बार */
+    .bottom-dock { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 580px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 35px; padding: 6px 10px 6px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 60; }
     .dock-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
-    .dock-mic-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: #ef4444;
-      border: none;
-      color: #fff;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s;
-    }
+    .dock-mic-btn { width: 42px; height: 42px; border-radius: 50%; background: #ef4444; border: none; color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .dock-mic-btn.is-active { background: #16a34a; animation: pulse 1s infinite alternate; }
     @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
-    /* 8. फुलस्क्रीन मोडल */
     #fullModal { position: fixed; inset: 0; background: #020617; z-index: 10000; display: none; flex-direction: column; }
     #fullModal.is-open { display: flex; }
     .fullmodal-bar { height: 52px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
@@ -447,9 +174,8 @@
 </head>
 <body class="dark-theme">
 
-  <!-- 0. वेलकम स्क्रीन -->
   <div id="welcomeScreen">
-    <div class="hero-badge">⚡ NISCHAY FORGE 2026</div>
+    <div class="hero-badge">⚡ NISCHAY FORGE PRO 2026</div>
     <h1 class="hero-title-big"><span id="typeWelcomeTitle"></span><span class="cursor-blink">|</span></h1>
     <p class="hero-subtitle" id="typeWelcomeSub"></p>
     <button class="btn-start-now" id="getStartedBtn" type="button">
@@ -458,7 +184,6 @@
     </button>
   </div>
 
-  <!-- 1. फुलस्क्रीन लाइव व्यू मोडल -->
   <div id="fullModal">
     <div class="fullmodal-bar">
       <span id="fullModalTitle">टूल का नाम</span>
@@ -467,7 +192,6 @@
     <iframe id="fullFrame" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
   </div>
 
-  <!-- 2. टॉप हेडर -->
   <header class="topbar">
     <div class="topbar-left">
       <button class="drawer-toggle" id="drawerOpenBtn" type="button" aria-label="मेनू खोलें">
@@ -483,14 +207,12 @@
     </div>
   </header>
 
-  <!-- 3. साइड मेनू ड्रॉअर -->
   <div class="drawer-overlay" id="drawerOverlay"></div>
   <aside class="menu-drawer" id="menuDrawer">
     <div class="drawer-head">
       <h3>⚡ निश्चय नेविगेशन</h3>
       <button class="btn-close-drawer" id="drawerCloseBtn">✕</button>
     </div>
-
     <div class="drawer-settings">
       <div class="setting-row">
         <span>थीम (Theme):</span>
@@ -501,7 +223,6 @@
         <button class="setting-btn" id="langToggleBtn">🇮🇳 हिंदी</button>
       </div>
     </div>
-
     <nav class="drawer-nav">
       <a class="nav-item active" href="./index.html">⌘ स्टूडियो</a>
       <a class="nav-item" href="./library.html">▦ मेरी लाइब्रेरी</a>
@@ -511,7 +232,6 @@
     <div class="drawer-foot">Nischay Forge AI Studio • 2026</div>
   </aside>
 
-  <!-- 4. मुख्य स्टूडियो ऐप -->
   <main>
     <div class="glass-box">
       <div class="prompt-label-row">
@@ -537,7 +257,7 @@
       </div>
     </div>
 
-    <!-- टर्मिनल स्क्रीन (HTML / CSS / JS अलग-अलग टैब) -->
+    <!-- प्रो-कोड टर्मिनल बार (HTML, CSS, JS अलग-अलग) -->
     <div class="terminal-box" id="terminalBox">
       <div class="terminal-header">
         <div class="code-tabs">
@@ -551,12 +271,19 @@
             <span style="color:var(--c-js)">⚡</span> JavaScript
           </button>
         </div>
-        <button class="btn-copy-code" id="btnCopyCode" type="button">📋 कोड कॉपी करें</button>
+
+        <div class="term-controls">
+          <button class="btn-term-action" id="btnApplyEdit" title="एडिट किया हुआ कोड कैनवस में चलाएं">⚡ बदलाव लागू करें</button>
+          <button class="btn-term-action" id="btnCopyCode" title="यह कोड कॉपी करें">📋 कोड कॉपी करें</button>
+        </div>
       </div>
-      <div class="terminal-code" id="termOutput">// आपका बनाया हुआ कोड यहाँ आकार लेगा...</div>
+      
+      <div class="terminal-content-area">
+        <textarea class="terminal-editor" id="termOutput" spellcheck="false" placeholder="// आपका बनाया हुआ कोड यहाँ आकार लेगा..."></textarea>
+      </div>
     </div>
 
-    <!-- लाइव टूल प्रीव्यू कार्ड -->
+    <!-- लाइव प्रीव्यू कार्ड -->
     <div class="glass-box">
       <div class="preview-header-bar">
         <span class="preview-title-text" id="toolHeading">Nischay Studio Canvas</span>
@@ -568,7 +295,6 @@
       </div>
 
       <div class="canvas-container">
-        <!-- लाइव लोडिंग एनीमेशन -->
         <div class="forge-loader" id="forgeLoader">
           <div class="loader-ring"></div>
           <div class="loader-step-text" id="loaderStepText">⚡ 1/4: आर्किटेक्चर तैयार हो रहा है...</div>
@@ -583,10 +309,18 @@
         </div>
         <iframe id="toolFrame" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
       </div>
+
+      <!-- रीफ़ाइन टूल इनपुट (बने हुए टूल को बिना दोबारा लिखे सुधारें) -->
+      <div class="refine-box" id="refineBox">
+        <span style="font-size:12px; font-weight:800; color:var(--accent);">🔧 इस टूल में और क्या सुधारना है?</span>
+        <div class="refine-row">
+          <input type="text" class="refine-input" id="refineInput" placeholder="उदा: बैकग्राउंड डार्क ब्लैक कर दो, 5 नए सवाल और जोड़ दो...">
+          <button class="btn-refine" id="btnRefineSubmit">अपडेट करें ➔</button>
+        </div>
+      </div>
     </div>
   </main>
 
-  <!-- 5. फ्लोटिंग वॉइस बार -->
   <div class="bottom-dock">
     <span class="dock-label" id="voiceStatusText">आइडिया बोलें, बॉक्स में लिखा जाएगा...</span>
     <button class="dock-mic-btn" id="micBtn" title="बोलें">🎙️</button>
@@ -594,7 +328,7 @@
 
   <div class="toast" id="toastBox"></div>
 
-  <!-- जावास्क्रिप्ट इंजन -->
+  <!-- स्मार्ट जावास्क्रिप्ट इंजन -->
   <script>
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
@@ -611,26 +345,25 @@
     const STORAGE_KEY_LEGACY = 'nischay-forge-tools-v1';
 
     let activeTool = null;
-    let currentCodeModules = { html: "", css: "", js: "" };
-    let currentActiveTab = "html";
+    let codeModules = { html: "", css: "", js: "" };
+    let currentTab = "html";
 
     let currentLang = localStorage.getItem('nischay_lang') || 'hi';
     let currentTheme = localStorage.getItem('nischay_theme') || 'dark';
 
     const $ = (id) => document.getElementById(id);
 
-    // 1. वेलकम स्क्रीन ऑटो-टाइपराइटर
-    const welcomeTitleFull = "WELCOME TO NISCHAY FORGE";
-    const welcomeSubFull = "बोलिए या लिखिए—भारी और मल्टी-स्क्रीन वेब ऐप्स भी सेकंडों में सीधे आपके डिवाइस पर तैयार।";
+    // वेलकम स्क्रीन
+    const welcomeTitleFull = "WELCOME TO NISCHAY FORGE PRO";
+    const welcomeSubFull = "बोलिए या लिखिए—भारी वेब ऐप्स, मल्टी-टैब कोड और कस्टमाइज़ेशन सेकंडों में सीधे आपके डिवाइस पर।";
 
     function runWelcomeTypewriter() {
       let tIdx = 0, sIdx = 0;
       const titleEl = $('typeWelcomeTitle'), subEl = $('typeWelcomeSub');
-
       function typeTitle() {
         if (tIdx < welcomeTitleFull.length) {
           titleEl.textContent += welcomeTitleFull[tIdx++];
-          setTimeout(typeTitle, 40);
+          setTimeout(typeTitle, 35);
         } else {
           typeSub();
         }
@@ -638,7 +371,7 @@
       function typeSub() {
         if (sIdx < welcomeSubFull.length) {
           subEl.textContent += welcomeSubFull[sIdx++];
-          setTimeout(typeSub, 18);
+          setTimeout(typeSub, 16);
         }
       }
       typeTitle();
@@ -648,14 +381,12 @@
       $('welcomeScreen').classList.add('is-hidden');
       sessionStorage.setItem('nischay_welcome_seen', 'true');
     });
-
     if (sessionStorage.getItem('nischay_welcome_seen') === 'true') {
       $('welcomeScreen').classList.add('is-hidden');
     } else {
       runWelcomeTypewriter();
     }
 
-    // 2. टोस्ट
     function showToast(msg) {
       const t = $('toastBox');
       t.textContent = msg;
@@ -663,15 +394,13 @@
       setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // 3. रीसेट बटन
     $('btnResetPrompt').addEventListener('click', () => {
       $('promptInput').value = '';
       $('charCount').textContent = '0 / 10000';
       $('promptInput').focus();
-      showToast('प्रॉम्प्ट बॉक्स खाली कर दिया गया! 🧹');
+      showToast('प्रॉम्प्ट खाली कर दिया गया! 🧹');
     });
 
-    // 4. थीम टॉगल
     function applyTheme(theme) {
       if (theme === 'light') {
         document.body.classList.add('light-theme');
@@ -689,35 +418,6 @@
       applyTheme(currentTheme);
     });
 
-    // 5. भाषा टॉगल
-    function applyLanguage(lang) {
-      if (lang === 'en') {
-        $('langToggleBtn').textContent = '🇺🇸 English';
-        $('labelPrompt').textContent = 'What do you want to build today?';
-        $('promptInput').placeholder = 'E.g., Build a complete 3-screen Student OS dashboard...';
-        $('generateBtn').querySelector('span').textContent = 'Build Tool';
-        $('voiceStatusText').textContent = 'Speak your idea, text will be typed...';
-        $('placeholderText').innerHTML = 'Your tool will render here.<br>Type above or use mic, then tap "Build Tool".';
-        $('startBtnText').textContent = 'Get Started';
-      } else {
-        $('langToggleBtn').textContent = '🇮🇳 हिंदी';
-        $('labelPrompt').textContent = 'आज क्या बनाना है?';
-        $('promptInput').placeholder = 'उदाहरण: 3-स्क्रीन वाला स्टूडेंट OS डैशबोर्ड बनाओ...';
-        $('generateBtn').querySelector('span').textContent = 'बनाइए';
-        $('voiceStatusText').textContent = 'आइडिया बोलें, बॉक्स में लिखा जाएगा...';
-        $('placeholderText').innerHTML = 'आपका टूल यहीं खुलेगा।<br>ऊपर लिखिए या नीचे माइक से बोलिए, फिर "बनाइए" पर टैप करें।';
-        $('startBtnText').textContent = 'गेट स्टार्टेड (Get Started)';
-      }
-      localStorage.setItem('nischay_lang', lang);
-    }
-    applyLanguage(currentLang);
-
-    $('langToggleBtn').addEventListener('click', () => {
-      currentLang = (currentLang === 'hi') ? 'en' : 'hi';
-      applyLanguage(currentLang);
-    });
-
-    // 6. साइड मेन्यू
     $('drawerOpenBtn').addEventListener('click', () => {
       $('menuDrawer').classList.add('open');
       $('drawerOverlay').classList.add('active');
@@ -741,118 +441,47 @@
       });
     });
 
-    // ----------------------------------------------------
-    // 7. HTML, CSS, JS टैब स्विचिंग लॉजिक
-    // ----------------------------------------------------
-    function switchTab(tab) {
-      currentActiveTab = tab;
-      document.querySelectorAll('.code-tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tab);
-      });
-      
-      const code = currentCodeModules[tab] || `// कोई ${tab.toUpperCase()} कोड नहीं है`;
-      $('termOutput').textContent = code;
-      $('termOutput').scrollTop = 0;
-    }
-
-    $('tabBtnHtml').addEventListener('click', () => switchTab('html'));
-    $('tabBtnCss').addEventListener('click', () => switchTab('css'));
-    $('tabBtnJs').addEventListener('click', () => switchTab('js'));
-
-    // कॉपी बटन (जो टैब खुला है, केवल उसी का कोड कॉपी करेगा)
-    $('btnCopyCode').addEventListener('click', () => {
-      const codeToCopy = currentCodeModules[currentActiveTab];
-      if (!codeToCopy) {
-        showToast('पहले कोई टूल बनने दीजिए!');
-        return;
-      }
-      navigator.clipboard.writeText(codeToCopy).then(() => {
-        showToast(`${currentActiveTab.toUpperCase()} कोड कॉपी हो गया! 📋`);
-      }).catch(() => {
-        showToast('कॉपी नहीं हो सका, कृपया दोबारा प्रयास करें।');
-      });
-    });
-
-    // ----------------------------------------------------
-    // 8. भारी काम के लिए AI इंजन (Clean Multi-Part)
-    // ----------------------------------------------------
-    async function requestGeminiRaw(modelName, query) {
-      const key = getApiKey();
-      
-      const sys = `You are Nischay Forge Heavy-Duty Code Generator.
-You must construct high-complexity web tools by cleanly separating code modules.
-DO NOT RETURN JSON! Output strictly formatted plain text with these exact delimiter tags:
-
-===NAME===
-[A short 2-4 word Title of the tool]
-===HTML===
-[Pure HTML markup with elements, inputs, containers. Do NOT include <style> or <script> tags here]
-===CSS===
-[Pure CSS styling, modern responsive dark theme, animations. Do NOT include <style> tags]
-===JS===
-[Pure JavaScript logic, state management, event listeners. Do NOT include <script> tags]
-
-RULES:
-1. Never wrap with markdown json tags.
-2. In CSS, use #070a13 for dark background and #38bdf8 for neon accents.
-3. If QR Code/Image download: use canvas.toDataURL('image/png') to download real PNG.
-4. Provide fully working code without placeholders.`;
-
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
-
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'x-goog-api-key': key
-        },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: `${sys}\n\nUser Request: ${query}` }] }],
-          generationConfig: {
-            maxOutputTokens: 8192,
-            temperature: 0.2
-          }
-        })
-      });
-
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message || 'API Error');
-      return data.candidates[0].content.parts[0].text;
-    }
-
-    function assembleMultiPartCode(rawText) {
+    // ------------------------------------------------------------------
+    // स्मार्ट एक्सट्रैक्टर: जो किसी भी HTML से शुद्ध HTML, CSS और JS अलग कर दे
+    // ------------------------------------------------------------------
+    function parseAndExtractModules(rawOutput) {
       let name = "Web Tool";
-      let html = "";
-      let css = "";
-      let js = "";
+      let pureHtml = "";
+      let pureCss = "";
+      let pureJs = "";
 
-      if (rawText.includes("===NAME===")) {
-        const parts = rawText.split(/===[A-Z]+===/);
+      // 1. अगर AI ने डेलिमिटर के साथ दिया हो
+      if (rawOutput.includes("===NAME===") || rawOutput.includes("===HTML===")) {
+        const parts = rawOutput.split(/===[A-Z]+===/);
         name = (parts[1] || "Web Tool").trim().replace(/[\r\n]+/g, " ");
-        html = (parts[2] || "").trim();
-        css = (parts[3] || "").trim();
-        js = (parts[4] || "").trim();
+        pureHtml = (parts[2] || "").trim();
+        pureCss = (parts[3] || "").trim();
+        pureJs = (parts[4] || "").trim();
       } else {
-        html = rawText.replace(/```html|```/gi, "").trim();
+        // 2. अगर AI ने पूरा HTML एक ही में दे दिया हो, तो उसे रेगुलर एक्सप्रेशन से अलग करना
+        let full = rawOutput.replace(/```html|```/gi, "").trim();
+
+        // CSS निकालना
+        const styleMatch = full.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+        if (styleMatch) pureCss = styleMatch[1].trim();
+
+        // JS निकालना
+        const scriptMatch = full.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+        if (scriptMatch) pureJs = scriptMatch[1].trim();
+
+        // HTML में से style और script साफ करना
+        pureHtml = full
+          .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+          .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+          .trim();
       }
 
-      html = html.replace(/^```html|^```|```$/gim, '').trim();
-      css = css.replace(/^```css|^```|```$/gim, '').trim();
-      js = js.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
+      pureHtml = pureHtml.replace(/^```html|^```|```$/gim, '').trim();
+      pureCss = pureCss.replace(/^```css|^```|```$/gim, '').trim();
+      pureJs = pureJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
 
-      // अलग-अलग टैब के लिए सेव करना
-      currentCodeModules = {
-        html: html,
-        css: css,
-        js: js
-      };
-
-      let fullDocument = "";
-      if (html.includes("<!DOCTYPE html>") || html.includes("<html")) {
-        fullDocument = html;
-      } else {
-        fullDocument = `<!DOCTYPE html>
+      // अगर शुद्ध HTML में सिर्फ बॉडी का हिस्सा हो
+      const assembledDoc = `<!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
@@ -861,45 +490,111 @@ RULES:
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #070a13; color: #f8fafc; font-family: system-ui, sans-serif; min-height: 100vh; }
-    ${css}
+    ${pureCss}
   </style>
 </head>
 <body>
-  ${html}
+  ${pureHtml}
   <script>
-    ${js}
+    ${pureJs}
   <\/script>
 </body>
 </html>`;
-      }
 
-      return { cleanName: name, htmlCode: fullDocument };
+      return {
+        name: name,
+        html: pureHtml,
+        css: pureCss,
+        js: pureJs,
+        fullDoc: assembledDoc
+      };
     }
 
-    // टाइपराइटर (सिर्फ पहले एक्टिव टैब का कोड टाइप करेगा)
-    function typewriter(code, cb) {
-      const out = $('termOutput');
-      out.textContent = '';
-      let i = 0;
-      const step = Math.max(20, Math.floor(code.length / 80));
+    // टैब स्विचिंग
+    function switchTab(tab) {
+      // पहले वर्तमान एडिटर में हुआ बदलाव सेव करें
+      codeModules[currentTab] = $('termOutput').value;
 
-      function loop() {
-        if (i < code.length) {
-          out.textContent += code.slice(i, i + step);
-          i += step;
-          out.scrollTop = out.scrollHeight;
-          requestAnimationFrame(loop);
-        } else {
-          out.textContent = code;
-          cb();
-        }
-      }
-      loop();
+      currentTab = tab;
+      document.querySelectorAll('.code-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      $('termOutput').value = codeModules[tab] || `/* कोई ${tab.toUpperCase()} कोड नहीं है */`;
+    }
+
+    $('tabBtnHtml').addEventListener('click', () => switchTab('html'));
+    $('tabBtnCss').addEventListener('click', () => switchTab('css'));
+    $('tabBtnJs').addEventListener('click', () => switchTab('js'));
+
+    // टर्मिनल में सीधे किए गए बदलाव को कैनवस पर लागू करना (Live Quick Edit)
+    $('btnApplyEdit').addEventListener('click', () => {
+      codeModules[currentTab] = $('termOutput').value;
+      
+      const newDoc = `<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${activeTool ? activeTool.name : 'Nischay Tool'}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #070a13; color: #f8fafc; font-family: system-ui, sans-serif; min-height: 100vh; }
+    ${codeModules.css}
+  </style>
+</head>
+<body>
+  ${codeModules.html}
+  <script>
+    ${codeModules.js}
+  <\/script>
+</body>
+</html>`;
+
+      if (activeTool) activeTool.html = newDoc;
+      $('toolFrame').srcdoc = newDoc;
+      showToast('कस्टम कोड बदलाव कैनवस पर लागू हो गया! ⚡');
+    });
+
+    // कॉपी बटन (जो टैब खुला है, सिर्फ वही कॉपी होगा)
+    $('btnCopyCode').addEventListener('click', () => {
+      const textToCopy = $('termOutput').value;
+      if (!textToCopy) return showToast('कॉपी करने के लिए कुछ नहीं है!');
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast(`${currentTab.toUpperCase()} कोड कॉपी हो गया! 📋`);
+      });
+    });
+
+    // AI API कॉल
+    async function callGemini(modelName, query) {
+      const key = getApiKey();
+      const sys = `You are Nischay Forge Pro Engine. Build single-file 100% complete, fully working modern HTML5 web tools.
+Strictly separate code using these exact markers:
+===NAME===
+[Tool Name]
+===HTML===
+[Pure HTML markup only]
+===CSS===
+[Pure CSS styling only, #070a13 dark theme]
+===JS===
+[Pure JavaScript logic only]`;
+
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: `${sys}\n\nUser Demand: ${query}` }] }],
+          generationConfig: { maxOutputTokens: 8192, temperature: 0.2 }
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message || 'API Error');
+      return data.candidates[0].content.parts[0].text;
     }
 
     // जेनरेशन प्रोसेस
-    async function executeBuild() {
-      const q = $('promptInput').value.trim();
+    async function executeBuild(customPrompt) {
+      const q = customPrompt || $('promptInput').value.trim();
       if (!q) return;
 
       const btn = $('generateBtn');
@@ -911,73 +606,68 @@ RULES:
       const fill = $('loaderFill');
       loader.classList.add('is-active');
 
-      stepText.textContent = '⚡ 1/4: आर्किटेक्चर और मॉड्युल्स तैयार हो रहे हैं...';
+      stepText.textContent = '⚡ 1/4: आर्किटेक्चर तैयार हो रहा है...';
       fill.style.width = '25%';
 
-      const t1 = setTimeout(() => {
-        stepText.textContent = '⚙️ 2/4: HTML, CSS और भारी लॉजिक अलग-अलग कंपाइल हो रहा है...';
-        fill.style.width = '55%';
-      }, 1500);
+      setTimeout(() => { stepText.textContent = '⚙️ 2/4: HTML, CSS और JS अलग-अलग प्रोसेस हो रहे हैं...'; fill.style.width = '55%'; }, 1500);
+      setTimeout(() => { stepText.textContent = '🎨 3/4: रिस्पॉन्सिव स्टाइलिंग और बटन्स तैयार हैं...'; fill.style.width = '80%'; }, 3000);
 
-      const t2 = setTimeout(() => {
-        stepText.textContent = '🎨 3/4: रिस्पॉन्सिव स्टाइलिंग और स्टेट बाइंडिंग हो रही है...';
-        fill.style.width = '80%';
-      }, 3000);
-
-      let assembled = null;
+      let rawResponse = "";
       try {
-        const rawResponse = await requestGeminiRaw(PRIMARY_MODEL, q);
-        assembled = assembleMultiPartCode(rawResponse);
+        rawResponse = await callGemini(PRIMARY_MODEL, q);
       } catch (err) {
-        console.warn('Primary model failed, trying backup:', err);
         try {
-          const rawResponse = await requestGeminiRaw(BACKUP_MODEL, q);
-          assembled = assembleMultiPartCode(rawResponse);
+          rawResponse = await callGemini(BACKUP_MODEL, q);
         } catch (bErr) {
-          clearTimeout(t1);
-          clearTimeout(t2);
           loader.classList.remove('is-active');
-          showToast('त्रुटि: ' + bErr.message);
           btn.disabled = false;
           btn.querySelector('span').textContent = 'बनाइए';
-          return;
+          return showToast('त्रुटि: ' + bErr.message);
         }
       }
 
-      clearTimeout(t1);
-      clearTimeout(t2);
-      stepText.textContent = '✨ 4/4: फ़ाइनल कोड असेंबल हो गया!';
-      fill.style.width = '100%';
+      const extracted = parseAndExtractModules(rawResponse);
+
+      codeModules = {
+        html: extracted.html,
+        css: extracted.css,
+        js: extracted.js
+      };
 
       activeTool = {
         id: 'tool-' + Date.now(),
-        name: `Nischay ${assembled.cleanName || 'Tool'}`,
-        html: assembled.htmlCode,
-        createdAt: new Date().toISOString()
+        name: `Nischay ${extracted.name || 'Tool'}`,
+        html: extracted.fullDoc
       };
 
       $('toolHeading').textContent = activeTool.name;
       $('toolActionBtns').style.display = 'flex';
+      $('refineBox').classList.add('is-visible');
 
-      setTimeout(() => {
-        // डिफ़ॉल्ट रूप से HTML टैब सक्रिय करें
-        switchTab('html');
-        typewriter(currentCodeModules.html, () => {
-          loader.classList.remove('is-active');
-          $('canvasPlaceholder').style.display = 'none';
-          const frame = $('toolFrame');
-          frame.style.display = 'block';
-          frame.srcdoc = activeTool.html;
-          btn.disabled = false;
-          btn.querySelector('span').textContent = 'बनाइए';
-          showToast(activeTool.name + ' सफलतापूर्वक तैयार! 🚀');
-        });
-      }, 300);
+      switchTab('html');
+      loader.classList.remove('is-active');
+      $('canvasPlaceholder').style.display = 'none';
+
+      const frame = $('toolFrame');
+      frame.style.display = 'block';
+      frame.srcdoc = activeTool.html;
+
+      btn.disabled = false;
+      btn.querySelector('span').textContent = 'बनाइए';
+      showToast(activeTool.name + ' तैयार है! 🚀');
     }
 
-    $('generateBtn').addEventListener('click', executeBuild);
+    $('generateBtn').addEventListener('click', () => executeBuild());
 
-    // फुलस्क्रीन व्यू
+    // रीफ़ाइन बटन (उसी टूल को आगे सुधारने के लिए)
+    $('btnRefineSubmit').addEventListener('click', () => {
+      const refineReq = $('refineInput').value.trim();
+      if (!refineReq || !activeTool) return;
+      const combinedPrompt = `Existing Code:\n${activeTool.html}\n\nTask: Modify this tool based on request: ${refineReq}. Maintain delimiter tags.`;
+      $('refineInput').value = '';
+      executeBuild(combinedPrompt);
+    });
+
     $('btnOpenFull').addEventListener('click', () => {
       if (!activeTool) return;
       $('fullModalTitle').textContent = activeTool.name;
@@ -989,7 +679,6 @@ RULES:
       $('fullFrame').srcdoc = '';
     });
 
-    // डाउनलोडर
     $('btnDownloadTool').addEventListener('click', () => {
       if (!activeTool) return;
       const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
@@ -1002,7 +691,6 @@ RULES:
       showToast('टूल HTML डाउनलोड हो गया! 📥');
     });
 
-    // स्टोरेज
     function getStoredTools() {
       const list1 = JSON.parse(localStorage.getItem(STORAGE_KEY_MAIN) || '[]');
       const list2 = JSON.parse(localStorage.getItem(STORAGE_KEY_LEGACY) || '[]');
@@ -1013,20 +701,15 @@ RULES:
       return Array.from(map.values());
     }
 
-    function syncBadge() {
-      $('libraryCount').textContent = getStoredTools().length;
-    }
+    function syncBadge() { $('libraryCount').textContent = getStoredTools().length; }
     syncBadge();
 
     $('btnSaveTool').addEventListener('click', () => {
       if (!activeTool) return;
       const list = getStoredTools();
       const existingIdx = list.findIndex(x => x.id === activeTool.id || x.name === activeTool.name);
-      if (existingIdx > -1) {
-        list[existingIdx] = activeTool;
-      } else {
-        list.unshift(activeTool);
-      }
+      if (existingIdx > -1) list[existingIdx] = activeTool;
+      else list.unshift(activeTool);
       localStorage.setItem(STORAGE_KEY_MAIN, JSON.stringify(list));
       localStorage.setItem(STORAGE_KEY_LEGACY, JSON.stringify(list));
       syncBadge();
@@ -1037,37 +720,19 @@ RULES:
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SR) {
       const rec = new SR();
-      rec.interimResults = false;
       let isListening = false;
-
       $('micBtn').addEventListener('click', () => {
         rec.lang = (currentLang === 'hi') ? 'hi-IN' : 'en-US';
-        if (!isListening) {
-          try { rec.start(); } catch(e) {}
-        } else {
-          rec.stop();
-        }
+        if (!isListening) { try { rec.start(); } catch(e) {} } else { rec.stop(); }
       });
-
-      rec.onstart = () => {
-        isListening = true;
-        $('micBtn').classList.add('is-active');
-        $('voiceStatusText').textContent = (currentLang === 'hi') ? 'सुन रहा हूँ... बोलिए' : 'Listening... Speak';
-      };
-
+      rec.onstart = () => { isListening = true; $('micBtn').classList.add('is-active'); $('voiceStatusText').textContent = 'सुन रहा हूँ... बोलिए'; };
       rec.onresult = (e) => {
         const text = e.results[0][0].transcript;
-        const currentVal = $('promptInput').value.trim();
-        $('promptInput').value = currentVal ? `${currentVal} ${text}` : text;
+        const cur = $('promptInput').value.trim();
+        $('promptInput').value = cur ? `${cur} ${text}` : text;
         $('charCount').textContent = `${$('promptInput').value.length} / 10000`;
       };
-
-      rec.onend = () => {
-        isListening = false;
-        $('micBtn').classList.remove('is-active');
-        $('voiceStatusText').textContent = (currentLang === 'hi') ? 'आवाज़ लिख दी गई है! अब "बनाइए" दबाएँ।' : 'Voice noted! Now tap "Build Tool".';
-        showToast('आवाज़ लिख ली गई है! अब "बनाइए" बटन दबाएँ।');
-      };
+      rec.onend = () => { isListening = false; $('micBtn').classList.remove('is-active'); $('voiceStatusText').textContent = 'आवाज़ लिख दी गई है! अब "बनाइए" दबाएँ।'; };
     }
   </script>
 </body>
