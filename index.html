@@ -7,16 +7,10 @@
   <meta name="description" content="बोलकर या लिखकर अपने लिए काम का वेब टूल बनाइए—Nischay Forge AI में।">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg">
-  <title>Nischay Forge AI — AI Tool Studio</title>
-
-  <!-- Firebase SDKs (CDN) -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <title>Nischay Forge AI — Heavy Duty Tool Studio</title>
 
   <style>
-    /* ===================================================
-       1. कलर्स और थीम वेरिएबल्स
-       =================================================== */
+    /* 1. कलर्स और थीम वेरिएबल्स */
     :root {
       --bg: #070a13;
       --surface: #0f172a;
@@ -29,6 +23,7 @@
       --card-bg: #0f172a;
       --input-bg: #070a13;
       --nav-link: #94a3b8;
+      --danger: #ef4444;
     }
 
     body.light-theme {
@@ -43,14 +38,13 @@
       --card-bg: #ffffff;
       --input-bg: #f8fafc;
       --nav-link: #334155;
+      --danger: #dc2626;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background 0.25s ease, color 0.25s ease; }
 
-    /* ===================================================
-       2. फुल-स्क्रीन गेट स्टार्टेड स्क्रीन
-       =================================================== */
+    /* 2. वेलकम स्क्रीन */
     #welcomeScreen {
       position: fixed;
       inset: 0;
@@ -120,9 +114,7 @@
     }
     .btn-start-now:active { transform: scale(0.96); }
 
-    /* ===================================================
-       3. टॉपबार हेडर
-       =================================================== */
+    /* 3. टॉपबार */
     .topbar {
       height: 60px;
       background: var(--surface);
@@ -167,9 +159,7 @@
     }
     .lib-pill span { background: var(--accent); color: #000; border-radius: 10px; padding: 1px 6px; font-size: 11px; }
 
-    /* ===================================================
-       4. साइड मेन्यू ड्रॉअर (Drawer)
-       =================================================== */
+    /* 4. साइड मेन्यू */
     .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; }
     .drawer-overlay.active { display: block; }
     .menu-drawer {
@@ -200,9 +190,7 @@
     .nav-item.active { background: var(--surface-elevated); color: var(--accent) !important; }
     .drawer-foot { padding: 14px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
 
-    /* ===================================================
-       5. मुख्य वर्कस्पेस
-       =================================================== */
+    /* 5. मुख्य स्टूडियो */
     main { max-width: 900px; margin: 0 auto; padding: 20px 14px 120px; display: flex; flex-direction: column; gap: 20px; }
     
     .glass-box {
@@ -213,7 +201,26 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.06);
     }
 
-    .prompt-label { font-size: 14px; font-weight: 700; color: var(--text); display: block; margin-bottom: 10px; }
+    .prompt-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .prompt-label { font-size: 14px; font-weight: 700; color: var(--text); }
+    
+    /* रीसेट बटन */
+    .btn-reset-prompt {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--danger);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-reset-prompt:hover { background: var(--danger); color: #fff; }
+
     textarea.prompt-text {
       width: 100%;
       background: var(--input-bg);
@@ -230,6 +237,7 @@
     .prompt-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
     .prompt-counter { font-size: 11px; color: var(--text-muted); }
     .prompt-actions { display: flex; align-items: center; gap: 8px; width: 100%; justify-content: flex-end; margin-top: 12px; }
+    
     .btn-create {
       background: var(--accent);
       color: #040814;
@@ -297,7 +305,7 @@
     .empty-canvas { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-muted); text-align: center; padding: 20px; }
     .empty-canvas span { font-size: 34px; }
 
-    /* लाइव लोडर */
+    /* लोडर */
     .forge-loader {
       position: absolute;
       inset: 0;
@@ -326,9 +334,7 @@
 
     iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; }
 
-    /* ===================================================
-       6. नीचे का वॉइस डॉक
-       =================================================== */
+    /* 6. वॉइस बार */
     .bottom-dock {
       position: fixed;
       bottom: 14px;
@@ -364,9 +370,7 @@
     .dock-mic-btn.is-active { background: #16a34a; animation: pulse 1s infinite alternate; }
     @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
-    /* ===================================================
-       7. फुलस्क्रीन इन-ऐप मोडल
-       =================================================== */
+    /* 7. फुलस्क्रीन इन-ऐप मोडल */
     #fullModal { position: fixed; inset: 0; background: #020617; z-index: 10000; display: none; flex-direction: column; }
     #fullModal.is-open { display: flex; }
     .fullmodal-bar { height: 52px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
@@ -380,7 +384,7 @@
 </head>
 <body class="dark-theme">
 
-  <!-- 0. वेलकम गेट स्टार्टेड स्क्रीन -->
+  <!-- 0. वेलकम स्क्रीन -->
   <div id="welcomeScreen">
     <div class="hero-badge">⚡ NISCHAY FORGE 2026</div>
     <h1 class="hero-title-big"><span id="typeWelcomeTitle"></span><span class="cursor-blink">|</span></h1>
@@ -400,7 +404,7 @@
     <iframe id="fullFrame" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
   </div>
 
-  <!-- 2. टॉप नेविगेशन हेडर -->
+  <!-- 2. टॉप हेडर -->
   <header class="topbar">
     <div class="topbar-left">
       <button class="drawer-toggle" id="drawerOpenBtn" type="button" aria-label="मेनू खोलें">
@@ -447,8 +451,11 @@
   <!-- 4. मुख्य स्टूडियो ऐप -->
   <main>
     <div class="glass-box">
-      <label class="prompt-label" id="labelPrompt">आज क्या बनाना है?</label>
-      <textarea class="prompt-text" id="promptInput" maxlength="10000" rows="4" placeholder="उदाहरण: उम्र कैलकुलेटर बनाओ जो साल, महीने और दिन बताए..."></textarea>
+      <div class="prompt-label-row">
+        <label class="prompt-label" id="labelPrompt">आज क्या बनाना है?</label>
+        <button class="btn-reset-prompt" id="btnResetPrompt" type="button" title="प्रॉम्प्ट साफ करें">✕ रीसेट</button>
+      </div>
+      <textarea class="prompt-text" id="promptInput" maxlength="10000" rows="4" placeholder="उदाहरण: 3-स्क्रीन वाला स्टूडेंट OS डैशबोर्ड बनाओ..."></textarea>
       
       <div class="prompt-footer">
         <span class="prompt-counter" id="charCount">0 / 10000</span>
@@ -460,14 +467,14 @@
       </div>
 
       <div class="quick-chips">
+        <span class="chip" data-q="एक 3-स्क्रीन स्टूडेंट OS वेब ऐप बनाओ (पोमोडोरो, टास्क मैनेजर और फॉर्मूला नोट्स के साथ)">🎒 स्टूडेंट OS ऐप</span>
         <span class="chip" data-q="एक उम्र कैलकुलेटर बनाओ जो जन्मतिथि से साल, महीने और दिन दिखाए">🎂 उम्र कैलकुलेटर</span>
         <span class="chip" data-q="एक साफ QR कोड जनरेटर बनाओ जिसमें डाउनलोड बटन हो और वह शुद्ध PNG फोटो डाउनलोड करे">📱 QR कोड जनरेटर</span>
-        <span class="chip" data-q="एक सिंपल बजट और खर्च ट्रैकर बनाओ">💰 बजट ट्रैकर</span>
         <span class="chip" data-q="एक साइंटिफिक कैलकुलेटर बनाओ जिसमें डार्क थीम और सभी बेसिक फ़ंक्शंस हों">🧮 साइंटिफिक कैलकुलेटर</span>
       </div>
     </div>
 
-    <!-- लाइव कोड टर्मिनल + कॉपी कोड बटन -->
+    <!-- टर्मिनल स्क्रीन + कॉपी कोड बटन -->
     <div class="terminal-box" id="terminalBox">
       <div class="terminal-head">
         <div class="terminal-head-left">
@@ -495,7 +502,7 @@
         <!-- लाइव लोडिंग एनीमेशन -->
         <div class="forge-loader" id="forgeLoader">
           <div class="loader-ring"></div>
-          <div class="loader-step-text" id="loaderStepText">⚡ 1/4: आइडिया का विश्लेषण हो रहा है...</div>
+          <div class="loader-step-text" id="loaderStepText">⚡ 1/4: आर्किटेक्चर तैयार हो रहा है...</div>
           <div class="loader-progress-bar">
             <div class="loader-progress-fill" id="loaderFill"></div>
           </div>
@@ -518,33 +525,8 @@
 
   <div class="toast" id="toastBox"></div>
 
-  <!-- ===================================================
-       8. जावास्क्रिप्ट लॉजिक (Firebase + Zero Data Loss)
-       =================================================== -->
+  <!-- 8. जावास्क्रिप्ट लॉजिक (No-JSON, Multi-Part Parser) -->
   <script>
-    // ----------------------------------------------------
-    // Firebase सेटअप (वैकल्पिक / खाली होने पर भी सुरक्षित)
-    // ----------------------------------------------------
-    const firebaseConfig = {
-      apiKey: "",
-      authDomain: "",
-      projectId: "",
-      storageBucket: "",
-      messagingSenderId: "",
-      appId: ""
-    };
-
-    let db = null;
-    try {
-      if (firebaseConfig.apiKey && firebaseConfig.projectId) {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        console.log("Firebase Firestore Ready ⚡");
-      }
-    } catch(err) {
-      console.warn("Firebase Init Skipped:", err);
-    }
-
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
       "VwkfXb6jbQF0Bh",
@@ -556,7 +538,6 @@
     const PRIMARY_MODEL = "gemini-3.8";
     const BACKUP_MODEL = "gemini-3.5-flash-lite";
 
-    // स्टोरेज चाबियाँ (दोनों में एक साथ सिंक होगा ताकि library.html कभी खाली न रहे)
     const STORAGE_KEY_MAIN = 'nischay_forge_tools';
     const STORAGE_KEY_LEGACY = 'nischay-forge-tools-v1';
 
@@ -568,32 +549,26 @@
 
     // 1. वेलकम स्क्रीन ऑटो-टाइपराइटर
     const welcomeTitleFull = "WELCOME TO NISCHAY FORGE";
-    const welcomeSubFull = "बोलिए या लिखिए—किसी भी तरह का कैलकुलेटर, कनवर्टर या मिनी टूल सेकंडों में सीधे आपके डिवाइस पर तैयार।";
+    const welcomeSubFull = "बोलिए या लिखिए—भारी और मल्टी-स्क्रीन वेब ऐप्स भी सेकंडों में सीधे आपके डिवाइस पर तैयार।";
 
     function runWelcomeTypewriter() {
-      let tIdx = 0;
-      let sIdx = 0;
-      const titleEl = $('typeWelcomeTitle');
-      const subEl = $('typeWelcomeSub');
+      let tIdx = 0, sIdx = 0;
+      const titleEl = $('typeWelcomeTitle'), subEl = $('typeWelcomeSub');
 
       function typeTitle() {
         if (tIdx < welcomeTitleFull.length) {
-          titleEl.textContent += welcomeTitleFull[tIdx];
-          tIdx++;
+          titleEl.textContent += welcomeTitleFull[tIdx++];
           setTimeout(typeTitle, 40);
         } else {
           typeSub();
         }
       }
-
       function typeSub() {
         if (sIdx < welcomeSubFull.length) {
-          subEl.textContent += welcomeSubFull[sIdx];
-          sIdx++;
+          subEl.textContent += welcomeSubFull[sIdx++];
           setTimeout(typeSub, 18);
         }
       }
-
       typeTitle();
     }
 
@@ -616,7 +591,15 @@
       setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // 3. थीम टॉगल
+    // 3. रीसेट बटन
+    $('btnResetPrompt').addEventListener('click', () => {
+      $('promptInput').value = '';
+      $('charCount').textContent = '0 / 10000';
+      $('promptInput').focus();
+      showToast('प्रॉम्प्ट बॉक्स खाली कर दिया गया! 🧹');
+    });
+
+    // 4. थीम टॉगल
     function applyTheme(theme) {
       if (theme === 'light') {
         document.body.classList.add('light-theme');
@@ -634,12 +617,12 @@
       applyTheme(currentTheme);
     });
 
-    // 4. भाषा टॉगल
+    // 5. भाषा टॉगल
     function applyLanguage(lang) {
       if (lang === 'en') {
         $('langToggleBtn').textContent = '🇺🇸 English';
         $('labelPrompt').textContent = 'What do you want to build today?';
-        $('promptInput').placeholder = 'E.g., Build a complete scientific calculator with dark UI...';
+        $('promptInput').placeholder = 'E.g., Build a complete 3-screen Student OS dashboard...';
         $('generateBtn').querySelector('span').textContent = 'Build Tool';
         $('voiceStatusText').textContent = 'Speak your idea, text will be typed...';
         $('placeholderText').innerHTML = 'Your tool will render here.<br>Type above or use mic, then tap "Build Tool".';
@@ -647,7 +630,7 @@
       } else {
         $('langToggleBtn').textContent = '🇮🇳 हिंदी';
         $('labelPrompt').textContent = 'आज क्या बनाना है?';
-        $('promptInput').placeholder = 'उदाहरण: उम्र कैलकुलेटर बनाओ जो साल, महीने और दिन बताए...';
+        $('promptInput').placeholder = 'उदाहरण: 3-स्क्रीन वाला स्टूडेंट OS डैशबोर्ड बनाओ...';
         $('generateBtn').querySelector('span').textContent = 'बनाइए';
         $('voiceStatusText').textContent = 'आइडिया बोलें, बॉक्स में लिखा जाएगा...';
         $('placeholderText').innerHTML = 'आपका टूल यहीं खुलेगा।<br>ऊपर लिखिए या नीचे माइक से बोलिए, फिर "बनाइए" पर टैप करें।';
@@ -662,7 +645,7 @@
       applyLanguage(currentLang);
     });
 
-    // 5. साइड मेन्यू
+    // 6. साइड मेन्यू
     $('drawerOpenBtn').addEventListener('click', () => {
       $('menuDrawer').classList.add('open');
       $('drawerOverlay').classList.add('active');
@@ -674,7 +657,7 @@
     $('drawerCloseBtn').addEventListener('click', closeDrawer);
     $('drawerOverlay').addEventListener('click', closeDrawer);
 
-    // 6. इनपुट कैरेक्टर काउंटर (10,000 लिमिट)
+    // कैरेक्टर काउंटर
     $('promptInput').addEventListener('input', (e) => {
       $('charCount').textContent = `${e.target.value.length} / 10000`;
     });
@@ -701,17 +684,30 @@
       });
     });
 
-    // 7. AI रिक्वेस्ट इंजन
-    async function requestGemini(modelName, query) {
+    // ----------------------------------------------------
+    // 7. भारी काम के लिए AI इंजन (No JSON Escape, Multi-Part Parser)
+    // ----------------------------------------------------
+    async function requestGeminiRaw(modelName, query) {
       const key = getApiKey();
-      const sys = `You are Nischay Forge AI Engine. Create single-file 100% complete, fully working, modern HTML5 web tools based on user demand.
-CRITICAL RULES:
-1. Always generate the COMPLETE code down to </html>. Never truncate or leave unclosed tags.
-2. Include <meta charset="UTF-8"> and <meta name="viewport" content="width=device-width, initial-scale=1.0"> in <head>.
-3. Put all CSS in <style> and all JavaScript logic in <script>. Never link external CSS files.
-4. If generating QR Code or Image or Canvas: The download button MUST download a real PNG image file using canvas.toDataURL('image/png') or Blob, downloading "qrcode.png".
-5. Return STRICT JSON ONLY:
-{"cleanName": "Tool Short Name", "htmlCode": "<!DOCTYPE html>..."}`;
+      
+      const sys = `You are Nischay Forge Heavy-Duty Code Generator.
+You must construct high-complexity web tools by cleanly separating code modules.
+DO NOT RETURN JSON! Output strictly formatted plain text with these exact delimiter tags:
+
+===NAME===
+[A short 2-4 word Title of the tool]
+===HTML===
+[Pure HTML markup with elements, inputs, containers]
+===CSS===
+[Pure CSS styling, modern responsive dark theme, animations]
+===JS===
+[Pure JavaScript logic, state management, event listeners, LocalStorage if required]
+
+RULES:
+1. Never wrap with markdown json tags.
+2. In CSS, use #070a13 for dark background and #38bdf8 for neon accents.
+3. If QR Code/Image download: use canvas.toDataURL('image/png') to download real PNG.
+4. Provide fully working code without placeholders.`;
 
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
 
@@ -723,17 +719,70 @@ CRITICAL RULES:
           'x-goog-api-key': key
         },
         body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: `${sys}\n\nDemand: ${query}` }] }],
+          contents: [{ role: 'user', parts: [{ text: `${sys}\n\nUser Request: ${query}` }] }],
           generationConfig: {
-            response_mime_type: "application/json",
-            maxOutputTokens: 8192
+            maxOutputTokens: 8192,
+            temperature: 0.2
           }
         })
       });
 
       const data = await res.json();
       if (data.error) throw new Error(data.error.message || 'API Error');
-      return JSON.parse(data.candidates[0].content.parts[0].text);
+      return data.candidates[0].content.parts[0].text;
+    }
+
+    // रॉ टेक्स्ट को शुद्ध वर्किंग HTML5 में असेंबल करना
+    function assembleMultiPartCode(rawText) {
+      let name = "Web Tool";
+      let html = "";
+      let css = "";
+      let js = "";
+
+      if (rawText.includes("===NAME===")) {
+        const parts = rawText.split(/===[A-Z]+===/);
+        // split करने पर: 0=pre, 1=NAME, 2=HTML, 3=CSS, 4=JS
+        name = (parts[1] || "Web Tool").trim().replace(/[\r\n]+/g, " ");
+        html = (parts[2] || "").trim();
+        css = (parts[3] || "").trim();
+        js = (parts[4] || "").trim();
+      } else {
+        // फॉलबैक अगर AI ने सीधे HTML कोड दिया हो
+        html = rawText.replace(/```html|```/gi, "").trim();
+      }
+
+      // क्लीनअप
+      html = html.replace(/^```html|^```|```$/gim, '').trim();
+      css = css.replace(/^```css|^```|```$/gim, '').trim();
+      js = js.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
+
+      // अगर पूरा कोड अलग-अलग भागों में है, तो उसे सिंगल HTML5 फ़ाइल में पिरोएँ
+      let fullDocument = "";
+      if (html.includes("<!DOCTYPE html>") || html.includes("<html")) {
+        fullDocument = html;
+      } else {
+        fullDocument = `<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${name}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #070a13; color: #f8fafc; font-family: system-ui, sans-serif; min-height: 100vh; }
+    ${css}
+  </style>
+</head>
+<body>
+  ${html}
+  <script>
+    ${js}
+  <\/script>
+</body>
+</html>`;
+      }
+
+      return { cleanName: name, htmlCode: fullDocument };
     }
 
     // 8. टाइपराइटर इफ़ेक्ट
@@ -742,7 +791,7 @@ CRITICAL RULES:
       $('termStatus').textContent = 'FORGING';
       out.textContent = '';
       let i = 0;
-      const step = Math.max(15, Math.floor(code.length / 90));
+      const step = Math.max(20, Math.floor(code.length / 80));
 
       function loop() {
         if (i < code.length) {
@@ -773,29 +822,31 @@ CRITICAL RULES:
       const fill = $('loaderFill');
       loader.classList.add('is-active');
 
-      stepText.textContent = '⚡ 1/4: आइडिया का विश्लेषण हो रहा है...';
+      stepText.textContent = '⚡ 1/4: आर्किटेक्चर और मॉड्युल्स तैयार हो रहे हैं...';
       fill.style.width = '25%';
 
-      const stepTimer1 = setTimeout(() => {
-        stepText.textContent = '⚙️ 2/4: पूरा HTML, CSS और लॉजिक तैयार हो रहा है...';
+      const t1 = setTimeout(() => {
+        stepText.textContent = '⚙️ 2/4: HTML, CSS और भारी लॉजिक अलग-अलग कंपाइल हो रहा है...';
         fill.style.width = '55%';
       }, 1500);
 
-      const stepTimer2 = setTimeout(() => {
-        stepText.textContent = '🎨 3/4: रिस्पॉन्सिव स्टाइलिंग और बटन्स जोड़े जा रहे हैं...';
+      const t2 = setTimeout(() => {
+        stepText.textContent = '🎨 3/4: रिस्पॉन्सिव स्टाइलिंग और स्टेट बाइंडिंग हो रही है...';
         fill.style.width = '80%';
       }, 3000);
 
-      let payload = null;
+      let assembled = null;
       try {
-        payload = await requestGemini(PRIMARY_MODEL, q);
+        const rawResponse = await requestGeminiRaw(PRIMARY_MODEL, q);
+        assembled = assembleMultiPartCode(rawResponse);
       } catch (err) {
         console.warn('Primary model failed, trying backup:', err);
         try {
-          payload = await requestGemini(BACKUP_MODEL, q);
+          const rawResponse = await requestGeminiRaw(BACKUP_MODEL, q);
+          assembled = assembleMultiPartCode(rawResponse);
         } catch (bErr) {
-          clearTimeout(stepTimer1);
-          clearTimeout(stepTimer2);
+          clearTimeout(t1);
+          clearTimeout(t2);
           loader.classList.remove('is-active');
           showToast('त्रुटि: ' + bErr.message);
           btn.disabled = false;
@@ -804,15 +855,15 @@ CRITICAL RULES:
         }
       }
 
-      clearTimeout(stepTimer1);
-      clearTimeout(stepTimer2);
-      stepText.textContent = '✨ 4/4: फ़ाइनल टच दिया जा रहा है...';
+      clearTimeout(t1);
+      clearTimeout(t2);
+      stepText.textContent = '✨ 4/4: फ़ाइनल कोड असेंबल हो गया!';
       fill.style.width = '100%';
 
       activeTool = {
         id: 'tool-' + Date.now(),
-        name: `Nischay ${payload.cleanName || 'Tool'}`,
-        html: payload.htmlCode,
+        name: `Nischay ${assembled.cleanName || 'Tool'}`,
+        html: assembled.htmlCode,
         createdAt: new Date().toISOString()
       };
 
@@ -828,14 +879,14 @@ CRITICAL RULES:
           frame.srcdoc = activeTool.html;
           btn.disabled = false;
           btn.querySelector('span').textContent = 'बनाइए';
-          showToast(activeTool.name + ' पूरी तरह तैयार है! 🚀');
+          showToast(activeTool.name + ' सफलतापूर्वक तैयार! 🚀');
         });
       }, 300);
     }
 
     $('generateBtn').addEventListener('click', executeBuild);
 
-    // 10. इन-ऐप फुलस्क्रीन व्यू
+    // 10. फुलस्क्रीन व्यू
     $('btnOpenFull').addEventListener('click', () => {
       if (!activeTool) return;
       $('fullModalTitle').textContent = activeTool.name;
@@ -847,7 +898,7 @@ CRITICAL RULES:
       $('fullFrame').srcdoc = '';
     });
 
-    // 11. शुद्ध HTML डाउनलोड
+    // 11. HTML डाउनलोडर
     $('btnDownloadTool').addEventListener('click', () => {
       if (!activeTool) return;
       const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
@@ -860,7 +911,7 @@ CRITICAL RULES:
       showToast('टूल HTML डाउनलोड हो गया! 📥');
     });
 
-    // 12. डुअल-सिंक स्टोरेज (डेटा कभी नहीं उड़ेगा)
+    // 12. डुअल-सिंक स्टोरेज
     function getStoredTools() {
       const list1 = JSON.parse(localStorage.getItem(STORAGE_KEY_MAIN) || '[]');
       const list2 = JSON.parse(localStorage.getItem(STORAGE_KEY_LEGACY) || '[]');
@@ -876,35 +927,18 @@ CRITICAL RULES:
     }
     syncBadge();
 
-    // सेव बटन (LocalStorage + Firebase Cloud Sync)
-    $('btnSaveTool').addEventListener('click', async () => {
+    $('btnSaveTool').addEventListener('click', () => {
       if (!activeTool) return;
-      
       const list = getStoredTools();
-      // डुप्लीकेट चेक
       const existingIdx = list.findIndex(x => x.id === activeTool.id || x.name === activeTool.name);
       if (existingIdx > -1) {
         list[existingIdx] = activeTool;
       } else {
         list.unshift(activeTool);
       }
-
-      // दोनों कीज में बैकअप सुरक्षित करना
       localStorage.setItem(STORAGE_KEY_MAIN, JSON.stringify(list));
       localStorage.setItem(STORAGE_KEY_LEGACY, JSON.stringify(list));
       syncBadge();
-
-      // अगर Firebase इनिशियलाइज़ है तो क्लाउड पर भी बैकअप भेजना
-      if (db) {
-        try {
-          await db.collection("nischay_tools").doc(activeTool.id).set(activeTool);
-          showToast('क्लाउड और डिवाइस दोनों में सेव हो गया! ☁️⭐');
-          return;
-        } catch(e) {
-          console.warn("Firebase sync error:", e);
-        }
-      }
-
       showToast('लाइब्रेरी में सुरक्षित सेव हो गया! ⭐');
     });
 
