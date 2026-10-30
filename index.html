@@ -11,93 +11,6 @@
   <link rel="stylesheet" href="./css/animations.css">
   <title>Nischay Forge AI — आपका ऑन-डिमांड टूल स्टूडियो</title>
   <style>
-    /* लाइट और डार्क थीम वैरियेबल्स */
-    :root {
-      --bg: #070a13;
-      --surface: #0f172a;
-      --surface-elevated: #162238;
-      --border: #1e293b;
-      --accent: #38bdf8;
-      --accent-glow: rgba(56, 189, 248, 0.25);
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-    }
-
-    body.light-theme {
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-elevated: #f1f5f9;
-      --border: #cbd5e1;
-      --accent: #0284c7;
-      --accent-glow: rgba(2, 132, 199, 0.2);
-      --text: #0f172a;
-      --text-muted: #475569;
-    }
-
-    body.light-theme .topbar,
-    body.light-theme .drawer,
-    body.light-theme .glass-card,
-    body.light-theme .floating-voice-dock {
-      background: var(--surface) !important;
-      color: var(--text) !important;
-      border-color: var(--border) !important;
-    }
-
-    body.light-theme textarea,
-    body.light-theme input {
-      background: #ffffff !important;
-      color: #0f172a !important;
-      border-color: #cbd5e1 !important;
-    }
-
-    /* प्लेसहोल्डर और आईफ्रेम ओवरलैप फिक्स */
-    .preview-placeholder[hidden],
-    .preview-placeholder.is-hidden {
-      display: none !important;
-    }
-    
-    .preview-canvas {
-      position: relative;
-      min-height: 480px;
-      background: #020617;
-      border-radius: 14px;
-      overflow: hidden;
-    }
-
-    iframe#toolFrame {
-      width: 100% !important;
-      height: 100% !important;
-      min-height: 480px !important;
-      border: 0;
-      background: #fff;
-      display: none;
-    }
-
-    iframe#toolFrame:not([hidden]) {
-      display: block !important;
-    }
-
-    /* थीम टॉगल बटन स्टाइल */
-    .theme-toggle-btn {
-      background: var(--surface-elevated);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .theme-toggle-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
     /* मोबाइल लेआउट सुरक्षा फिक्स */
     @media (max-width: 820px) {
       .studio-shell { padding: 12px 10px 100px !important; }
@@ -107,8 +20,8 @@
       .prompt-controls { flex-direction: column !important; gap: 10px !important; }
       .button-primary { width: 100% !important; justify-content: center !important; }
       .floating-voice-dock { width: calc(100% - 24px) !important; bottom: 12px !important; }
-      .preview-card { min-height: 440px !important; }
-      iframe#toolFrame { min-height: 440px !important; }
+      .preview-card { min-height: 420px !important; }
+      iframe { min-height: 400px !important; width: 100% !important; }
     }
   </style>
 </head>
@@ -128,9 +41,7 @@
       </a>
     </div>
     <div class="topbar-right">
-      <button class="theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="थीम बदलें">
-        <span id="themeIcon">☀️</span><span id="themeText">लाइट</span>
-      </button>
+      <span class="system-pill"><i></i> Studio ready</span>
       <a class="topbar-link" href="./library.html">मेरी लाइब्रेरी <span id="libraryCount" class="count-badge">0</span></a>
       <button class="button button-quiet install-pwa" id="installPwaBtn" type="button">इंस्टॉल ऐप</button>
     </div>
@@ -253,7 +164,6 @@
               </div>
             </div>
             <div class="preview-actions" id="toolActions" hidden>
-              <button class="icon-button action-icon" id="openFullTabBtn" type="button" aria-label="अलग पेज पर पूरा बड़ा खोलें" title="अलग पेज में खोलें">↗</button>
               <button class="icon-button action-icon" id="saveToolBtn" type="button" aria-label="लाइब्रेरी में सेव करें" title="लाइब्रेरी में सेव करें">♡</button>
               <button class="icon-button action-icon" id="downloadToolBtn" type="button" aria-label="अलग HTML टूल डाउनलोड करें" title="HTML डाउनलोड">↓</button>
             </div>
@@ -308,28 +218,13 @@
   <!-- पूरा वर्किंग जावास्क्रिप्ट इंजन -->
   <script>
     // ----------------------------------------------------
-    // 1. सुरक्षित API Key (Scrambled Chunks - GitHub बॉट से सेफ)
+    // 1. कॉन्फ़िगरेशन और स्टेट
     // ----------------------------------------------------
-    const _p1 = "QVEuQWI4Uk42";
-    const _p2 = "SW94NzNxYWp3";
-    const _p3 = "VjBRcFZxeGRV";
-    const _p4 = "bUFuQXY4UWpo";
-    const _p5 = "bGViN29QVk1H";
-    const _p6 = "Q3JVUV8xMGc=";
-
-    function getSecureApiKey() {
-      try {
-        return atob(_p1 + _p2 + _p3 + _p4 + _p5 + _p6);
-      } catch (e) {
-        return "AQ.Ab8RN6Iox73qaj7V0QpVqxdUmAnAv8Qjhleb7oPVMGCrUQ_10g";
-      }
-    }
-
+    const API_KEY = "AQ.Ab8RN6Iox73qaj7V0QpVqxdUmAnAv8Qjhleb7oPVMGCrUQ_10g";
     const PRIMARY_MODEL = "gemini-3.8";
     const BACKUP_MODEL = "gemini-3.5-flash-lite";
-    const STORAGE_KEY = 'nischay-forge-tools-v1';
-    const THEME_KEY = 'nischay-forge-theme';
 
+    const STORAGE_KEY = 'nischay-forge-tools-v1';
     let activeTool = null;
     let isBusy = false;
     let toastTimer = null;
@@ -348,7 +243,6 @@
     const downloadStandaloneBtn = $('downloadStandaloneBtn');
     const saveToolBtn = $('saveToolBtn');
     const downloadToolBtn = $('downloadToolBtn');
-    const openFullTabBtn = $('openFullTabBtn');
     const terminalStatus = $('terminalStatus');
     const terminalProgress = $('terminalProgress');
     const previewStatus = $('previewStatus');
@@ -367,38 +261,9 @@
     const siteDrawer = $('siteDrawer');
     const drawerToggleBtn = $('drawerToggleBtn');
     const drawerCloseBtn = $('drawerCloseBtn');
-    const themeToggleBtn = $('themeToggleBtn');
-    const themeIcon = $('themeIcon');
-    const themeText = $('themeText');
 
     // ----------------------------------------------------
-    // 2. लाइट और डार्क मोड थीम हैंडलर
-    // ----------------------------------------------------
-    function initTheme() {
-      const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
-      applyTheme(savedTheme);
-    }
-
-    function applyTheme(theme) {
-      if (theme === 'light') {
-        document.body.classList.add('light-theme');
-        themeIcon.textContent = '🌙';
-        themeText.textContent = 'डार्क';
-      } else {
-        document.body.classList.remove('light-theme');
-        themeIcon.textContent = '☀️';
-        themeText.textContent = 'लाइट';
-      }
-      localStorage.setItem(THEME_KEY, theme);
-    }
-
-    themeToggleBtn?.addEventListener('click', () => {
-      const isLight = document.body.classList.contains('light-theme');
-      applyTheme(isLight ? 'dark' : 'light');
-    });
-
-    // ----------------------------------------------------
-    // 3. टोस्ट और यूटिलिटी फ़ंक्शंस
+    // 2. टोस्ट और यूटिलिटी फ़ंक्शंस
     // ----------------------------------------------------
     function showToast(msg) {
       if (!toast) return;
@@ -426,18 +291,17 @@
     }
 
     // ----------------------------------------------------
-    // 4. AI इंजन रिक्वेस्ट
+    // 3. AI रिक्वेस्ट इंजन (Gemini 3.8 + बैकअप 3.5 Flash Lite)
     // ----------------------------------------------------
     async function callGemini(modelName, query) {
-      const key = getSecureApiKey();
       const sys = `आप Nischay Forge के मुख्य AI इंजन हैं। यूज़र की मांग समझकर तय करें कि उन्हें एक वर्किंग वेब टूल चाहिए या वे सिर्फ सामान्य बातचीत कर रहे हैं।
 सख्त नियम:
 1. हर टूल के <head> में <meta charset="UTF-8"> और <meta name="viewport" content="width=device-width, initial-scale=1.0"> अनिवार्य रूप से हो।
-2. कोई बाहरी CSS मत लगाएं। पूरी CSS <style> में और JS <script> में रखें।
+2. कोई बाहरी CSS मत लगाएं। पूरी CSS <style> में और JS <script> में रखें। डार्क थीम (#0b1120) बनाएं।
 3. केवल और केवल शुद्ध JSON उत्तर दें:
 {"intent": "tool" या "chat", "cleanName": "टूल का नाम", "htmlCode": "<!DOCTYPE html>...", "message": "मित्रवत हिंदी संदेश"}`;
 
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -452,7 +316,7 @@
     }
 
     // ----------------------------------------------------
-    // 5. टाइपराइटर एनीमेशन
+    // 4. टाइपराइटर एनीमेशन
     // ----------------------------------------------------
     function runTypewriter(code, onComplete) {
       terminalCard.classList.add('is-writing');
@@ -481,7 +345,7 @@
     }
 
     // ----------------------------------------------------
-    // 6. मुख्य जेनरेशन लॉजिक
+    // 5. मुख्य जेनरेशन लॉजिक
     // ----------------------------------------------------
     async function handleGenerate(e) {
       if (e) e.preventDefault();
@@ -536,16 +400,9 @@
       downloadStandaloneBtn.disabled = false;
 
       runTypewriter(activeTool.html, () => {
-        // प्लेसहोल्डर को पूरी तरह हटाना
-        previewPlaceholder.hidden = true;
-        previewPlaceholder.classList.add('is-hidden');
-        previewPlaceholder.style.display = 'none';
-
-        // आईफ्रेम रेंडर करना
-        toolFrame.hidden = false;
-        toolFrame.style.display = 'block';
         toolFrame.srcdoc = activeTool.html;
-
+        toolFrame.hidden = false;
+        previewPlaceholder.hidden = true;
         previewStatus.textContent = 'टूल तैयार है — sandbox में चल रहा है';
         generateBtn.disabled = false;
         generateBtn.querySelector('span').textContent = 'बनाइए';
@@ -566,17 +423,8 @@
     });
 
     // ----------------------------------------------------
-    // 7. डाउनलोड, फुलस्क्रीन अलग टैब और सेविंग
+    // 6. डाउनलोड और सेविंग
     // ----------------------------------------------------
-    function openFullPage() {
-      if (!activeTool) return;
-      const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      showToast('टूल अलग पूरे पेज में खुल गया! ↗');
-    }
-    openFullTabBtn?.addEventListener('click', openFullPage);
-
     function downloadCurrent() {
       if (!activeTool) return;
       const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
@@ -616,7 +464,7 @@
     });
 
     // ----------------------------------------------------
-    // 8. वॉइस पहचान (Speech Recognition)
+    // 7. वॉइस पहचान (Speech Recognition)
     // ----------------------------------------------------
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -659,7 +507,7 @@
     }
 
     // ----------------------------------------------------
-    // 9. साइड मेन्यू ड्रॉअर और PWA
+    // 8. साइड मेन्यू ड्रॉअर और PWA
     // ----------------------------------------------------
     function toggleDrawer(open) {
       siteDrawer.classList.toggle('open', open);
@@ -686,8 +534,7 @@
       }
     });
 
-    // इनिशियलाइज़ेशन
-    initTheme();
+    // लोड होते ही इनिशियलाइज़
     syncLibraryBadge();
   </script>
 </body>
