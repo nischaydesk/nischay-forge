@@ -146,7 +146,9 @@
     .refine-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none; }
     .btn-refine { background: var(--accent); color: #000; border: none; font-size: 12px; font-weight: 800; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
 
-    /* साइबर-रिएक्टर लोडर */
+    /* ===================================================
+       साइबर-रिएक्टर लोडर + लाइव टाइमर
+       =================================================== */
     .forge-loader {
       position: absolute;
       inset: 0;
@@ -164,7 +166,10 @@
 
     .laser-scanner {
       position: absolute;
-      top: 0; left: 0; right: 0; height: 2px;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
       background: linear-gradient(90deg, transparent, var(--accent), #818cf8, transparent);
       box-shadow: 0 0 15px var(--accent);
       animation: scanSweep 2s ease-in-out infinite alternate;
@@ -176,23 +181,43 @@
     }
 
     .matrix-reactor {
-      position: relative; width: 110px; height: 110px;
-      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .reactor-grid {
-      position: absolute; inset: 0; border: 1px dashed rgba(56, 189, 248, 0.35); border-radius: 24px; animation: rotateFrame 14s linear infinite;
+      position: absolute;
+      inset: 0;
+      border: 1px dashed rgba(56, 189, 248, 0.35);
+      border-radius: 24px;
+      animation: rotateFrame 14s linear infinite;
     }
     .reactor-grid-inner {
-      position: absolute; inset: 14px; border: 1px solid rgba(129, 140, 248, 0.45); border-radius: 16px; animation: rotateFrameRev 9s linear infinite;
+      position: absolute;
+      inset: 14px;
+      border: 1px solid rgba(129, 140, 248, 0.45);
+      border-radius: 16px;
+      animation: rotateFrameRev 9s linear infinite;
     }
     @keyframes rotateFrame { 100% { transform: rotate(360deg); } }
     @keyframes rotateFrameRev { 100% { transform: rotate(-360deg); } }
 
     .reactor-core {
-      width: 48px; height: 48px; background: radial-gradient(circle, #38bdf8 0%, #0284c7 70%, transparent 100%);
-      border-radius: 50%; box-shadow: 0 0 30px var(--accent), inset 0 0 10px #ffffff;
-      animation: corePulse 1.2s ease-in-out infinite alternate; display: flex; align-items: center; justify-content: center;
-      color: #040814; font-size: 22px; font-weight: 900;
+      width: 48px;
+      height: 48px;
+      background: radial-gradient(circle, #38bdf8 0%, #0284c7 70%, transparent 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 30px var(--accent), inset 0 0 10px #ffffff;
+      animation: corePulse 1.2s ease-in-out infinite alternate;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #040814;
+      font-size: 22px;
+      font-weight: 900;
     }
     @keyframes corePulse {
       0% { transform: scale(0.85); box-shadow: 0 0 15px var(--accent); }
@@ -200,26 +225,57 @@
     }
 
     .loader-timer-badge {
-      display: inline-flex; align-items: center; gap: 6px; font-family: ui-monospace, monospace;
-      font-size: 13px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.1);
-      border: 1px solid rgba(250, 204, 21, 0.3); padding: 4px 14px; border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 13px;
+      font-weight: 800;
+      color: #facc15;
+      background: rgba(250, 204, 21, 0.1);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      padding: 4px 14px;
+      border-radius: 20px;
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.2);
     }
 
     .matrix-code-stream {
-      font-family: ui-monospace, monospace; font-size: 11px; color: #4ade80;
-      background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border); padding: 6px 14px;
-      border-radius: 20px; min-width: 270px; text-align: center;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 11px;
+      color: #4ade80;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      min-width: 270px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
 
     .loader-step-text {
-      font-size: 14px; font-weight: 800; color: var(--accent); text-align: center; max-width: 360px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent-glow);
+      letter-spacing: 0.5px;
+      text-align: center;
+      max-width: 360px;
     }
     .loader-progress-bar {
-      width: 250px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden;
+      width: 250px;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 6px;
+      overflow: hidden;
       border: 1px solid rgba(56, 189, 248, 0.2);
     }
     .loader-progress-fill {
-      width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #818cf8); transition: width 0.35s ease;
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      transition: width 0.35s ease;
+      box-shadow: 0 0 15px var(--accent);
     }
 
     .bottom-dock { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 580px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 35px; padding: 6px 10px 6px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 60; }
@@ -317,10 +373,10 @@
       </div>
 
       <div class="quick-chips">
-        <span class="chip" data-q="एक 3D स्पेस सोलर सिस्टम एनिमेशन बनाओ जिसमें शनि की रिंग्स, ग्रह और 3D रोटेशन हो">🪐 3D सोलर सिस्टम</span>
-        <span class="chip" data-q="एक आधुनिक Text to PDF कनवर्टर बनाओ जिसमें फ़ॉन्ट साइज़, मार्जिन सेटिंग्स और एक क्लिक में A4 PDF डाउनलोड हो">📄 Text to PDF कनवर्टर</span>
-        <span class="chip" data-q="एक 3D कार ड्राइविंग गेम बनाओ जिसमें सड़क, एक्सीलेटर और ब्रेक हो">🚗 3D ड्राइविंग गेम</span>
-        <span class="chip" data-q="एक वॉइस बिलिंग कैलकुलेटर बनाओ जो दाम बोलते ही सामान जोड़कर A4 रसीद तैयार करे">🎙️ वॉइस बिलिंग रसीद</span>
+        <span class="chip" data-q="एक 3-स्क्रीन स्टूडेंट OS वेब ऐप बनाओ (पोमोडोरो, टास्क मैनेजर और फॉर्मूला नोट्स के साथ)">🎒 स्टूडेंट OS ऐप</span>
+        <span class="chip" data-q="एक 3D स्पेस सोलर सिस्टम एनिमेशन बनाओ जिसमें शनि की रिंग्स और 3D रोटेशन हो">🪐 3D सोलर सिस्टम</span>
+        <span class="chip" data-q="एक अल्ट्रा-स्मूथ 3D एंडलेस रनर गेम बनाओ जिसमें लेन स्विचिंग, जंपिंग, कॉइंस और स्कोर सिस्टम हो">🎮 3D रनर गेम</span>
+        <span class="chip" data-q="एक उम्र कैलकुलेटर बनाओ जो जन्मतिथि से साल, महीने और दिन दिखाए">🎂 उम्र कैलकुलेटर</span>
       </div>
     </div>
 
@@ -362,6 +418,7 @@
       </div>
 
       <div class="canvas-container">
+        <!-- साइबर-रिएक्टर लोडर + लाइव टाइमर -->
         <div class="forge-loader" id="forgeLoader">
           <div class="laser-scanner"></div>
           <div class="matrix-reactor">
@@ -371,12 +428,12 @@
           </div>
           
           <div class="loader-timer-badge">
-            <span>⏱️ समय:</span>
+            <span>⏱️ बीता समय:</span>
             <span id="elapsedTimerText">00:00s</span>
           </div>
 
-          <div class="matrix-code-stream" id="matrixCodeStream">INITIALIZING ATOMIC SYNTHESIS...</div>
-          <div class="loader-step-text" id="loaderStepText">⚡ सिंगल-शॉट पूर्ण वेब एप्लिकेशन तैयार हो रहा है...</div>
+          <div class="matrix-code-stream" id="matrixCodeStream">INITIALIZING DEEP SYNTHESIS...</div>
+          <div class="loader-step-text" id="loaderStepText">⚡ 1/4: भारी आर्किटेक्चर व 3D पाइपलाइन तैयार हो रही है...</div>
           <div class="loader-progress-bar">
             <div class="loader-progress-fill" id="loaderFill"></div>
           </div>
@@ -406,7 +463,7 @@
 
   <div class="toast" id="toastBox"></div>
 
-  <!-- मजबूत और अचूक सिंगल-शॉट इंजन -->
+  <!-- स्मार्ट जावास्क्रिप्ट इंजन: 2-स्टेज पाइपलाइन + बैकग्राउंड सैंडबॉक्स टेस्टिंग -->
   <script>
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
@@ -416,8 +473,8 @@
     ];
     function getApiKey() { return _k.join(""); }
 
-    const PRIMARY_MODEL = "gemini-2.5-flash";
-    const BACKUP_MODEL = "gemini-1.5-flash";
+    const PRIMARY_MODEL = "gemini-3.5-flash-lite";
+    const BACKUP_MODEL = "gemini-2.5-flash";
 
     const STORAGE_KEY_MAIN = 'nischay_forge_tools';
     const STORAGE_KEY_LEGACY = 'nischay-forge-tools-v1';
@@ -530,41 +587,32 @@
     $('tabBtnCss').addEventListener('click', () => switchTab('css'));
     $('tabBtnJs').addEventListener('click', () => switchTab('js'));
 
-    // सीधे सुरक्षित HTML डॉक बनाना - ऑटो-एक्ज़ीक्यूटिंग स्क्रिप्ट के साथ
     function assembleFullHtml(toolName, htmlCode, cssCode, jsCode) {
       return `<!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${toolName}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"><\/script>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"><\/script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; min-height: 100%; overflow-x: hidden; background: #070a13; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #070a13; color: #f8fafc; font-family: system-ui, sans-serif; min-height: 100vh; overflow-x: hidden; }
     ${cssCode}
   </style>
 </head>
 <body>
   ${htmlCode}
   <script>
-    (function() {
-      function startApp() {
-        try {
-          ${jsCode}
-        } catch(err) {
-          console.error("Tool Runtime Error:", err);
-        }
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        ${jsCode}
+      } catch(err) {
+        console.error("Runtime Tool Error:", err);
       }
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startApp);
-      } else {
-        startApp();
-      }
-    })();
+    });
   <\/script>
 </body>
 </html>`;
@@ -577,7 +625,7 @@
       if (activeTool) activeTool.html = newDoc;
       const frame = $('toolFrame');
       frame.srcdoc = newDoc;
-      showToast('कस्टम कोड बदलाव लागू हो गया! ⚡');
+      showToast('कस्टम कोड बदलाव कैनवस पर लागू हो गया! ⚡');
     });
 
     $('btnCopyCode').addEventListener('click', () => {
@@ -592,7 +640,7 @@
       const editor = $('termOutput');
       editor.value = '';
       let cursor = 0;
-      const chunkSize = Math.max(50, Math.floor(text.length / 40));
+      const chunkSize = Math.max(45, Math.floor(text.length / 50));
 
       function typeLoop() {
         if (cursor < text.length) {
@@ -608,16 +656,58 @@
       typeLoop();
     }
 
-    async function callGeminiRaw(promptText) {
+    // ==================================================================
+    // बैकग्राउंड टेस्टिंग सैंडबॉक्स (Pre-Flight Error Detector)
+    // ==================================================================
+    function testInHiddenSandbox(fullHtmlDoc) {
+      return new Promise((resolve) => {
+        const testFrame = document.createElement('iframe');
+        testFrame.style.display = 'none';
+        testFrame.sandbox = 'allow-scripts allow-same-origin';
+        document.body.appendChild(testFrame);
+
+        let hasError = false;
+        let errorMessage = "";
+
+        const timer = setTimeout(() => {
+          document.body.removeChild(testFrame);
+          resolve({ passed: !hasError, error: errorMessage });
+        }, 1200);
+
+        window.addEventListener('message', function handler(e) {
+          if (e.data && e.data.type === 'SANDBOX_ERROR') {
+            hasError = true;
+            errorMessage = e.data.message;
+            clearTimeout(timer);
+            window.removeEventListener('message', handler);
+            try { document.body.removeChild(testFrame); } catch(err){}
+            resolve({ passed: false, error: errorMessage });
+          }
+        });
+
+        const injectedDoc = fullHtmlDoc.replace('<head>', `<head><script>
+          window.onerror = function(msg, url, line) {
+            window.parent.postMessage({ type: 'SANDBOX_ERROR', message: msg + ' at line ' + line }, '*');
+          };
+        <\/script>`);
+
+        testFrame.srcdoc = injectedDoc;
+      });
+    }
+
+    // ==================================================================
+    // API इंजन कॉल
+    // ==================================================================
+    async function callGeminiRaw(promptText, modelName) {
       const key = getApiKey();
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${PRIMARY_MODEL}:generateContent?key=${key}`;
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName || PRIMARY_MODEL}:generateContent?key=${key}`;
       
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: promptText }] }],
-          generationConfig: { maxOutputTokens: 8192, temperature: 0.1 }
+          generationConfig: { maxOutputTokens: 8192, temperature: 0.15 }
         })
       });
 
@@ -627,7 +717,7 @@
     }
 
     // ==================================================================
-    // सिंगल-शॉट सॉलिड जनरेशन (बिना किसी मिसमैच या डमी टेक्स्ट के)
+    // मुख्य 2-स्टेज बिल्ड प्रोसेस + बैकग्राउंड ऑटो-चेक
     // ==================================================================
     async function executeBuild(customPrompt) {
       const q = customPrompt || $('promptInput').value.trim();
@@ -649,6 +739,7 @@
       const timerEl = $('elapsedTimerText');
       loader.classList.add('is-active');
 
+      // ⏱️ लाइव टाइमर
       let secondsPassed = 0;
       timerEl.textContent = '00:00s';
       const liveTimerInterval = setInterval(() => {
@@ -659,63 +750,103 @@
       }, 1000);
 
       try {
-        stepText.textContent = '⚡ पूर्ण कोड (HTML, CSS व JS) एक साथ संकलित हो रहा है...';
-        fill.style.width = '45%';
-        streamText.textContent = 'SINGLE-SHOT DIRECT SYNTHESIS RUNNING';
+        // --- फेज़ 1: UI लेआउट (HTML + CSS) ---
+        stepText.textContent = '⚡ 1/4: UI लेआउट व कैनवस कंटेनर तैयार हो रहा है...';
+        fill.style.width = '25%';
+        streamText.textContent = 'STAGE 1: GENERATING ROBUST HTML + CSS';
 
-        const unifiedPrompt = `You are an Elite Fullstack Software Engineer. Build a 100% COMPLETE, fully-functional web tool or 3D animation for: "${q}".
-
-ABSOLUTE HARD RULES:
-1. NEVER output dummy messages like "(Requires JavaScript...)" or "// add code here". Write the ACTUAL complete working code!
-2. If this is a 3D app, use Three.js immediately. Create Scene, Camera, WebGLRenderer, Lights, Mesh objects, animate loop, and bind all sliders/buttons to actual 3D properties.
-3. If this is a PDF tool, use window.jspdf.jsPDF and download using Blob URL (never doc.save directly).
-4. No element overlapping! Keep mobile layout in stacked cards.
-5. You MUST strictly format your response using EXACTLY these 4 tokens:
-
+        const promptStep1 = `You are an elite Web UI Architect. Create ONLY the HTML and CSS for this tool: "${q}".
+RULES:
+1. Do NOT write any JavaScript.
+2. Ensure all buttons, canvas/game containers, and HUD inputs have clear, distinct IDs.
+3. Modern dark cyberpunk theme (#070a13).
+4. Strictly format:
 ===NAME===
-[Concise Title]
+[Concise Tool Name]
 ===HTML===
-[Pure HTML elements to be put inside body. Do NOT include <script> or <style> tags here]
+[Pure HTML layout with elements]
 ===CSS===
-[Pure modern CSS styles]
-===JS===
-[Pure JavaScript code that runs immediately and makes EVERYTHING work 100%]`;
+[Pure modern CSS]`;
 
-        const rawOutput = await callGeminiRaw(unifiedPrompt);
-
-        fill.style.width = '85%';
-        stepText.textContent = '📦 कोड पार्स और असेंबल किया जा रहा है...';
-
+        const uiRaw = await callGeminiRaw(promptStep1);
+        
         let toolName = "Nischay Tool";
         let pureHtml = "";
         let pureCss = "";
-        let pureJs = "";
 
-        if (rawOutput.includes("===HTML===") && rawOutput.includes("===JS===")) {
-          const namePart = rawOutput.split("===HTML===")[0].replace("===NAME===", "").trim();
-          if (namePart) toolName = namePart.replace(/[\r\n]+/g, " ");
-
-          const htmlPart = rawOutput.split("===HTML===")[1].split("===CSS===")[0].trim();
-          pureHtml = htmlPart.replace(/^```html|^```|```$/gim, '').trim();
-
-          const cssPart = rawOutput.split("===CSS===")[1].split("===JS===")[0].trim();
-          pureCss = cssPart.replace(/^```css|^```|```$/gim, '').trim();
-
-          const jsPart = rawOutput.split("===JS===")[1].trim();
-          pureJs = jsPart.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
+        if (uiRaw.includes("===HTML===")) {
+          const parts = uiRaw.split(/===[A-Z]+===/);
+          toolName = (parts[1] || toolName).trim().replace(/[\r\n]+/g, " ");
+          pureHtml = (parts[2] || "").trim();
+          pureCss = (parts[3] || "").trim();
         } else {
-          pureHtml = rawOutput.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').trim();
-          const sm = rawOutput.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+          pureHtml = uiRaw.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').trim();
+          const sm = uiRaw.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
           if (sm) pureCss = sm[1].trim();
-          const jm = rawOutput.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
-          if (jm) pureJs = jm[1].trim();
         }
 
-        const fullAssembledDoc = assembleFullHtml(toolName, pureHtml, pureCss, pureJs);
+        pureHtml = pureHtml.replace(/^```html|^```|```$/gim, '').trim();
+        pureCss = pureCss.replace(/^```css|^```|```$/gim, '').trim();
 
+        // --- फेज़ 2: 8192 टोकन केवल JavaScript के लिए ---
+        stepText.textContent = '⚙️ 2/4: Three.js व पूर्ण जावास्क्रिप्ट लॉजिक तैयार हो रहा है...';
+        fill.style.width = '60%';
+        streamText.textContent = 'STAGE 2: COMPILING FULL JAVASCRIPT LOGIC';
+
+        const promptStep2 = `You are a Principal 3D & Web Application Engineer.
+Here is the HTML markup for the tool:
+\`\`\`html
+${pureHtml}
+\`\`\`
+
+User Demand: "${q}"
+
+TASK:
+Write 100% COMPLETE, non-truncated, bug-free JavaScript logic.
+CRITICAL RULES:
+1. If 3D is required, use Three.js (THREE is already globally loaded via CDN).
+2. Do NOT leave code unfinished. Close EVERY function, listener, and loop.
+3. Write ONLY pure JavaScript. No HTML, no CSS, no markdown codeblocks.`;
+
+        let pureJs = await callGeminiRaw(promptStep2);
+        pureJs = pureJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
+
+        // --- फेज़ 3: बैकग्राउंड में हिडन सैंडबॉक्स टेस्टिंग ---
+        stepText.textContent = '🔬 3/4: बैकग्राउंड में चलाकर एरर व बटन टेस्ट किए जा रहे हैं...';
+        fill.style.width = '85%';
+        streamText.textContent = 'STAGE 3: RUNNING IN-MEMORY TEST SANDBOX';
+
+        let fullAssembledDoc = assembleFullHtml(toolName, pureHtml, pureCss, pureJs);
+        let testResult = await testInHiddenSandbox(fullAssembledDoc);
+
+        // अगर कोई एरर निकला तो बैकग्राउंड में खुद सुधारो (Self-Healing Loop)
+        if (!testResult.passed && testResult.error) {
+          stepText.textContent = '🩹 बैकग्राउंड में एरर सुधारा जा रहा है...';
+          streamText.textContent = 'AUTO-FIXING RUNTIME ERROR';
+
+          const fixPrompt = `The following JavaScript code produced this error in testing: "${testResult.error}".
+HTML:
+\`\`\`html
+${pureHtml}
+\`\`\`
+
+BROKEN JS:
+\`\`\`javascript
+${pureJs}
+\`\`\`
+
+Rewrite the JavaScript to FIX this error completely. Return ONLY pure corrected JavaScript.`;
+
+          const fixedJs = await callGeminiRaw(fixPrompt);
+          pureJs = fixedJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
+          fullAssembledDoc = assembleFullHtml(toolName, pureHtml, pureCss, pureJs);
+        }
+
+        // --- फेज़ 4: असेंबल व लाइव रेंडर ---
         clearInterval(liveTimerInterval);
+        stepText.textContent = '✨ 4/4: टेस्ट पास! 100% मुकम्मल टूल लोड हो रहा है...';
         fill.style.width = '100%';
-        stepText.textContent = '✨ तैयार! कैनवस में लोड हो रहा है...';
+        streamText.textContent = `VERIFIED COMPLETE IN ${timerEl.textContent} 🚀`;
 
         codeModules = {
           html: pureHtml,
@@ -749,7 +880,7 @@ ABSOLUTE HARD RULES:
 
           btn.disabled = false;
           btn.querySelector('span').textContent = 'बनाइए';
-          showToast(`${activeTool.name} पूरी तरह तैयार! 🚀`);
+          showToast(`${activeTool.name} टेस्ट होकर तैयार (${timerEl.textContent})! 🚀`);
         });
 
       } catch (err) {
@@ -840,4 +971,4 @@ ABSOLUTE HARD RULES:
     }
   </script>
 </body>
-</html>
+        </html>
