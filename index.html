@@ -16,7 +16,7 @@
       --surface-elevated: #162238;
       --border: #1e293b;
       --accent: #38bdf8;
-      --accent-glow: rgba(56, 189, 248, 0.25);
+      --accent-glow: rgba(56, 189, 248, 0.35);
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --card-bg: #0f172a;
@@ -89,7 +89,9 @@
     .drawer-foot { padding: 14px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
 
     main { max-width: 900px; margin: 0 auto; padding: 20px 14px 120px; display: flex; flex-direction: column; gap: 20px; }
-    .glass-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .glass-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+    .glass-box.building { border-color: var(--accent); box-shadow: 0 0 25px var(--accent-glow); }
+
     .prompt-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .prompt-label { font-size: 14px; font-weight: 700; color: var(--text); }
     .btn-reset-prompt { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px; cursor: pointer; }
@@ -99,7 +101,8 @@
     textarea.prompt-text:focus { border-color: var(--accent); }
     .prompt-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
     .prompt-counter { font-size: 11px; color: var(--text-muted); }
-    .btn-create { background: var(--accent); color: #040814; border: none; font-size: 15px; font-weight: 800; padding: 12px 28px; border-radius: 24px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px var(--accent-glow); }
+    .btn-create { background: var(--accent); color: #040814; border: none; font-size: 15px; font-weight: 800; padding: 12px 28px; border-radius: 24px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px var(--accent-glow); transition: transform 0.15s ease; }
+    .btn-create:active { transform: scale(0.96); }
     .btn-create:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .quick-chips { display: flex; gap: 8px; overflow-x: auto; padding-top: 10px; scrollbar-width: none; }
@@ -120,7 +123,7 @@
     .btn-term-action:hover { background: #38bdf8; color: #040814; }
 
     .terminal-content-area { position: relative; }
-    textarea.terminal-editor { width: 100%; height: 180px; background: transparent; border: none; color: #4ade80; font-family: inherit; font-size: inherit; padding: 12px; outline: none; resize: vertical; line-height: 1.5; white-space: pre; }
+    textarea.terminal-editor { width: 100%; height: 200px; background: transparent; border: none; color: #4ade80; font-family: inherit; font-size: inherit; padding: 12px; outline: none; resize: vertical; line-height: 1.5; white-space: pre; }
 
     .preview-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .preview-title-text { font-size: 15px; font-weight: 800; color: var(--accent); }
@@ -130,22 +133,27 @@
 
     .canvas-container { position: relative; min-height: 480px; background: #020617; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
     .empty-canvas { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-muted); text-align: center; padding: 20px; }
-    .empty-canvas span { font-size: 34px; }
-    iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; }
+    .empty-canvas span { font-size: 34px; animation: floatIcon 3s ease-in-out infinite; }
+    @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+    iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; opacity: 0; transition: opacity 0.4s ease; }
+    iframe#toolFrame.visible { opacity: 1; }
 
     .refine-box { margin-top: 14px; background: var(--surface-elevated); border: 1px dashed var(--accent); border-radius: 12px; padding: 12px; display: none; }
-    .refine-box.is-visible { display: block; }
+    .refine-box.is-visible { display: block; animation: slideUp 0.3s ease; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .refine-row { display: flex; gap: 8px; margin-top: 8px; }
     .refine-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none; }
     .btn-refine { background: var(--accent); color: #000; border: none; font-size: 12px; font-weight: 800; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
 
-    .forge-loader { position: absolute; inset: 0; background: rgba(4, 7, 17, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 20; }
+    /* मॉडर्न ग्लोइंग लोडर */
+    .forge-loader { position: absolute; inset: 0; background: rgba(4, 7, 17, 0.94); backdrop-filter: blur(8px); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 20; }
     .forge-loader.is-active { display: flex; }
-    .loader-ring { width: 64px; height: 64px; border: 4px solid rgba(56, 189, 248, 0.15); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.85s linear infinite; box-shadow: 0 0 20px var(--accent-glow); }
+    .loader-ring { width: 68px; height: 68px; border: 4px solid rgba(56, 189, 248, 0.15); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; box-shadow: 0 0 25px var(--accent-glow); }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-    .loader-step-text { font-size: 14px; font-weight: 800; color: var(--accent); }
-    .loader-progress-bar { width: 220px; height: 5px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-    .loader-progress-fill { width: 0%; height: 100%; background: var(--accent); transition: width 0.35s ease; box-shadow: 0 0 10px var(--accent); }
+    .loader-step-text { font-size: 14px; font-weight: 800; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+    .loader-progress-bar { width: 220px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; }
+    .loader-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #818cf8); transition: width 0.35s ease; box-shadow: 0 0 12px var(--accent); }
 
     .bottom-dock { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 580px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 35px; padding: 6px 10px 6px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 60; }
     .dock-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
@@ -225,12 +233,12 @@
   </aside>
 
   <main>
-    <div class="glass-box">
+    <div class="glass-box" id="promptBox">
       <div class="prompt-label-row">
         <label class="prompt-label" id="labelPrompt">आज क्या बनाना है?</label>
         <button class="btn-reset-prompt" id="btnResetPrompt" type="button" title="प्रॉम्प्ट साफ करें">✕ रीसेट</button>
       </div>
-      <textarea class="prompt-text" id="promptInput" maxlength="10000" rows="4" placeholder="उदाहरण: 3-स्क्रीन वाला स्टूडेंट OS डैशबोर्ड बनाओ..."></textarea>
+      <textarea class="prompt-text" id="promptInput" maxlength="10000" rows="4" placeholder="उदाहरण: 3D स्पेस सोलर सिस्टम बनाओ..."></textarea>
       
       <div class="prompt-footer">
         <span class="prompt-counter" id="charCount">0 / 10000</span>
@@ -243,9 +251,9 @@
 
       <div class="quick-chips">
         <span class="chip" data-q="एक 3-स्क्रीन स्टूडेंट OS वेब ऐप बनाओ (पोमोडोरो, टास्क मैनेजर और फॉर्मूला नोट्स के साथ)">🎒 स्टूडेंट OS ऐप</span>
+        <span class="chip" data-q="एक 3D स्पेस सोलर सिस्टम एनिमेशन बनाओ जिसमें शनि की रिंग्स और 3D रोटेशन हो">🪐 3D सोलर सिस्टम</span>
         <span class="chip" data-q="एक उम्र कैलकुलेटर बनाओ जो जन्मतिथि से साल, महीने और दिन दिखाए">🎂 उम्र कैलकुलेटर</span>
         <span class="chip" data-q="एक साफ QR कोड जनरेटर बनाओ जिसमें डाउनलोड बटन हो और वह शुद्ध PNG फोटो डाउनलोड करे">📱 QR कोड जनरेटर</span>
-        <span class="chip" data-q="एक साइंटिफिक कैलकुलेटर बनाओ जिसमें डार्क थीम और सभी बेसिक फ़ंक्शंस हों">🧮 साइंटिफिक कैलकुलेटर</span>
       </div>
     </div>
 
@@ -271,12 +279,12 @@
       </div>
       
       <div class="terminal-content-area">
-        <textarea class="terminal-editor" id="termOutput" spellcheck="false" placeholder="// आपका बनाया हुआ कोड यहाँ आकार लेगा..."></textarea>
+        <textarea class="terminal-editor" id="termOutput" spellcheck="false" placeholder="// आपका बनाया हुआ कोड यहाँ लाइव टाइप होगा..."></textarea>
       </div>
     </div>
 
     <!-- लाइव प्रीव्यू कार्ड -->
-    <div class="glass-box">
+    <div class="glass-box" id="previewCardBox">
       <div class="preview-header-bar">
         <span class="preview-title-text" id="toolHeading">Nischay Studio Canvas</span>
         <div class="preview-btn-group" id="toolActionBtns" style="display: none;">
@@ -305,7 +313,7 @@
       <div class="refine-box" id="refineBox">
         <span style="font-size:12px; font-weight:800; color:var(--accent);">🔧 इस टूल में और क्या सुधारना है?</span>
         <div class="refine-row">
-          <input type="text" class="refine-input" id="refineInput" placeholder="उदा: बैकग्राउंड डार्क ब्लैक कर दो, 5 नए सवाल और जोड़ दो...">
+          <input type="text" class="refine-input" id="refineInput" placeholder="उदा: बैकग्राउंड डार्क ब्लैक कर दो, स्पीड बढ़ा दो...">
           <button class="btn-refine" id="btnRefineSubmit">अपडेट करें ➔</button>
         </div>
       </div>
@@ -345,7 +353,7 @@
     const $ = (id) => document.getElementById(id);
 
     const welcomeTitleFull = "WELCOME TO NISCHAY FORGE PRO";
-    const welcomeSubFull = "बोलिए या लिखिए—भारी वेब ऐप्स, मल्टी-टैब कोड और कस्टमाइज़ेशन सेकंडों में सीधे आपके डिवाइस पर।";
+    const welcomeSubFull = "बोलिए या लिखिए—भारी वेब ऐप्स, मल्टी-टैब कोड और रियल-टाइम एनीमेशन सीधे आपके डिवाइस पर।";
 
     function runWelcomeTypewriter() {
       let tIdx = 0, sIdx = 0;
@@ -432,7 +440,7 @@
     });
 
     // ==================================================================
-    // स्मार्ट और सेफ़ एक्सट्रैक्टर: जो कोड के टुकड़ों को सुरक्षित जोड़ता है
+    // स्मार्ट और सेफ़ एक्सट्रैक्टर: शुद्ध कोड बिना काटे अलग करना
     // ==================================================================
     function parseAndExtractModules(rawOutput) {
       let name = "Web Tool";
@@ -469,7 +477,6 @@
       pureCss = pureCss.replace(/^```css|^```|```$/gim, '').trim();
       pureJs = pureJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
 
-      // अगर JS बीच में कट गई हो तो उसे सुरक्षित क्लोज़ करना
       if (pureJs && !pureJs.trim().endsWith("}") && !pureJs.trim().endsWith(";")) {
         pureJs += "\n/* Auto-recovered closure */\n});";
       }
@@ -555,7 +562,8 @@ ${pureHtml}
 </html>`;
 
       if (activeTool) activeTool.html = newDoc;
-      $('toolFrame').srcdoc = newDoc;
+      const frame = $('toolFrame');
+      frame.srcdoc = newDoc;
       showToast('कस्टम कोड बदलाव कैनवस पर लागू हो गया! ⚡');
     });
 
@@ -567,7 +575,30 @@ ${pureHtml}
       });
     });
 
-    // सख्त सिस्टम प्रॉम्प्ट: कोड को बिना टोकन वेस्ट किए मुकम्मल रखना
+    // ----------------------------------------------------
+    // लाइव टाइपराइटर इफ़ेक्ट (तेज़ और स्मूथ टाइपिंग)
+    // ----------------------------------------------------
+    function runLiveTypewriter(text, onComplete) {
+      const editor = $('termOutput');
+      editor.value = '';
+      let cursor = 0;
+      const chunkSize = Math.max(30, Math.floor(text.length / 70));
+
+      function typeLoop() {
+        if (cursor < text.length) {
+          editor.value += text.slice(cursor, cursor + chunkSize);
+          cursor += chunkSize;
+          editor.scrollTop = editor.scrollHeight;
+          requestAnimationFrame(typeLoop);
+        } else {
+          editor.value = text;
+          if (onComplete) onComplete();
+        }
+      }
+      typeLoop();
+    }
+
+    // सख्त AI सिस्टम प्रॉम्प्ट
     async function callGemini(modelName, query) {
       const key = getApiKey();
       const sys = `You are Nischay Forge Pro Engine. Build single-file 100% complete, fully working modern HTML5 web tools.
@@ -598,6 +629,7 @@ CRITICAL HEAVY-DUTY RULES:
       return data.candidates[0].content.parts[0].text;
     }
 
+    // मुख्य जेनरेशन प्रोसेस (लाइव कोड टाइप + लाइव कैनवस रेंडर)
     async function executeBuild(customPrompt) {
       const q = customPrompt || $('promptInput').value.trim();
       if (!q) return;
@@ -605,6 +637,11 @@ CRITICAL HEAVY-DUTY RULES:
       const btn = $('generateBtn');
       btn.disabled = true;
       btn.querySelector('span').textContent = 'बन रहा है...';
+
+      const promptBox = $('promptBox');
+      const previewBox = $('previewCardBox');
+      promptBox.classList.add('building');
+      previewBox.classList.add('building');
 
       const loader = $('forgeLoader');
       const stepText = $('loaderStepText');
@@ -614,7 +651,7 @@ CRITICAL HEAVY-DUTY RULES:
       stepText.textContent = '⚡ 1/4: आर्किटेक्चर तैयार हो रहा है...';
       fill.style.width = '25%';
 
-      setTimeout(() => { stepText.textContent = '⚙️ 2/4: HTML, CSS और JS अलग-अलग प्रोसेस हो रहे हैं...'; fill.style.width = '55%'; }, 1500);
+      setTimeout(() => { stepText.textContent = '⚙️ 2/4: कोड कंपाइल और ऑप्टिमाइज़ हो रहा है...'; fill.style.width = '55%'; }, 1500);
       setTimeout(() => { stepText.textContent = '🎨 3/4: रिस्पॉन्सिव स्टाइलिंग और बटन्स तैयार हैं...'; fill.style.width = '80%'; }, 3000);
 
       let rawResponse = "";
@@ -625,6 +662,8 @@ CRITICAL HEAVY-DUTY RULES:
           rawResponse = await callGemini(BACKUP_MODEL, q);
         } catch (bErr) {
           loader.classList.remove('is-active');
+          promptBox.classList.remove('building');
+          previewBox.classList.remove('building');
           btn.disabled = false;
           btn.querySelector('span').textContent = 'बनाइए';
           return showToast('त्रुटि: ' + bErr.message);
@@ -649,18 +688,31 @@ CRITICAL HEAVY-DUTY RULES:
       $('toolActionBtns').style.display = 'flex';
       $('refineBox').classList.add('is-visible');
 
+      stepText.textContent = '✨ 4/4: लाइव कोड टाइप हो रहा है...';
+      fill.style.width = '100%';
+
+      // 1. एक्टिव टैब (HTML) पर स्विच करें
       switchTab('html');
 
-      loader.classList.remove('is-active');
-      $('canvasPlaceholder').style.display = 'none';
+      // 2. कोड को रियल-टाइम लाइव टाइप करवाएँ और फिर स्मूथली कैनवस पर दिखाएँ
+      runLiveTypewriter(codeModules.html, () => {
+        loader.classList.remove('is-active');
+        promptBox.classList.remove('building');
+        previewBox.classList.remove('building');
+        $('canvasPlaceholder').style.display = 'none';
 
-      const frame = $('toolFrame');
-      frame.style.display = 'block';
-      frame.srcdoc = activeTool.html;
+        const frame = $('toolFrame');
+        frame.style.display = 'block';
+        frame.srcdoc = activeTool.html;
 
-      btn.disabled = false;
-      btn.querySelector('span').textContent = 'बनाइए';
-      showToast(activeTool.name + ' तैयार है! 🚀');
+        setTimeout(() => {
+          frame.classList.add('visible');
+        }, 50);
+
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'बनाइए';
+        showToast(activeTool.name + ' तैयार है! 🚀');
+      });
     }
 
     $('generateBtn').addEventListener('click', () => executeBuild());
