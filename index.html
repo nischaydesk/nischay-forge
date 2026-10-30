@@ -11,6 +11,33 @@
   <link rel="stylesheet" href="./css/animations.css">
   <title>Nischay Forge AI — आपका ऑन-डिमांड टूल स्टूडियो</title>
   <style>
+    /* प्लेसहोल्डर और आईफ्रेम ओवरलैप फिक्स */
+    .preview-placeholder[hidden],
+    .preview-placeholder.is-hidden {
+      display: none !important;
+    }
+    
+    .preview-canvas {
+      position: relative;
+      min-height: 480px;
+      background: #020617;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    iframe#toolFrame {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 480px !important;
+      border: 0;
+      background: #fff;
+      display: none;
+    }
+
+    iframe#toolFrame:not([hidden]) {
+      display: block !important;
+    }
+
     /* मोबाइल लेआउट सुरक्षा फिक्स */
     @media (max-width: 820px) {
       .studio-shell { padding: 12px 10px 100px !important; }
@@ -20,8 +47,8 @@
       .prompt-controls { flex-direction: column !important; gap: 10px !important; }
       .button-primary { width: 100% !important; justify-content: center !important; }
       .floating-voice-dock { width: calc(100% - 24px) !important; bottom: 12px !important; }
-      .preview-card { min-height: 420px !important; }
-      iframe { min-height: 400px !important; width: 100% !important; }
+      .preview-card { min-height: 440px !important; }
+      iframe#toolFrame { min-height: 440px !important; }
     }
   </style>
 </head>
@@ -164,6 +191,7 @@
               </div>
             </div>
             <div class="preview-actions" id="toolActions" hidden>
+              <button class="icon-button action-icon" id="openFullTabBtn" type="button" aria-label="अलग पेज पर पूरा बड़ा खोलें" title="अलग पेज में खोलें">↗</button>
               <button class="icon-button action-icon" id="saveToolBtn" type="button" aria-label="लाइब्रेरी में सेव करें" title="लाइब्रेरी में सेव करें">♡</button>
               <button class="icon-button action-icon" id="downloadToolBtn" type="button" aria-label="अलग HTML टूल डाउनलोड करें" title="HTML डाउनलोड">↓</button>
             </div>
@@ -243,6 +271,7 @@
     const downloadStandaloneBtn = $('downloadStandaloneBtn');
     const saveToolBtn = $('saveToolBtn');
     const downloadToolBtn = $('downloadToolBtn');
+    const openFullTabBtn = $('openFullTabBtn');
     const terminalStatus = $('terminalStatus');
     const terminalProgress = $('terminalProgress');
     const previewStatus = $('previewStatus');
@@ -400,9 +429,16 @@
       downloadStandaloneBtn.disabled = false;
 
       runTypewriter(activeTool.html, () => {
-        toolFrame.srcdoc = activeTool.html;
-        toolFrame.hidden = false;
+        // प्लेसहोल्डर को 100% साफ़ और हिडन करना
         previewPlaceholder.hidden = true;
+        previewPlaceholder.classList.add('is-hidden');
+        previewPlaceholder.style.display = 'none';
+
+        // आईफ्रेम चालू करना
+        toolFrame.hidden = false;
+        toolFrame.style.display = 'block';
+        toolFrame.srcdoc = activeTool.html;
+
         previewStatus.textContent = 'टूल तैयार है — sandbox में चल रहा है';
         generateBtn.disabled = false;
         generateBtn.querySelector('span').textContent = 'बनाइए';
@@ -423,8 +459,17 @@
     });
 
     // ----------------------------------------------------
-    // 6. डाउनलोड और सेविंग
+    // 6. डाउनलोड, पूरा अलग टैब और सेविंग
     // ----------------------------------------------------
+    function openFullPage() {
+      if (!activeTool) return;
+      const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      showToast('टूल अलग पूरे पेज में खुल गया! ↗');
+    }
+    openFullTabBtn?.addEventListener('click', openFullPage);
+
     function downloadCurrent() {
       if (!activeTool) return;
       const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
@@ -534,7 +579,6 @@
       }
     });
 
-    // लोड होते ही इनिशियलाइज़
     syncLibraryBadge();
   </script>
 </body>
