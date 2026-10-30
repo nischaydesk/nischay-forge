@@ -37,9 +37,13 @@ function showToast(message) {
   const toast = $('#toast');
   if (!toast) return;
   toast.textContent = message;
+  toast.classList.add('show');
   toast.classList.add('is-visible');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 3_000);
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+    toast.classList.remove('is-visible');
+  }, 3_000);
 }
 
 function updatePromptCount() {
@@ -52,7 +56,7 @@ function flyPrompt(text, source) {
   const layer = $('#flyingLayer');
   if (!layer || !source || !text) return;
   const tag = document.createElement('span');
-  tag.className = 'flying-tag';
+  tag.className = 'flying-tag show';
   tag.textContent = text;
   layer.append(tag);
   const sourceRect = source.getBoundingClientRect();
@@ -431,7 +435,7 @@ function setupLibrary() {
     } else if (button.dataset.action === 'run') {
       try {
         sessionStorage.setItem(RUN_KEY, JSON.stringify(tool));
-        window.location.assign('/');
+        window.location.assign('./index.html');
       } catch {
         showToast('यह टूल launch नहीं हो पाया। फिर कोशिश करें।');
       }
@@ -444,11 +448,16 @@ function setupDrawer() {
   const drawer = $('#siteDrawer');
   const backdrop = $('#drawerBackdrop');
   if (!drawer) return;
-  const toggles = document.querySelectorAll('.drawer-toggle');
-  const closeButtons = document.querySelectorAll('.drawer-close');
+  const toggles = document.querySelectorAll('.drawer-toggle, #drawerToggleBtn');
+  const closeButtons = document.querySelectorAll('.drawer-close, #drawerCloseBtn');
   const setOpen = (open) => {
     document.body.classList.toggle('drawer-open', open);
+    drawer.classList.toggle('open', open);
     drawer.setAttribute('aria-hidden', String(!open));
+    if (backdrop) {
+      backdrop.classList.toggle('show', open);
+      backdrop.classList.toggle('active', open);
+    }
     toggles.forEach((button) => button.setAttribute('aria-expanded', String(open)));
     if (open) $('.drawer-close', drawer)?.focus();
     else toggles[0]?.focus();
@@ -487,5 +496,5 @@ setupLibrary();
 setupInstall();
 updateLibraryCounts();
 if ('serviceWorker' in navigator && window.isSecureContext) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}), { once: true });
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}), { once: true });
 }
