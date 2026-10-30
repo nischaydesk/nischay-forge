@@ -1,8 +1,0 @@
-{
-  "routes": [
-    { "path": "/", "title": "Nischay Forge AI Studio" },
-    { "path": "/library.html", "title": "My Library — Nischay Forge AI" },
-    { "path": "/privacy.html", "title": "Privacy — Nischay Forge AI" },
-    { "path": "/terms.html", "title": "Terms — Nischay Forge AI" }
-  ]
-}
