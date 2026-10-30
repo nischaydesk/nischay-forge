@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Nischay Forge mark">
+  <defs>
+    <linearGradient id="forge" x1="17" y1="15" x2="111" y2="114" gradientUnits="userSpaceOnUse"><stop stop-color="#8fffe1"/><stop offset=".52" stop-color="#6bd8d4"/><stop offset="1" stop-color="#9278ff"/></linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(65 0 0 65 64 64)" gradientUnits="userSpaceOnUse"><stop stop-color="#58e8d0" stop-opacity=".22"/><stop offset="1" stop-color="#58e8d0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="128" height="128" rx="34" fill="#0c1420"/>
+  <rect width="128" height="128" rx="34" fill="url(#glow)"/>
+  <path d="M34 92V36h14l31 36V36h15v56H80L49 56v36H34Z" fill="url(#forge)"/>
+  <path d="m99 22 3.3 7.7L110 33l-7.7 3.3L99 44l-3.3-7.7L88 33l7.7-3.3L99 22Z" fill="#c4fff1"/>
+  <circle cx="27" cy="99" r="4" fill="#8fffe1"/>
+</svg>
