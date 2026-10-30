@@ -8,6 +8,11 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg">
   <title>Nischay Forge AI — AI Tool Studio</title>
+
+  <!-- Firebase SDKs (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
   <style>
     /* ===================================================
        1. कलर्स और थीम वेरिएबल्स
@@ -514,9 +519,32 @@
   <div class="toast" id="toastBox"></div>
 
   <!-- ===================================================
-       8. जावास्क्रिप्ट लॉजिक
+       8. जावास्क्रिप्ट लॉजिक (Firebase + Zero Data Loss)
        =================================================== -->
   <script>
+    // ----------------------------------------------------
+    // Firebase सेटअप (वैकल्पिक / खाली होने पर भी सुरक्षित)
+    // ----------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
+
+    let db = null;
+    try {
+      if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        console.log("Firebase Firestore Ready ⚡");
+      }
+    } catch(err) {
+      console.warn("Firebase Init Skipped:", err);
+    }
+
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
       "VwkfXb6jbQF0Bh",
@@ -527,6 +555,10 @@
 
     const PRIMARY_MODEL = "gemini-3.8";
     const BACKUP_MODEL = "gemini-3.5-flash-lite";
+
+    // स्टोरेज चाबियाँ (दोनों में एक साथ सिंक होगा ताकि library.html कभी खाली न रहे)
+    const STORAGE_KEY_MAIN = 'nischay_forge_tools';
+    const STORAGE_KEY_LEGACY = 'nischay-forge-tools-v1';
 
     let activeTool = null;
     let currentLang = localStorage.getItem('nischay_lang') || 'hi';
@@ -656,7 +688,7 @@
       });
     });
 
-    // 7. कोड कॉपी बटन (पूरा 100% कोड कॉपी होगा)
+    // कोड कॉपी बटन
     $('btnCopyCode').addEventListener('click', () => {
       if (!activeTool || !activeTool.html) {
         showToast('पहले कोई टूल बनने दीजिए!');
@@ -669,7 +701,7 @@
       });
     });
 
-    // 8. AI इंजन कॉल (maxOutputTokens: 8192 ताकि कोड कभी अधूरा न छूटे)
+    // 7. AI रिक्वेस्ट इंजन
     async function requestGemini(modelName, query) {
       const key = getApiKey();
       const sys = `You are Nischay Forge AI Engine. Create single-file 100% complete, fully working, modern HTML5 web tools based on user demand.
@@ -704,23 +736,22 @@ CRITICAL RULES:
       return JSON.parse(data.candidates[0].content.parts[0].text);
     }
 
-    // 9. टाइपराइटर इफ़ेक्ट (पूरा 100% कोड बिना काटे टाइप करेगा)
+    // 8. टाइपराइटर इफ़ेक्ट
     function typewriter(code, cb) {
       const out = $('termOutput');
       $('termStatus').textContent = 'FORGING';
       out.textContent = '';
       let i = 0;
-      // बड़े कोड को तेज़ी से और पूरा रेंडर करने के लिए डायनामिक स्टेप
       const step = Math.max(15, Math.floor(code.length / 90));
 
       function loop() {
         if (i < code.length) {
           out.textContent += code.slice(i, i + step);
           i += step;
-          out.scrollTop = out.scrollHeight; // ऑटो-स्क्रॉल
+          out.scrollTop = out.scrollHeight;
           requestAnimationFrame(loop);
         } else {
-          out.textContent = code; // पूरा कोड अंतिम रूप से पक्का करें
+          out.textContent = code;
           $('termStatus').textContent = 'READY';
           cb();
         }
@@ -728,7 +759,7 @@ CRITICAL RULES:
       loop();
     }
 
-    // 10. जेनरेशन प्रोसेस
+    // 9. जेनरेशन प्रोसेस
     async function executeBuild() {
       const q = $('promptInput').value.trim();
       if (!q) return;
@@ -781,7 +812,8 @@ CRITICAL RULES:
       activeTool = {
         id: 'tool-' + Date.now(),
         name: `Nischay ${payload.cleanName || 'Tool'}`,
-        html: payload.htmlCode
+        html: payload.htmlCode,
+        createdAt: new Date().toISOString()
       };
 
       $('toolHeading').textContent = activeTool.name;
@@ -803,7 +835,7 @@ CRITICAL RULES:
 
     $('generateBtn').addEventListener('click', executeBuild);
 
-    // 11. इन-ऐप फुलस्क्रीन व्यू
+    // 10. इन-ऐप फुलस्क्रीन व्यू
     $('btnOpenFull').addEventListener('click', () => {
       if (!activeTool) return;
       $('fullModalTitle').textContent = activeTool.name;
@@ -815,7 +847,7 @@ CRITICAL RULES:
       $('fullFrame').srcdoc = '';
     });
 
-    // 12. शुद्ध HTML डाउनलोड
+    // 11. शुद्ध HTML डाउनलोड
     $('btnDownloadTool').addEventListener('click', () => {
       if (!activeTool) return;
       const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
@@ -828,21 +860,55 @@ CRITICAL RULES:
       showToast('टूल HTML डाउनलोड हो गया! 📥');
     });
 
-    // 13. लाइब्रेरी स्टोरेज
-    function getStoredTools() { return JSON.parse(localStorage.getItem('nischay_forge_tools') || '[]'); }
-    function syncBadge() { $('libraryCount').textContent = getStoredTools().length; }
+    // 12. डुअल-सिंक स्टोरेज (डेटा कभी नहीं उड़ेगा)
+    function getStoredTools() {
+      const list1 = JSON.parse(localStorage.getItem(STORAGE_KEY_MAIN) || '[]');
+      const list2 = JSON.parse(localStorage.getItem(STORAGE_KEY_LEGACY) || '[]');
+      const map = new Map();
+      [...list1, ...list2].forEach(item => {
+        if (item && (item.id || item.name)) map.set(item.id || item.name, item);
+      });
+      return Array.from(map.values());
+    }
+
+    function syncBadge() {
+      $('libraryCount').textContent = getStoredTools().length;
+    }
     syncBadge();
 
-    $('btnSaveTool').addEventListener('click', () => {
+    // सेव बटन (LocalStorage + Firebase Cloud Sync)
+    $('btnSaveTool').addEventListener('click', async () => {
       if (!activeTool) return;
+      
       const list = getStoredTools();
-      list.unshift(activeTool);
-      localStorage.setItem('nischay_forge_tools', JSON.stringify(list));
+      // डुप्लीकेट चेक
+      const existingIdx = list.findIndex(x => x.id === activeTool.id || x.name === activeTool.name);
+      if (existingIdx > -1) {
+        list[existingIdx] = activeTool;
+      } else {
+        list.unshift(activeTool);
+      }
+
+      // दोनों कीज में बैकअप सुरक्षित करना
+      localStorage.setItem(STORAGE_KEY_MAIN, JSON.stringify(list));
+      localStorage.setItem(STORAGE_KEY_LEGACY, JSON.stringify(list));
       syncBadge();
-      showToast('लाइब्रेरी में सेव हो गया! ⭐');
+
+      // अगर Firebase इनिशियलाइज़ है तो क्लाउड पर भी बैकअप भेजना
+      if (db) {
+        try {
+          await db.collection("nischay_tools").doc(activeTool.id).set(activeTool);
+          showToast('क्लाउड और डिवाइस दोनों में सेव हो गया! ☁️⭐');
+          return;
+        } catch(e) {
+          console.warn("Firebase sync error:", e);
+        }
+      }
+
+      showToast('लाइब्रेरी में सुरक्षित सेव हो गया! ⭐');
     });
 
-    // 14. वॉइस पहचान
+    // 13. वॉइस पहचान
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SR) {
       const rec = new SR();
