@@ -7,17 +7,49 @@
   <meta name="description" content="बोलकर या लिखकर अपने लिए काम का वेब टूल बनाइए—Nischay Forge AI में।">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg">
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="stylesheet" href="./css/animations.css">
-  <title>Nischay Forge AI — आपका ऑन-डिमांड टूल स्टूडियो</title>
+  <title>Nischay Forge AI — AI Tool Studio</title>
   <style>
-    /* =========================================
-       1. लैंडिंग और वेलकम स्क्रीन (Get Started)
-       ========================================= */
+    /* ===================================================
+       1. CSS वेरिएबल्स (डार्क और लाइट थीम के सटीक कलर्स)
+       =================================================== */
+    :root {
+      --bg: #070a13;
+      --surface: #0f172a;
+      --surface-elevated: #162238;
+      --border: #1e293b;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --card-bg: #0f172a;
+      --input-bg: #070a13;
+      --nav-link: #94a3b8;
+    }
+
+    body.light-theme {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-elevated: #f1f5f9;
+      --border: #cbd5e1;
+      --accent: #0284c7;
+      --accent-glow: rgba(2, 132, 199, 0.15);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --card-bg: #ffffff;
+      --input-bg: #f8fafc;
+      --nav-link: #334155;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background 0.25s ease, color 0.25s ease; }
+
+    /* ===================================================
+       2. फुल-स्क्रीन गेट स्टार्टेड स्क्रीन (Welcome Overlay)
+       =================================================== */
     #welcomeScreen {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at 50% 20%, #172554, #070a13 70%);
+      background: radial-gradient(circle at 50% 15%, #1e293b, var(--bg) 75%);
       z-index: 9999;
       display: flex;
       flex-direction: column;
@@ -27,587 +59,524 @@
       text-align: center;
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
-    #welcomeScreen.is-hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-    .welcome-pill {
+    #welcomeScreen.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 6px 16px;
       background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      border: 1px solid var(--accent);
       border-radius: 999px;
-      color: #38bdf8;
+      color: var(--accent);
       font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      margin-bottom: 20px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      margin-bottom: 24px;
     }
-    .welcome-title {
-      font-size: 38px;
+    .hero-title-big {
+      font-size: clamp(34px, 8vw, 54px);
       line-height: 1.15;
       font-weight: 900;
-      color: #f8fafc;
-      margin-bottom: 12px;
+      color: var(--text);
+      margin-bottom: 16px;
     }
-    .welcome-title span {
+    .hero-title-big span {
       background: linear-gradient(135deg, #38bdf8, #818cf8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .welcome-desc {
-      font-size: 15px;
-      color: #94a3b8;
-      max-width: 380px;
-      line-height: 1.5;
-      margin-bottom: 32px;
+    .hero-subtitle {
+      font-size: clamp(14px, 4vw, 17px);
+      color: var(--text-muted);
+      max-width: 440px;
+      line-height: 1.6;
+      margin-bottom: 36px;
     }
-    .btn-get-started {
+    .btn-start-now {
       background: #38bdf8;
       color: #040814;
       font-size: 16px;
       font-weight: 800;
-      padding: 14px 36px;
-      border-radius: 30px;
+      padding: 16px 42px;
+      border-radius: 40px;
       border: none;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.35);
+      gap: 12px;
+      box-shadow: 0 12px 35px var(--accent-glow);
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .btn-get-started:active {
-      transform: scale(0.96);
-    }
+    .btn-start-now:active { transform: scale(0.96); }
 
-    /* =========================================
-       2. फुलस्क्रीन लाइव मॉडल (No Blank Blocked)
-       ========================================= */
-    #fullPreviewModal {
-      position: fixed;
-      inset: 0;
-      background: #020617;
-      z-index: 10000;
-      display: none;
-      flex-direction: column;
-    }
-    #fullPreviewModal.is-active {
-      display: flex;
-    }
-    .full-modal-bar {
-      height: 52px;
-      background: #0f172a;
-      border-bottom: 1px solid #1e293b;
+    /* ===================================================
+       3. टॉपबार हेडर
+       =================================================== */
+    .topbar {
+      height: 60px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-    .full-modal-title {
-      color: #38bdf8;
-      font-weight: 700;
-      font-size: 15px;
-    }
-    .full-modal-actions {
-      display: flex;
-      gap: 8px;
-    }
-    .btn-modal-close {
-      background: #ef4444;
-      color: #fff;
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .drawer-toggle {
+      background: transparent;
       border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 13px;
       cursor: pointer;
-    }
-    #fullFrame {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: #ffffff;
-    }
-
-    /* =========================================
-       3. लाइट / डार्क मोड सटीक कलर पैलेट
-       ========================================= */
-    :root {
-      --bg: #070a13;
-      --surface: #0f172a;
-      --surface-elevated: #162238;
-      --border: #1e293b;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-    }
-
-    body.light-theme {
-      --bg: #f1f5f9;
-      --surface: #ffffff;
-      --surface-elevated: #e2e8f0;
-      --border: #cbd5e1;
-      --accent: #0284c7;
-      --text: #0f172a;
-      --text-muted: #64748b;
-    }
-
-    body.light-theme .topbar,
-    body.light-theme .drawer,
-    body.light-theme .glass-card,
-    body.light-theme .preview-card,
-    body.light-theme .prompt-card,
-    body.light-theme .terminal-card,
-    body.light-theme .floating-voice-dock {
-      background: #ffffff !important;
-      border-color: #cbd5e1 !important;
-      color: #0f172a !important;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
-    }
-
-    body.light-theme .brand-name,
-    body.light-theme h1,
-    body.light-theme h2,
-    body.light-theme .prompt-label,
-    body.light-theme #toolTitle {
-      color: #0f172a !important;
-    }
-
-    body.light-theme textarea#promptInput {
-      background: #f8fafc !important;
-      color: #0f172a !important;
-      border: 1px solid #cbd5e1 !important;
-    }
-
-    body.light-theme .terminal-body pre {
-      background: #0f172a !important;
-      color: #22c55e !important;
-      border-radius: 8px;
-      padding: 10px;
-    }
-
-    /* मेन्यू के अंदर का थीम स्विच */
-    .drawer-theme-toggle {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+    }
+    .drawer-toggle span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+    .brand-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .brand-logo { width: 34px; height: 34px; border-radius: 8px; background: #0f172a; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
+    .brand-text { font-size: 16px; font-weight: 800; color: var(--text); }
+    .brand-text span { color: var(--accent); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .lib-pill {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
       background: var(--surface-elevated);
-      border-radius: 10px;
-      margin: 8px 12px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 700;
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 20px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lib-pill span { background: var(--accent); color: #000; border-radius: 10px; padding: 1px 6px; font-size: 11px; }
+
+    /* ===================================================
+       4. साइड मेन्यू ड्रॉअर (Drawer)
+       =================================================== */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; }
+    .drawer-overlay.active { display: block; }
+    .menu-drawer {
+      position: fixed;
+      top: 0;
+      left: -320px;
+      width: 300px;
+      height: 100%;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      z-index: 110;
+      transition: left 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 10px 0 40px rgba(0,0,0,0.5);
+    }
+    .menu-drawer.open { left: 0; }
+    .drawer-head { padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .drawer-head h3 { font-size: 15px; font-weight: 800; color: var(--accent); }
+    .btn-close-drawer { background: transparent; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; padding: 4px; }
+
+    /* मेन्यू के अंदर सेटिंग्स कार्ड्स */
+    .drawer-settings { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+    .setting-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--text); }
+    .setting-btn { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .setting-btn:active { border-color: var(--accent); }
+
+    .drawer-nav { display: flex; flex-direction: column; padding: 12px 10px; gap: 4px; flex: 1; overflow-y: auto; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: var(--nav-link) !important; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600; }
+    .nav-item.active { background: var(--surface-elevated); color: var(--accent) !important; }
+    .drawer-foot { padding: 14px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
+
+    /* ===================================================
+       5. मुख्य वर्कस्पेस
+       =================================================== */
+    main { max-width: 900px; margin: 0 auto; padding: 20px 14px 120px; display: flex; flex-direction: column; gap: 20px; }
+    
+    .glass-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
     }
 
-    /* प्लेसहोल्डर और आईफ्रेम रेंडरिंग */
-    .preview-placeholder[hidden],
-    .preview-placeholder.is-hidden {
-      display: none !important;
+    /* प्रॉम्प्ट कार्ड */
+    .prompt-label { font-size: 14px; font-weight: 700; color: var(--text); display: block; margin-bottom: 10px; }
+    textarea.prompt-text {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      resize: vertical;
+      min-height: 90px;
     }
-    
-    .preview-canvas {
+    textarea.prompt-text:focus { border-color: var(--accent); }
+    .prompt-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+    .prompt-counter { font-size: 11px; color: var(--text-muted); }
+    .prompt-actions { display: flex; align-items: center; gap: 8px; width: 100%; justify-content: flex-end; margin-top: 12px; }
+    .btn-create {
+      background: var(--accent);
+      color: #040814;
+      border: none;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 10px 22px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-create:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .quick-chips { display: flex; gap: 8px; overflow-x: auto; padding-top: 10px; scrollbar-width: none; }
+    .chip { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; padding: 6px 12px; border-radius: 20px; white-space: nowrap; cursor: pointer; }
+    .chip:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* टर्मिनल स्क्रीन */
+    .terminal-box {
+      background: #040711;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      color: #22c55e;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+    }
+    .terminal-head { background: #0b1120; border-bottom: 1px solid var(--border); padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; color: #64748b; font-size: 11px; font-weight: 700; }
+    .terminal-dots { display: flex; gap: 5px; }
+    .terminal-dots i { width: 8px; height: 8px; border-radius: 50%; background: #334155; display: inline-block; }
+    .terminal-code { padding: 12px; max-height: 120px; overflow-y: auto; white-space: pre-wrap; line-height: 1.5; color: #4ade80; }
+
+    /* प्रीव्यू कार्ड */
+    .preview-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .preview-title-text { font-size: 15px; font-weight: 800; color: var(--accent); }
+    .preview-btn-group { display: flex; gap: 6px; }
+    .tool-btn { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .canvas-container {
       position: relative;
       min-height: 480px;
       background: #020617;
-      border-radius: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
       overflow: hidden;
     }
+    .empty-canvas { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-muted); text-align: center; padding: 20px; }
+    .empty-canvas span { font-size: 34px; }
+    iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; }
 
-    iframe#toolFrame {
-      width: 100% !important;
-      height: 100% !important;
-      min-height: 480px !important;
-      border: 0;
-      background: #ffffff;
-      display: none;
+    /* ===================================================
+       6. नीचे का वॉइस डॉक (Non-Overlapping Bottom Bar)
+       =================================================== */
+    .bottom-dock {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 580px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 35px;
+      padding: 6px 10px 6px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      z-index: 60;
     }
+    .dock-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+    .dock-mic-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ef4444;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+    .dock-mic-btn.is-active { background: #16a34a; animation: pulse 1s infinite alternate; }
+    @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
-    iframe#toolFrame:not([hidden]) {
-      display: block !important;
-    }
+    /* ===================================================
+       7. फुलस्क्रीन इन-ऐप मोडल (No Blocked URL)
+       =================================================== */
+    #fullModal { position: fixed; inset: 0; background: #020617; z-index: 10000; display: none; flex-direction: column; }
+    #fullModal.is-open { display: flex; }
+    .fullmodal-bar { height: 52px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+    .fullmodal-bar span { font-size: 15px; font-weight: 800; color: var(--accent); }
+    .btn-close-full { background: #ef4444; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    #fullFrame { flex: 1; width: 100%; border: none; background: #fff; }
 
-    /* मोबाइल लेआउट सुरक्षा */
-    @media (max-width: 820px) {
-      .studio-shell { padding: 12px 10px 100px !important; }
-      .studio-grid { display: flex !important; flex-direction: column !important; gap: 16px !important; }
-      .hero-strip { flex-direction: column !important; text-align: center !important; }
-      .hero-orbit { margin: 16px auto !important; }
-      .prompt-controls { flex-direction: column !important; gap: 10px !important; }
-      .button-primary { width: 100% !important; justify-content: center !important; }
-      .floating-voice-dock { width: calc(100% - 24px) !important; bottom: 12px !important; }
-      .preview-card { min-height: 440px !important; }
-      iframe#toolFrame { min-height: 440px !important; }
-    }
+    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--surface-elevated); color: var(--text); border: 1px solid var(--accent); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; display: none; z-index: 999; }
+    .toast.show { display: block; }
   </style>
 </head>
-<body class="studio-page">
-  <!-- 0. लैंडिंग स्क्रीन (Get Started) -->
+<body class="dark-theme">
+
+  <!-- 0. वेलकम गेट स्टार्टेड स्क्रीन -->
   <div id="welcomeScreen">
-    <div class="welcome-pill">⚡ NISCHAY FORGE 2026</div>
-    <h1 class="welcome-title">BUILD YOUR IDEA<br><span>INTO WORKING TOOLS</span></h1>
-    <p class="welcome-desc">बोलिए या लिखिए—किसी भी तरह का कैलकुलेटर, कन्वर्टर, या मिनी टूल सेकंडों में सीधे आपके डिवाइस पर तैयार।</p>
-    <button class="btn-get-started" id="getStartedBtn" type="button">
-      <span>शुरू करें (Get Started)</span>
+    <div class="hero-badge">⚡ NISCHAY FORGE 2026</div>
+    <h1 class="hero-title-big">BUILD YOUR IDEA<br><span>INTO WORKING TOOLS</span></h1>
+    <p class="hero-subtitle">बोलिए या लिखिए—किसी भी तरह का कैलकुलेटर, कन्वर्टर, या मिनी टूल सेकंडों में सीधे आपके डिवाइस पर तैयार।</p>
+    <button class="btn-start-now" id="getStartedBtn" type="button">
+      <span id="startBtnText">गेट स्टार्टेड (Get Started)</span>
       <span>➔</span>
     </button>
   </div>
 
-  <!-- 1. फुलस्क्रीन मॉडल (अलग पेज की तरह) -->
-  <div id="fullPreviewModal">
-    <div class="full-modal-bar">
-      <span class="full-modal-title" id="fullModalTitle">टूल का नाम</span>
-      <div class="full-modal-actions">
-        <button class="btn-modal-close" id="closeFullModalBtn" type="button">✕ बंद करें</button>
-      </div>
+  <!-- 1. फुलस्क्रीन लाइव व्यू मोडल -->
+  <div id="fullModal">
+    <div class="fullmodal-bar">
+      <span id="fullModalTitle">टूल का नाम</span>
+      <button class="btn-close-full" id="closeFullBtn" type="button">✕ बंद करें</button>
     </div>
     <iframe id="fullFrame" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
   </div>
 
-  <div class="ambient ambient-one" aria-hidden="true"></div>
-  <div class="ambient ambient-two" aria-hidden="true"></div>
-
-  <!-- टॉपबार हेडर -->
+  <!-- 2. टॉप नेविगेशन हेडर -->
   <header class="topbar">
     <div class="topbar-left">
-      <button class="icon-button drawer-toggle" id="drawerToggleBtn" type="button" aria-label="मेन्यू खोलें" aria-expanded="false" aria-controls="siteDrawer">
+      <button class="drawer-toggle" id="drawerOpenBtn" type="button" aria-label="मेनू खोलें">
         <span></span><span></span><span></span>
       </button>
-      <a class="brand" href="./index.html" aria-label="Nischay Forge Studio">
-        <img src="./assets/nischay-mark.svg" width="36" height="36" alt="Nischay Logo" onerror="this.src='./assets/app-icon.svg'">
-        <span class="brand-name">nischay<span>forge</span><small>AI TOOL STUDIO</small></span>
+      <a class="brand-wrap" href="./index.html">
+        <div class="brand-logo"><span style="color:#38bdf8; font-weight:900;">N</span></div>
+        <div class="brand-text">nischay<span>forge</span></div>
       </a>
     </div>
     <div class="topbar-right">
-      <a class="topbar-link" href="./library.html">मेरी लाइब्रेरी <span id="libraryCount" class="count-badge">0</span></a>
-      <button class="button button-quiet install-pwa" id="installPwaBtn" type="button">इंस्टॉल ऐप</button>
+      <a class="lib-pill" href="./library.html">लाइब्रेरी <span id="libraryCount">0</span></a>
     </div>
   </header>
 
-  <!-- साइड मेन्यू ड्रॉअर -->
-  <div class="drawer-backdrop" id="drawerBackdrop"></div>
-  <aside class="drawer" id="siteDrawer" aria-label="मुख्य नेविगेशन" aria-hidden="true">
+  <!-- 3. साइड मेनू ड्रॉअर (Language + Theme अंदर सेट) -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="menu-drawer" id="menuDrawer">
     <div class="drawer-head">
-      <span class="eyebrow">आपका क्रिएशन स्पेस</span>
-      <button class="icon-button drawer-close" id="drawerCloseBtn" type="button" aria-label="मेन्यू बंद करें">×</button>
+      <h3>⚡ निश्चय नेविगेशन</h3>
+      <button class="btn-close-drawer" id="drawerCloseBtn">✕</button>
     </div>
-    <a class="drawer-brand" href="./index.html">
-      <img src="./assets/nischay-mark.svg" width="42" height="42" alt="Logo" onerror="this.src='./assets/app-icon.svg'">
-      <span>Nischay Forge<small>बोलिए. बनाइए. चलाइए.</small></span>
-    </a>
 
-    <!-- मेन्यू के अंदर थीम टॉगल -->
-    <div class="drawer-theme-toggle" id="menuThemeToggle">
-      <span>थीम बदलें (Theme)</span>
-      <span id="themeToggleText">🌙 डार्क</span>
+    <!-- थीम व भाषा सेटिंग्स -->
+    <div class="drawer-settings">
+      <div class="setting-row">
+        <span>थीम (Theme):</span>
+        <button class="setting-btn" id="themeToggleBtn">🌙 डार्क</button>
+      </div>
+      <div class="setting-row">
+        <span>भाषा (Language):</span>
+        <button class="setting-btn" id="langToggleBtn">🇮🇳 हिंदी</button>
+      </div>
     </div>
 
     <nav class="drawer-nav">
-      <a class="active" href="./index.html" aria-current="page"><span class="nav-icon">⌘</span><span>स्टूडियो<small>नया टूल बनाइए</small></span><b>↗</b></a>
-      <a href="./library.html"><span class="nav-icon">▦</span><span>मेरी लाइब्रेरी<small>सेव किए गए टूल</small></span><b>↗</b></a>
-      <a href="./privacy.html"><span class="nav-icon">◈</span><span>प्राइवेसी<small>आपका डेटा, आपके पास</small></span><b>↗</b></a>
-      <a href="./terms.html"><span class="nav-icon">⌑</span><span>टर्म्स ऑफ़ सर्विस<small>ज़िम्मेदार उपयोग</small></span><b>↗</b></a>
+      <a class="nav-item active" href="./index.html">⌘ स्टूडियो</a>
+      <a class="nav-item" href="./library.html">▦ मेरी लाइब्रेरी</a>
+      <a class="nav-item" href="./privacy.html">◈ प्राइवेसी पॉलिसी</a>
+      <a class="nav-item" href="./terms.html">⌑ नियम व शर्तें</a>
     </nav>
-    <div class="drawer-note">
-      <span class="status-dot"></span>
-      <span>आपका स्टूडियो तैयार है<small>आपकी लाइब्रेरी इसी डिवाइस पर रहती है</small></span>
-    </div>
-    <div class="drawer-foot">Made for ideas that move.<span>NF / 01</span></div>
+    <div class="drawer-foot">Nischay Forge AI Studio • 2026</div>
   </aside>
 
-  <!-- मुख्य स्टूडियो कंटेनर -->
-  <main class="studio-shell" id="studioApp">
-    <section class="hero-strip">
-      <div class="hero-copy">
-        <div class="eyebrow"><span class="eyebrow-line"></span> YOUR IDEA, FORGED IN SECONDS</div>
-        <h1>बोलिए.<br><span class="gradient-text">टूल तैयार.</span></h1>
-        <p class="hero-description">आपके दिमाग़ में जो छोटा-सा काम अटका है—उसे एक ऐसे टूल में बदलें जो बस आपका काम करे।</p>
-        <div class="hero-proof"><span class="proof-mark">✳</span> हिंदी और English में बोलें या लिखें <span class="proof-divider"></span> डाउनलोड करें, ऑफ़लाइन चलाएँ</div>
+  <!-- 4. मुख्य स्टूडियो ऐप -->
+  <main>
+    <!-- इनपुट कार्ड -->
+    <div class="glass-box">
+      <label class="prompt-label" id="labelPrompt">आज क्या बनाना है?</label>
+      <textarea class="prompt-text" id="promptInput" rows="3" placeholder="उदाहरण: उम्र कैलकुलेटर बनाओ जो साल, महीने और दिन बताए..."></textarea>
+      
+      <div class="prompt-footer">
+        <span class="prompt-counter" id="charCount">0 / 4000</span>
+        <div class="prompt-actions">
+          <button class="btn-create" id="generateBtn" type="button">
+            <span>बनाइए</span> <span>↗</span>
+          </button>
+        </div>
       </div>
-      <div class="hero-orbit" aria-hidden="true">
-        <div class="orbit-ring ring-a"></div><div class="orbit-ring ring-b"></div>
-        <div class="orbit-core">
-          <img src="./assets/nischay-mark.svg" alt="" width="82" height="82" onerror="this.src='./assets/app-icon.svg'">
-          <span class="orbit-spark spark-a">✦</span><span class="orbit-spark spark-b">✧</span>
-        </div>
-        <span class="orbit-label label-a">IDEA IN</span><span class="orbit-label label-b">TOOL OUT</span>
+
+      <div class="quick-chips">
+        <span class="chip" data-q="एक उम्र कैलकुलेटर बनाओ जो जन्मतिथि से साल, महीने और दिन दिखाए">🎂 उम्र कैलकुलेटर</span>
+        <span class="chip" data-q="एक साफ QR कोड जनरेटर बनाओ जिसमें डाउनलोड बटन हो">📱 QR कोड जनरेटर</span>
+        <span class="chip" data-q="एक सिंपल बजट और खर्च ट्रैकर बनाओ">💰 बजट ट्रैकर</span>
       </div>
-    </section>
-
-    <div class="studio-grid">
-      <!-- बायाँ कॉलम: प्रॉम्प्ट और वॉइस इनपुट -->
-      <section class="create-column" aria-label="टूल बनाने का स्थान">
-        <div class="section-kicker"><span>01</span><span>YOUR PROMPT</span><span class="kicker-rule"></span><span class="kicker-live"><i></i> LIVE</span></div>
-        <form class="prompt-card glass-card" id="promptForm">
-          <label class="prompt-label" for="promptInput">आज क्या बनाना है?</label>
-          <textarea id="promptInput" name="prompt" rows="4" maxlength="4000" placeholder="उदाहरण: मेरी उम्र साल, महीने और दिनों में बताने वाला कैलकुलेटर बनाओ…" autocomplete="off" required></textarea>
-          <div class="prompt-meta">
-            <span><kbd>↵</kbd> से लिखें, <kbd>⌘</kbd> बोलने के लिए</span>
-            <span id="promptCount">0 / 4000</span>
-          </div>
-          <div class="prompt-controls">
-            <div class="voice-controls">
-              <button class="button button-mic" id="micButton" type="button" aria-label="वॉइस इनपुट शुरू करें" aria-pressed="false">
-                <span class="mic-glyph">◖</span><span>बोलकर बताएं</span>
-              </button>
-              <label class="sr-only" for="voiceLanguage">वॉइस भाषा</label>
-              <select id="voiceLanguage" class="language-select" aria-label="वॉइस भाषा">
-                <option value="hi-IN">हिंदी</option>
-                <option value="en-US">English</option>
-              </select>
-            </div>
-            <button class="button button-primary" id="generateBtn" type="submit">
-              <span>बनाइए</span><span class="button-arrow">↗</span>
-            </button>
-          </div>
-          <div class="voice-status" id="voiceState" aria-live="polite">माइक केवल आपकी अनुमति और टैप के बाद चालू होता है।</div>
-          <div class="prompt-suggestions">
-            <span class="suggestion-label">TRY:</span>
-            <button type="button" class="prompt-chip" data-prompt="एक उम्र कैलकुलेटर बनाओ जो जन्मतिथि से साल, महीने और दिन दिखाए">उम्र कैलकुलेटर <span>↗</span></button>
-            <button type="button" class="prompt-chip" data-prompt="एक साफ QR कोड जनरेटर बनाओ जिसमें डाउनलोड बटन हो">QR कोड जनरेटर <span>↗</span></button>
-            <button type="button" class="prompt-chip" data-prompt="एक सिंपल बजट ट्रैकर मिनी ऐप बनाओ">बजट ट्रैकर <span>↗</span></button>
-          </div>
-        </form>
-
-        <div class="chat-card glass-card" id="chatResponse" role="status" aria-live="polite" hidden>
-          <div class="chat-avatar"><img src="./assets/nischay-mark.svg" alt="" width="34" height="34" onerror="this.src='./assets/app-icon.svg'"></div>
-          <div>
-            <div class="chat-label"><span>निश्चय</span><span class="chat-time">अभी</span></div>
-            <p id="chatMessage"></p>
-          </div>
-        </div>
-
-        <div class="terminal-card glass-card" id="terminalCard" aria-label="जनरेशन टर्मिनल">
-          <div class="terminal-head">
-            <div class="terminal-window-dots"><i></i><i></i><i></i></div>
-            <span>FORGE / OUTPUT</span>
-            <span class="terminal-indicator" id="terminalStatus"><i></i> IDLE</span>
-          </div>
-          <div class="terminal-body">
-            <pre id="codeOutput"><span class="terminal-muted">// आपका अगला टूल यहाँ आकार लेगा</span>
-<span class="terminal-accent">const</span> idea = <span class="terminal-green">"कुछ उपयोगी"</span>;
-<span class="terminal-muted">// बस बोलें या लिखें — शुरुआत यहीं से है</span><span class="terminal-cursor">▋</span></pre>
-          </div>
-          <div class="terminal-foot">
-            <span><i class="terminal-dot"></i> NISCHAY ENGINE</span>
-            <span id="terminalProgress">READY TO FORGE</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- दायाँ कॉलम: लाइव टूल प्रीव्यू -->
-      <section class="preview-column" aria-label="लाइव टूल प्रीव्यू">
-        <div class="section-kicker"><span>02</span><span>LIVE PREVIEW</span><span class="kicker-rule"></span><span class="preview-device">⌘ &nbsp; SANDBOX</span></div>
-        <div class="preview-card glass-card" id="previewCard">
-          <div class="preview-head">
-            <div class="preview-title-wrap">
-              <span class="preview-app-icon">✳</span>
-              <div>
-                <span class="preview-overline" id="toolEyebrow">YOUR NEXT TOOL</span>
-                <h2 id="toolTitle">Nischay Forge Studio</h2>
-              </div>
-            </div>
-            <div class="preview-actions" id="toolActions" hidden>
-              <!-- फुलस्क्रीन बटन जो सीधे मॉडल खोलेगा -->
-              <button class="icon-button action-icon" id="openFullModalBtn" type="button" aria-label="पूरा बड़ा देखें" title="पूरा बड़ा देखें">↗</button>
-              <button class="icon-button action-icon" id="saveToolBtn" type="button" aria-label="लाइब्रेरी में सेव करें" title="लाइब्रेरी में सेव करें">♡</button>
-              <button class="icon-button action-icon" id="downloadToolBtn" type="button" aria-label="अलग HTML टूल डाउनलोड करें" title="HTML डाउनलोड">↓</button>
-            </div>
-          </div>
-          <div class="preview-canvas" id="previewCanvas">
-            <div class="preview-placeholder" id="previewPlaceholder">
-              <div class="placeholder-mark"><span>✳</span></div>
-              <span class="placeholder-overline">THE CANVAS IS YOURS</span>
-              <p>आपका टूल यहीं खुलेगा।<br><span>एक आइडिया भेजिए और उसे काम करते देखिए।</span></p>
-              <div class="placeholder-coordinate"><span>NF—CANVAS</span><span>00 : 00</span></div>
-            </div>
-            <iframe id="toolFrame" title="बनाए गए टूल का सुरक्षित लाइव प्रीव्यू" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin" referrerpolicy="no-referrer" hidden></iframe>
-          </div>
-          <div class="preview-foot">
-            <span><i class="preview-dot" id="previewDot"></i><span id="previewStatus">आपका कैनवस तैयार है</span></span>
-            <span class="preview-foot-label">ISOLATED PREVIEW</span>
-          </div>
-        </div>
-        <button class="button button-download glass-card" id="downloadStandaloneBtn" type="button" disabled>
-          <span class="download-icon">↓</span>
-          <span><strong>📲 इंस्टॉल ऐप / डाउनलोड</strong><small>जनरेटेड टूल को UTF-8 HTML में सेव करें</small></span>
-          <span class="download-trail">↗</span>
-        </button>
-        <p class="download-note"><span>◈</span> डाउनलोड की गई फ़ाइल standalone है और ऑफ़लाइन चलती है।</p>
-      </section>
     </div>
 
-    <footer class="studio-footer">
-      <span>© 2026 NISCHAY FORGE AI</span>
-      <span>MADE FOR MOMENTUM</span>
-      <nav>
-        <a href="./privacy.html">प्राइवेसी</a>
-        <a href="./terms.html">टर्म्स</a>
-      </nav>
-    </footer>
+    <!-- लाइव कोड टर्मिनल -->
+    <div class="terminal-box" id="terminalBox">
+      <div class="terminal-head">
+        <div class="terminal-dots"><i></i><i></i><i></i></div>
+        <span>FORGE OUTPUT ENGINE</span>
+        <span id="termStatus">IDLE</span>
+      </div>
+      <div class="terminal-code" id="termOutput">// आपका बनाया हुआ टूल यहाँ आकार लेगा...</div>
+    </div>
+
+    <!-- लाइव टूल प्रीव्यू कार्ड -->
+    <div class="glass-box">
+      <div class="preview-header-bar">
+        <span class="preview-title-text" id="toolHeading">Nischay Studio Canvas</span>
+        <div class="preview-btn-group" id="toolActionBtns" style="display: none;">
+          <button class="tool-btn" id="btnOpenFull" title="पूरा बड़ा देखें">↗ बड़ा खोलें</button>
+          <button class="tool-btn" id="btnSaveTool">♥ सेव</button>
+          <button class="tool-btn" id="btnDownloadTool">📥 डाउनलोड</button>
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <div class="empty-canvas" id="canvasPlaceholder">
+          <span>✳</span>
+          <p id="placeholderText">आपका टूल यहीं खुलेगा।<br>ऊपर लिखिए या नीचे माइक से बोलिए।</p>
+        </div>
+        <iframe id="toolFrame" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
+      </div>
+    </div>
   </main>
 
-  <!-- फ्लोटिंग डॉक और नोटिफिकेशन -->
-  <div class="flying-layer" id="flyingLayer" aria-hidden="true"></div>
-  <div class="floating-voice-dock" id="voiceDock">
-    <div class="dock-copy">
-      <span class="dock-status" id="dockStatus"><i></i> READY WHEN YOU ARE</span>
-      <span class="dock-caption">आइडिया बोलें, निश्चय बना देगा।</span>
-    </div>
-    <div class="audio-wave" id="audioWave" aria-hidden="true">
-      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-    </div>
-    <button class="dock-mic" id="dockMic" type="button" aria-label="माइक चालू करें" aria-pressed="false"><span>◖</span></button>
+  <!-- 5. फ्लोटिंग वॉइस बार -->
+  <div class="bottom-dock">
+    <span class="dock-label" id="voiceStatusText">आइडिया बोलें, निश्चय बना देगा...</span>
+    <button class="dock-mic-btn" id="micBtn" title="बोलें">🎙️</button>
   </div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <!-- पूरा वर्किंग जावास्क्रिप्ट इंजन -->
+  <div class="toast" id="toastBox"></div>
+
+  <!-- ===================================================
+       8. जावास्क्रिप्ट लॉजिक
+       =================================================== -->
   <script>
-    // ----------------------------------------------------
-    // 1. सुरक्षित API Key
-    // ----------------------------------------------------
+    // सुरक्षित Google Gemini API Key
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
       "VwkfXb6jbQF0Bh",
       "_9jOF-tIrZfYxfn",
       "YrYe5CgGw"
     ];
-
-    function getApiKey() {
-      return _k.join("");
-    }
+    function getApiKey() { return _k.join(""); }
 
     const PRIMARY_MODEL = "gemini-3.8";
     const BACKUP_MODEL = "gemini-3.5-flash-lite";
-    const STORAGE_KEY = 'nischay-forge-tools-v1';
-    const THEME_KEY = 'nischay-forge-theme';
 
     let activeTool = null;
-    let isBusy = false;
-    let toastTimer = null;
+    let currentLang = localStorage.getItem('nischay_lang') || 'hi';
+    let currentTheme = localStorage.getItem('nischay_theme') || 'dark';
 
-    // एलिमेंट्स का चयन
     const $ = (id) => document.getElementById(id);
-    const welcomeScreen = $('welcomeScreen');
-    const getStartedBtn = $('getStartedBtn');
-    const promptInput = $('promptInput');
-    const promptCount = $('promptCount');
-    const promptForm = $('promptForm');
-    const generateBtn = $('generateBtn');
-    const toolFrame = $('toolFrame');
-    const previewPlaceholder = $('previewPlaceholder');
-    const toolTitle = $('toolTitle');
-    const toolEyebrow = $('toolEyebrow');
-    const toolActions = $('toolActions');
-    const downloadStandaloneBtn = $('downloadStandaloneBtn');
-    const saveToolBtn = $('saveToolBtn');
-    const downloadToolBtn = $('downloadToolBtn');
-    const openFullModalBtn = $('openFullModalBtn');
-    const fullPreviewModal = $('fullPreviewModal');
-    const closeFullModalBtn = $('closeFullModalBtn');
-    const fullFrame = $('fullFrame');
-    const fullModalTitle = $('fullModalTitle');
-    const terminalStatus = $('terminalStatus');
-    const terminalProgress = $('terminalProgress');
-    const previewStatus = $('previewStatus');
-    const codeOutput = $('codeOutput');
-    const terminalCard = $('terminalCard');
-    const chatResponse = $('chatResponse');
-    const chatMessage = $('chatMessage');
-    const toast = $('toast');
-    const libraryCount = $('libraryCount');
-    const micButton = $('micButton');
-    const dockMic = $('dockMic');
-    const voiceDock = $('voiceDock');
-    const voiceState = $('voiceState');
-    const dockStatus = $('dockStatus');
-    const drawerBackdrop = $('drawerBackdrop');
-    const siteDrawer = $('siteDrawer');
-    const drawerToggleBtn = $('drawerToggleBtn');
-    const drawerCloseBtn = $('drawerCloseBtn');
-    const menuThemeToggle = $('menuThemeToggle');
-    const themeToggleText = $('themeToggleText');
 
-    // ----------------------------------------------------
-    // 2. गेट स्टार्टेड (Welcome Screen) हैंडलर
-    // ----------------------------------------------------
-    getStartedBtn?.addEventListener('click', () => {
-      welcomeScreen.classList.add('is-hidden');
-      sessionStorage.setItem('nischay_entered', 'true');
+    // 1. गेट स्टार्टेड हैंडलर
+    $('getStartedBtn').addEventListener('click', () => {
+      $('welcomeScreen').classList.add('is-hidden');
+      sessionStorage.setItem('nischay_welcome_seen', 'true');
     });
-
-    if (sessionStorage.getItem('nischay_entered') === 'true') {
-      welcomeScreen.classList.add('is-hidden');
+    if (sessionStorage.getItem('nischay_welcome_seen') === 'true') {
+      $('welcomeScreen').classList.add('is-hidden');
     }
 
-    // ----------------------------------------------------
-    // 3. मेन्यू के अंदर डार्क / लाइट मोड स्विच
-    // ----------------------------------------------------
-    function initTheme() {
-      const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
-      applyTheme(savedTheme);
+    // 2. टोस्ट
+    function showToast(msg) {
+      const t = $('toastBox');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
     }
 
+    // 3. थीम टॉगल (डार्क / लाइट)
     function applyTheme(theme) {
       if (theme === 'light') {
         document.body.classList.add('light-theme');
-        if (themeToggleText) themeToggleText.textContent = '☀️ लाइट';
+        $('themeToggleBtn').textContent = '☀️ लाइट';
       } else {
         document.body.classList.remove('light-theme');
-        if (themeToggleText) themeToggleText.textContent = '🌙 डार्क';
+        $('themeToggleBtn').textContent = '🌙 डार्क';
       }
-      localStorage.setItem(THEME_KEY, theme);
+      localStorage.setItem('nischay_theme', theme);
     }
+    applyTheme(currentTheme);
 
-    menuThemeToggle?.addEventListener('click', () => {
-      const isLight = document.body.classList.contains('light-theme');
-      applyTheme(isLight ? 'dark' : 'light');
+    $('themeToggleBtn').addEventListener('click', () => {
+      currentTheme = (currentTheme === 'dark') ? 'light' : 'dark';
+      applyTheme(currentTheme);
     });
 
-    // ----------------------------------------------------
-    // 4. यूटिलिटीज और एनीमेशन
-    // ----------------------------------------------------
-    function showToast(msg) {
-      if (!toast) return;
-      toast.textContent = msg;
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    function updateCount() {
-      if (promptInput && promptCount) {
-        promptCount.textContent = `${promptInput.value.length} / 4000`;
+    // 4. भाषा टॉगल (हिंदी / English)
+    function applyLanguage(lang) {
+      if (lang === 'en') {
+        $('langToggleBtn').textContent = '🇺🇸 English';
+        $('labelPrompt').textContent = 'What do you want to build today?';
+        $('promptInput').placeholder = 'E.g., Build an age calculator showing years, months, and days...';
+        $('generateBtn').querySelector('span').textContent = 'Build Tool';
+        $('voiceStatusText').textContent = 'Speak your idea, Nischay will forge it...';
+        $('placeholderText').innerHTML = 'Your tool will render here.<br>Type above or tap mic below.';
+        $('startBtnText').textContent = 'Get Started';
+      } else {
+        $('langToggleBtn').textContent = '🇮🇳 हिंदी';
+        $('labelPrompt').textContent = 'आज क्या बनाना है?';
+        $('promptInput').placeholder = 'उदाहरण: उम्र कैलकुलेटर बनाओ जो साल, महीने और दिन बताए...';
+        $('generateBtn').querySelector('span').textContent = 'बनाइए';
+        $('voiceStatusText').textContent = 'आइडिया बोलें, निश्चय बना देगा...';
+        $('placeholderText').innerHTML = 'आपका टूल यहीं खुलेगा।<br>ऊपर लिखिए या नीचे माइक से बोलिए।';
+        $('startBtnText').textContent = 'गेट स्टार्टेड (Get Started)';
       }
+      localStorage.setItem('nischay_lang', lang);
     }
-    promptInput.addEventListener('input', updateCount);
+    applyLanguage(currentLang);
 
-    function flyPromptTag(text) {
-      const layer = $('flyingLayer');
-      if (!layer) return;
-      const tag = document.createElement('span');
-      tag.className = 'flying-tag show';
-      tag.textContent = text;
-      layer.appendChild(tag);
-      setTimeout(() => tag.remove(), 2500);
-    }
+    $('langToggleBtn').addEventListener('click', () => {
+      currentLang = (currentLang === 'hi') ? 'en' : 'hi';
+      applyLanguage(currentLang);
+    });
 
-    // ----------------------------------------------------
-    // 5. AI इंजन (REST API)
-    // ----------------------------------------------------
-    async function callGemini(modelName, query) {
+    // 5. साइड मेन्यू
+    $('drawerOpenBtn').addEventListener('click', () => {
+      $('menuDrawer').classList.add('open');
+      $('drawerOverlay').classList.add('active');
+    });
+    const closeDrawer = () => {
+      $('menuDrawer').classList.remove('open');
+      $('drawerOverlay').classList.remove('active');
+    };
+    $('drawerCloseBtn').addEventListener('click', closeDrawer);
+    $('drawerOverlay').addEventListener('click', closeDrawer);
+
+    // 6. इनपुट कैरेक्टर काउंटर
+    $('promptInput').addEventListener('input', (e) => {
+      $('charCount').textContent = `${e.target.value.length} / 4000`;
+    });
+
+    // क्विक चिप्स
+    document.querySelectorAll('.chip').forEach(c => {
+      c.addEventListener('click', () => {
+        $('promptInput').value = c.dataset.q;
+        $('charCount').textContent = `${c.dataset.q.length} / 4000`;
+        $('promptInput').focus();
+      });
+    });
+
+    // 7. AI रिक्वेस्ट इंजन
+    async function requestGemini(modelName, query) {
       const key = getApiKey();
-      const sys = `आप Nischay Forge के मुख्य AI इंजन हैं। यूज़र की मांग समझकर तय करें कि उन्हें एक वर्किंग वेब टूल चाहिए या वे सिर्फ सामान्य बातचीत कर रहे हैं।
-सख्त नियम:
-1. हर टूल के <head> में <meta charset="UTF-8"> और <meta name="viewport" content="width=device-width, initial-scale=1.0"> अनिवार्य रूप से हो।
-2. कोई बाहरी CSS मत लगाएं। पूरी CSS <style> में और JS <script> में रखें।
-3. केवल और केवल शुद्ध JSON उत्तर दें:
-{"intent": "tool" या "chat", "cleanName": "टूल का नाम", "htmlCode": "<!DOCTYPE html>...", "message": "मित्रवत हिंदी संदेश"}`;
+      const sys = `You are Nischay Forge AI Engine. Create single-file 100% working, modern HTML5 web tools based on user demand.
+Rules:
+1. Include <meta charset="UTF-8"> and <meta name="viewport" content="width=device-width, initial-scale=1.0"> in <head>.
+2. Put all CSS in <style> and JS in <script>. Do not link external CSS.
+3. Return STRICT JSON ONLY:
+{"cleanName": "Tool Short Name", "htmlCode": "<!DOCTYPE html>..."}`;
 
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
 
@@ -619,154 +588,100 @@
           'x-goog-api-key': key
         },
         body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: `${sys}\n\nमांग: ${query}` }] }],
+          contents: [{ role: 'user', parts: [{ text: `${sys}\n\nDemand: ${query}` }] }],
           generationConfig: { response_mime_type: "application/json" }
         })
       });
 
       const data = await res.json();
-      if (data.error) throw new Error(data.error.message || 'API एरर');
+      if (data.error) throw new Error(data.error.message || 'API Error');
       return JSON.parse(data.candidates[0].content.parts[0].text);
     }
 
-    // ----------------------------------------------------
-    // 6. टाइपराइटर
-    // ----------------------------------------------------
-    function runTypewriter(code, onComplete) {
-      terminalCard.classList.add('is-writing');
-      terminalStatus.innerHTML = '<i></i> FORGING';
-      terminalProgress.textContent = 'COMPILING HTML + CSS + JS';
-      codeOutput.textContent = '';
-
-      let idx = 0;
-      const step = Math.max(1, Math.floor(code.length / 70));
-      const clipped = code.length > 3000 ? code.slice(0, 3000) + '\n\n// ...कोड पूरा तैयार है।' : code;
-
-      function frame() {
-        if (idx < clipped.length) {
-          codeOutput.textContent = clipped.slice(0, idx + step);
-          idx += step;
-          requestAnimationFrame(frame);
+    // 8. टाइपराइटर इफ़ेक्ट
+    function typewriter(code, cb) {
+      const out = $('termOutput');
+      $('termStatus').textContent = 'FORGING';
+      out.textContent = '';
+      let i = 0;
+      const step = Math.max(1, Math.floor(code.length / 60));
+      const clip = code.length > 2500 ? code.slice(0, 2500) + '\n\n// ...Ready' : code;
+      function loop() {
+        if (i < clip.length) {
+          out.textContent += clip.slice(i, i + step);
+          i += step;
+          requestAnimationFrame(loop);
         } else {
-          codeOutput.textContent = clipped;
-          terminalStatus.innerHTML = '<i></i> READY';
-          terminalProgress.textContent = 'TOOL LIVE';
-          terminalCard.classList.remove('is-writing');
-          onComplete();
+          out.textContent = clip;
+          $('termStatus').textContent = 'READY';
+          cb();
         }
       }
-      frame();
+      loop();
     }
 
-    // ----------------------------------------------------
-    // 7. मुख्य जेनरेशन लॉजिक
-    // ----------------------------------------------------
-    async function handleGenerate(e) {
-      if (e) e.preventDefault();
-      const q = promptInput.value.trim();
-      if (!q || isBusy) return;
+    // 9. जेनरेशन प्रोसेस
+    async function executeBuild() {
+      const q = $('promptInput').value.trim();
+      if (!q) return;
 
-      isBusy = true;
-      generateBtn.disabled = true;
-      generateBtn.querySelector('span').textContent = 'बन रहा है…';
-      flyPromptTag(q);
-      chatResponse.hidden = true;
-      previewStatus.textContent = 'टूल का कोड तैयार हो रहा है…';
+      const btn = $('generateBtn');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'बन रहा है...';
+      $('termStatus').textContent = 'CONNECTING';
 
       let payload = null;
       try {
-        payload = await callGemini(PRIMARY_MODEL, q);
+        payload = await requestGemini(PRIMARY_MODEL, q);
       } catch (err) {
-        console.warn('प्राइमरी मॉडल फेल, बैकअप पर स्विच:', err);
+        console.warn('Primary fallback to backup model:', err);
         try {
-          payload = await callGemini(BACKUP_MODEL, q);
+          payload = await requestGemini(BACKUP_MODEL, q);
         } catch (bErr) {
-          chatMessage.textContent = 'त्रुटि: ' + bErr.message;
-          chatResponse.hidden = false;
-          generateBtn.disabled = false;
-          generateBtn.querySelector('span').textContent = 'बनाइए';
-          previewStatus.textContent = 'कैनवस तैयार है';
-          isBusy = false;
+          showToast('त्रुटि: ' + bErr.message);
+          btn.disabled = false;
+          btn.querySelector('span').textContent = 'बनाइए';
           return;
         }
-      }
-
-      if (payload.intent === 'chat' || !payload.htmlCode) {
-        chatMessage.textContent = payload.message || 'नमस्ते! बताइए आज कौन सा टूल बनाऊँ?';
-        chatResponse.hidden = false;
-        generateBtn.disabled = false;
-        generateBtn.querySelector('span').textContent = 'बनाइए';
-        isBusy = false;
-        return;
       }
 
       activeTool = {
         id: 'tool-' + Date.now(),
         name: `Nischay ${payload.cleanName || 'Tool'}`,
-        html: payload.htmlCode,
-        prompt: q,
-        createdAt: Date.now()
+        html: payload.htmlCode
       };
 
-      toolTitle.textContent = activeTool.name;
-      toolEyebrow.textContent = 'GENERATED TOOL';
-      toolActions.hidden = false;
-      downloadStandaloneBtn.disabled = false;
+      $('toolHeading').textContent = activeTool.name;
+      $('toolActionBtns').style.display = 'flex';
 
-      runTypewriter(activeTool.html, () => {
-        // प्लेसहोल्डर पूरी तरह गायब
-        previewPlaceholder.hidden = true;
-        previewPlaceholder.classList.add('is-hidden');
-        previewPlaceholder.style.display = 'none';
-
-        // आईफ्रेम चालू
-        toolFrame.hidden = false;
-        toolFrame.style.display = 'block';
-        toolFrame.srcdoc = activeTool.html;
-
-        previewStatus.textContent = 'टूल तैयार है — sandbox में चल रहा है';
-        generateBtn.disabled = false;
-        generateBtn.querySelector('span').textContent = 'बनाइए';
-        isBusy = false;
-        showToast(`${activeTool.name} तैयार हो गया! 🚀`);
+      typewriter(activeTool.html, () => {
+        $('canvasPlaceholder').style.display = 'none';
+        const frame = $('toolFrame');
+        frame.style.display = 'block';
+        frame.srcdoc = activeTool.html;
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'बनाइए';
+        showToast(activeTool.name + ' तैयार है! 🚀');
       });
     }
 
-    promptForm.addEventListener('submit', handleGenerate);
+    $('generateBtn').addEventListener('click', executeBuild);
 
-    // चिप्स क्लिक
-    document.querySelectorAll('.prompt-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        promptInput.value = btn.dataset.prompt;
-        updateCount();
-        promptInput.focus();
-      });
+    // 10. इन-ऐप फुलस्क्रीन व्यू
+    $('btnOpenFull').addEventListener('click', () => {
+      if (!activeTool) return;
+      $('fullModalTitle').textContent = activeTool.name;
+      $('fullFrame').srcdoc = activeTool.html;
+      $('fullModal').classList.add('is-open');
+    });
+    $('closeFullBtn').addEventListener('click', () => {
+      $('fullModal').classList.remove('is-open');
+      $('fullFrame').srcdoc = '';
     });
 
-    // ----------------------------------------------------
-    // 8. इन-ऐप फुलस्क्रीन व्यू (No Blank Page Error)
-    // ----------------------------------------------------
-    openFullModalBtn?.addEventListener('click', () => {
-      if (!activeTool || !activeTool.html) return;
-      fullModalTitle.textContent = activeTool.name;
-      fullFrame.srcdoc = activeTool.html;
-      fullPreviewModal.classList.add('is-active');
-    });
-
-    closeFullModalBtn?.addEventListener('click', () => {
-      fullPreviewModal.classList.remove('is-active');
-      fullFrame.srcdoc = '';
-    });
-
-    // ----------------------------------------------------
-    // 9. शुद्ध टूल HTML डाउनलोडर (100% वर्किंग)
-    // ----------------------------------------------------
-    function downloadCurrentTool() {
-      if (!activeTool || !activeTool.html) {
-        showToast('पहले कोई टूल बनाइए!');
-        return;
-      }
-      // केवल जनरेट किए गए टूल का शुद्ध HTML कोड डाउनलोड करना
+    // 11. शुद्ध HTML डाउनलोडर
+    $('btnDownloadTool').addEventListener('click', () => {
+      if (!activeTool) return;
       const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -774,114 +689,58 @@
       document.body.appendChild(a);
       a.click();
       a.remove();
-      showToast('टूल सफलतापूर्वक डाउनलोड हो गया! 📥');
-    }
+      showToast('टूल HTML डाउनलोड हो गया! 📥');
+    });
 
-    downloadStandaloneBtn.addEventListener('click', downloadCurrentTool);
-    downloadToolBtn.addEventListener('click', downloadCurrentTool);
+    // 12. लाइब्रेरी स्टोरेज
+    function getStoredTools() { return JSON.parse(localStorage.getItem('nischay_forge_tools') || '[]'); }
+    function syncBadge() { $('libraryCount').textContent = getStoredTools().length; }
+    syncBadge();
 
-    // ----------------------------------------------------
-    // 10. स्टोरेज व लाइब्रेरी
-    // ----------------------------------------------------
-    function getSavedTools() {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    }
-
-    function syncLibraryBadge() {
-      const list = getSavedTools();
-      if (libraryCount) libraryCount.textContent = list.length;
-    }
-
-    saveToolBtn.addEventListener('click', () => {
+    $('btnSaveTool').addEventListener('click', () => {
       if (!activeTool) return;
-      const list = getSavedTools();
-      const idx = list.findIndex(x => x.id === activeTool.id);
-      if (idx > -1) {
-        list.splice(idx, 1);
-        saveToolBtn.textContent = '♡';
-        showToast('लाइब्रेरी से हटा दिया गया।');
-      } else {
-        list.unshift(activeTool);
-        saveToolBtn.textContent = '♥';
-        showToast('टूल आपकी लाइब्रेरी में सेव हो गया! ⭐');
-      }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      syncLibraryBadge();
+      const list = getStoredTools();
+      list.unshift(activeTool);
+      localStorage.setItem('nischay_forge_tools', JSON.stringify(list));
+      syncBadge();
+      showToast('लाइब्रेरी में सेव हो गया! ⭐');
     });
 
-    // ----------------------------------------------------
-    // 11. वॉइस पहचान
-    // ----------------------------------------------------
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const rec = new SpeechRecognition();
-      rec.lang = 'hi-IN';
+    // 13. वॉइस पहचान (Speech Recognition)
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SR) {
+      const rec = new SR();
       rec.interimResults = false;
+      let isListening = false;
 
-      function setMicActive(active) {
-        micButton.setAttribute('aria-pressed', String(active));
-        dockMic.setAttribute('aria-pressed', String(active));
-        voiceDock.classList.toggle('active', active);
-        if (active) {
-          dockStatus.innerHTML = '<i></i> LISTENING — बोलिए...';
-          voiceState.textContent = 'सुन रहा हूँ… अपना टूल आइडिया बताइए।';
+      $('micBtn').addEventListener('click', () => {
+        rec.lang = (currentLang === 'hi') ? 'hi-IN' : 'en-US';
+        if (!isListening) {
+          try { rec.start(); } catch(e) {}
         } else {
-          dockStatus.innerHTML = '<i></i> READY WHEN YOU ARE';
-          voiceState.textContent = 'माइक केवल आपकी अनुमति और टैप के बाद चालू होता है।';
+          rec.stop();
         }
-      }
+      });
 
-      rec.onstart = () => setMicActive(true);
+      rec.onstart = () => {
+        isListening = true;
+        $('micBtn').classList.add('is-active');
+        $('voiceStatusText').textContent = (currentLang === 'hi') ? 'सुन रहा हूँ... बोलिए' : 'Listening... Speak';
+      };
+
       rec.onresult = (e) => {
-        let txt = e.results[0][0].transcript;
-        txt = txt.replace(/कर कोड|क्युर कोड|क्यूआर/gi, 'QR Code');
-        promptInput.value = txt;
-        updateCount();
+        const text = e.results[0][0].transcript;
+        $('promptInput').value = text;
+        $('charCount').textContent = `${text.length} / 4000`;
       };
+
       rec.onend = () => {
-        setMicActive(false);
-        if (promptInput.value.trim().length > 1) {
-          handleGenerate();
-        }
+        isListening = false;
+        $('micBtn').classList.remove('is-active');
+        $('voiceStatusText').textContent = (currentLang === 'hi') ? 'आइडिया बोलें, निश्चय बना देगा...' : 'Speak your idea...';
+        if ($('promptInput').value.trim().length > 2) executeBuild();
       };
-
-      const toggleMic = () => {
-        try { rec.start(); } catch(e) { rec.stop(); }
-      };
-      micButton.addEventListener('click', toggleMic);
-      dockMic.addEventListener('click', toggleMic);
     }
-
-    // ----------------------------------------------------
-    // 12. साइड ड्रॉअर और PWA
-    // ----------------------------------------------------
-    function toggleDrawer(open) {
-      siteDrawer.classList.toggle('open', open);
-      drawerBackdrop.classList.toggle('show', open);
-      drawerBackdrop.classList.toggle('active', open);
-    }
-    drawerToggleBtn.addEventListener('click', () => toggleDrawer(true));
-    drawerCloseBtn.addEventListener('click', () => toggleDrawer(false));
-    drawerBackdrop.addEventListener('click', () => toggleDrawer(false));
-
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      $('installPwaBtn').style.display = 'inline-flex';
-    });
-    $('installPwaBtn').addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-      } else {
-        showToast('ब्राउज़र मेन्यू से "Add to Home Screen" चुनें।');
-      }
-    });
-
-    initTheme();
-    syncLibraryBadge();
   </script>
 </body>
 </html>
