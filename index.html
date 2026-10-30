@@ -11,46 +11,201 @@
   <link rel="stylesheet" href="./css/animations.css">
   <title>Nischay Forge AI — आपका ऑन-डिमांड टूल स्टूडियो</title>
   <style>
-    /* लाइट और डार्क थीम वैरियेबल्स */
+    /* =========================================
+       1. लैंडिंग और वेलकम स्क्रीन (Get Started)
+       ========================================= */
+    #welcomeScreen {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 20%, #172554, #070a13 70%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    #welcomeScreen.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .welcome-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 999px;
+      color: #38bdf8;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+    .welcome-title {
+      font-size: 38px;
+      line-height: 1.15;
+      font-weight: 900;
+      color: #f8fafc;
+      margin-bottom: 12px;
+    }
+    .welcome-title span {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .welcome-desc {
+      font-size: 15px;
+      color: #94a3b8;
+      max-width: 380px;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+    .btn-get-started {
+      background: #38bdf8;
+      color: #040814;
+      font-size: 16px;
+      font-weight: 800;
+      padding: 14px 36px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-get-started:active {
+      transform: scale(0.96);
+    }
+
+    /* =========================================
+       2. फुलस्क्रीन लाइव मॉडल (No Blank Blocked)
+       ========================================= */
+    #fullPreviewModal {
+      position: fixed;
+      inset: 0;
+      background: #020617;
+      z-index: 10000;
+      display: none;
+      flex-direction: column;
+    }
+    #fullPreviewModal.is-active {
+      display: flex;
+    }
+    .full-modal-bar {
+      height: 52px;
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    .full-modal-title {
+      color: #38bdf8;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .full-modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-modal-close {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #fullFrame {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #ffffff;
+    }
+
+    /* =========================================
+       3. लाइट / डार्क मोड सटीक कलर पैलेट
+       ========================================= */
     :root {
       --bg: #070a13;
       --surface: #0f172a;
       --surface-elevated: #162238;
       --border: #1e293b;
       --accent: #38bdf8;
-      --accent-glow: rgba(56, 189, 248, 0.25);
       --text: #f8fafc;
       --text-muted: #94a3b8;
     }
 
     body.light-theme {
-      --bg: #f8fafc;
+      --bg: #f1f5f9;
       --surface: #ffffff;
-      --surface-elevated: #f1f5f9;
+      --surface-elevated: #e2e8f0;
       --border: #cbd5e1;
       --accent: #0284c7;
-      --accent-glow: rgba(2, 132, 199, 0.2);
       --text: #0f172a;
-      --text-muted: #475569;
+      --text-muted: #64748b;
     }
 
     body.light-theme .topbar,
     body.light-theme .drawer,
     body.light-theme .glass-card,
+    body.light-theme .preview-card,
+    body.light-theme .prompt-card,
+    body.light-theme .terminal-card,
     body.light-theme .floating-voice-dock {
-      background: var(--surface) !important;
-      color: var(--text) !important;
-      border-color: var(--border) !important;
-    }
-
-    body.light-theme textarea,
-    body.light-theme input {
       background: #ffffff !important;
-      color: #0f172a !important;
       border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
     }
 
-    /* प्लेसहोल्डर और आईफ्रेम ओवरलैप फिक्स */
+    body.light-theme .brand-name,
+    body.light-theme h1,
+    body.light-theme h2,
+    body.light-theme .prompt-label,
+    body.light-theme #toolTitle {
+      color: #0f172a !important;
+    }
+
+    body.light-theme textarea#promptInput {
+      background: #f8fafc !important;
+      color: #0f172a !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+
+    body.light-theme .terminal-body pre {
+      background: #0f172a !important;
+      color: #22c55e !important;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    /* मेन्यू के अंदर का थीम स्विच */
+    .drawer-theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--surface-elevated);
+      border-radius: 10px;
+      margin: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* प्लेसहोल्डर और आईफ्रेम रेंडरिंग */
     .preview-placeholder[hidden],
     .preview-placeholder.is-hidden {
       display: none !important;
@@ -69,7 +224,7 @@
       height: 100% !important;
       min-height: 480px !important;
       border: 0;
-      background: #fff;
+      background: #ffffff;
       display: none;
     }
 
@@ -77,28 +232,7 @@
       display: block !important;
     }
 
-    /* थीम टॉगल बटन */
-    .theme-toggle-btn {
-      background: var(--surface-elevated);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .theme-toggle-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* मोबाइल लेआउट सुरक्षा फिक्स */
+    /* मोबाइल लेआउट सुरक्षा */
     @media (max-width: 820px) {
       .studio-shell { padding: 12px 10px 100px !important; }
       .studio-grid { display: flex !important; flex-direction: column !important; gap: 16px !important; }
@@ -113,6 +247,28 @@
   </style>
 </head>
 <body class="studio-page">
+  <!-- 0. लैंडिंग स्क्रीन (Get Started) -->
+  <div id="welcomeScreen">
+    <div class="welcome-pill">⚡ NISCHAY FORGE 2026</div>
+    <h1 class="welcome-title">BUILD YOUR IDEA<br><span>INTO WORKING TOOLS</span></h1>
+    <p class="welcome-desc">बोलिए या लिखिए—किसी भी तरह का कैलकुलेटर, कन्वर्टर, या मिनी टूल सेकंडों में सीधे आपके डिवाइस पर तैयार।</p>
+    <button class="btn-get-started" id="getStartedBtn" type="button">
+      <span>शुरू करें (Get Started)</span>
+      <span>➔</span>
+    </button>
+  </div>
+
+  <!-- 1. फुलस्क्रीन मॉडल (अलग पेज की तरह) -->
+  <div id="fullPreviewModal">
+    <div class="full-modal-bar">
+      <span class="full-modal-title" id="fullModalTitle">टूल का नाम</span>
+      <div class="full-modal-actions">
+        <button class="btn-modal-close" id="closeFullModalBtn" type="button">✕ बंद करें</button>
+      </div>
+    </div>
+    <iframe id="fullFrame" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
+  </div>
+
   <div class="ambient ambient-one" aria-hidden="true"></div>
   <div class="ambient ambient-two" aria-hidden="true"></div>
 
@@ -128,9 +284,6 @@
       </a>
     </div>
     <div class="topbar-right">
-      <button class="theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="थीम बदलें">
-        <span id="themeIcon">☀️</span><span id="themeText">लाइट</span>
-      </button>
       <a class="topbar-link" href="./library.html">मेरी लाइब्रेरी <span id="libraryCount" class="count-badge">0</span></a>
       <button class="button button-quiet install-pwa" id="installPwaBtn" type="button">इंस्टॉल ऐप</button>
     </div>
@@ -147,6 +300,13 @@
       <img src="./assets/nischay-mark.svg" width="42" height="42" alt="Logo" onerror="this.src='./assets/app-icon.svg'">
       <span>Nischay Forge<small>बोलिए. बनाइए. चलाइए.</small></span>
     </a>
+
+    <!-- मेन्यू के अंदर थीम टॉगल -->
+    <div class="drawer-theme-toggle" id="menuThemeToggle">
+      <span>थीम बदलें (Theme)</span>
+      <span id="themeToggleText">🌙 डार्क</span>
+    </div>
+
     <nav class="drawer-nav">
       <a class="active" href="./index.html" aria-current="page"><span class="nav-icon">⌘</span><span>स्टूडियो<small>नया टूल बनाइए</small></span><b>↗</b></a>
       <a href="./library.html"><span class="nav-icon">▦</span><span>मेरी लाइब्रेरी<small>सेव किए गए टूल</small></span><b>↗</b></a>
@@ -253,7 +413,8 @@
               </div>
             </div>
             <div class="preview-actions" id="toolActions" hidden>
-              <button class="icon-button action-icon" id="openFullTabBtn" type="button" aria-label="अलग पेज पर पूरा बड़ा खोलें" title="अलग पेज में खोलें">↗</button>
+              <!-- फुलस्क्रीन बटन जो सीधे मॉडल खोलेगा -->
+              <button class="icon-button action-icon" id="openFullModalBtn" type="button" aria-label="पूरा बड़ा देखें" title="पूरा बड़ा देखें">↗</button>
               <button class="icon-button action-icon" id="saveToolBtn" type="button" aria-label="लाइब्रेरी में सेव करें" title="लाइब्रेरी में सेव करें">♡</button>
               <button class="icon-button action-icon" id="downloadToolBtn" type="button" aria-label="अलग HTML टूल डाउनलोड करें" title="HTML डाउनलोड">↓</button>
             </div>
@@ -265,7 +426,7 @@
               <p>आपका टूल यहीं खुलेगा।<br><span>एक आइडिया भेजिए और उसे काम करते देखिए।</span></p>
               <div class="placeholder-coordinate"><span>NF—CANVAS</span><span>00 : 00</span></div>
             </div>
-            <iframe id="toolFrame" title="बनाए गए टूल का सुरक्षित लाइव प्रीव्यू" sandbox="allow-scripts allow-modals allow-downloads allow-same-origin" referrerpolicy="no-referrer" hidden></iframe>
+            <iframe id="toolFrame" title="बनाए गए टूल का सुरक्षित लाइव प्रीव्यू" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin" referrerpolicy="no-referrer" hidden></iframe>
           </div>
           <div class="preview-foot">
             <span><i class="preview-dot" id="previewDot"></i><span id="previewStatus">आपका कैनवस तैयार है</span></span>
@@ -308,7 +469,7 @@
   <!-- पूरा वर्किंग जावास्क्रिप्ट इंजन -->
   <script>
     // ----------------------------------------------------
-    // 1. नई AQ. की को सुरक्षित तरीके से लोड करना
+    // 1. सुरक्षित API Key
     // ----------------------------------------------------
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
@@ -332,6 +493,8 @@
 
     // एलिमेंट्स का चयन
     const $ = (id) => document.getElementById(id);
+    const welcomeScreen = $('welcomeScreen');
+    const getStartedBtn = $('getStartedBtn');
     const promptInput = $('promptInput');
     const promptCount = $('promptCount');
     const promptForm = $('promptForm');
@@ -344,7 +507,11 @@
     const downloadStandaloneBtn = $('downloadStandaloneBtn');
     const saveToolBtn = $('saveToolBtn');
     const downloadToolBtn = $('downloadToolBtn');
-    const openFullTabBtn = $('openFullTabBtn');
+    const openFullModalBtn = $('openFullModalBtn');
+    const fullPreviewModal = $('fullPreviewModal');
+    const closeFullModalBtn = $('closeFullModalBtn');
+    const fullFrame = $('fullFrame');
+    const fullModalTitle = $('fullModalTitle');
     const terminalStatus = $('terminalStatus');
     const terminalProgress = $('terminalProgress');
     const previewStatus = $('previewStatus');
@@ -363,12 +530,23 @@
     const siteDrawer = $('siteDrawer');
     const drawerToggleBtn = $('drawerToggleBtn');
     const drawerCloseBtn = $('drawerCloseBtn');
-    const themeToggleBtn = $('themeToggleBtn');
-    const themeIcon = $('themeIcon');
-    const themeText = $('themeText');
+    const menuThemeToggle = $('menuThemeToggle');
+    const themeToggleText = $('themeToggleText');
 
     // ----------------------------------------------------
-    // 2. लाइट और डार्क थीम टॉगल
+    // 2. गेट स्टार्टेड (Welcome Screen) हैंडलर
+    // ----------------------------------------------------
+    getStartedBtn?.addEventListener('click', () => {
+      welcomeScreen.classList.add('is-hidden');
+      sessionStorage.setItem('nischay_entered', 'true');
+    });
+
+    if (sessionStorage.getItem('nischay_entered') === 'true') {
+      welcomeScreen.classList.add('is-hidden');
+    }
+
+    // ----------------------------------------------------
+    // 3. मेन्यू के अंदर डार्क / लाइट मोड स्विच
     // ----------------------------------------------------
     function initTheme() {
       const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
@@ -378,23 +556,21 @@
     function applyTheme(theme) {
       if (theme === 'light') {
         document.body.classList.add('light-theme');
-        themeIcon.textContent = '🌙';
-        themeText.textContent = 'डार्क';
+        if (themeToggleText) themeToggleText.textContent = '☀️ लाइट';
       } else {
         document.body.classList.remove('light-theme');
-        themeIcon.textContent = '☀️';
-        themeText.textContent = 'लाइट';
+        if (themeToggleText) themeToggleText.textContent = '🌙 डार्क';
       }
       localStorage.setItem(THEME_KEY, theme);
     }
 
-    themeToggleBtn?.addEventListener('click', () => {
+    menuThemeToggle?.addEventListener('click', () => {
       const isLight = document.body.classList.contains('light-theme');
       applyTheme(isLight ? 'dark' : 'light');
     });
 
     // ----------------------------------------------------
-    // 3. यूटिलिटी व एनीमेशन
+    // 4. यूटिलिटीज और एनीमेशन
     // ----------------------------------------------------
     function showToast(msg) {
       if (!toast) return;
@@ -422,7 +598,7 @@
     }
 
     // ----------------------------------------------------
-    // 4. AI इंजन (x-goog-api-key और ?key दोनों के साथ फ़ुल सपोर्ट)
+    // 5. AI इंजन (REST API)
     // ----------------------------------------------------
     async function callGemini(modelName, query) {
       const key = getApiKey();
@@ -433,7 +609,6 @@
 3. केवल और केवल शुद्ध JSON उत्तर दें:
 {"intent": "tool" या "chat", "cleanName": "टूल का नाम", "htmlCode": "<!DOCTYPE html>...", "message": "मित्रवत हिंदी संदेश"}`;
 
-      // नई AQ. की को x-goog-api-key हेडर और URL दोनों से पास करना
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
 
       const res = await fetch(endpoint, {
@@ -455,7 +630,7 @@
     }
 
     // ----------------------------------------------------
-    // 5. टाइपराइटर
+    // 6. टाइपराइटर
     // ----------------------------------------------------
     function runTypewriter(code, onComplete) {
       terminalCard.classList.add('is-writing');
@@ -484,7 +659,7 @@
     }
 
     // ----------------------------------------------------
-    // 6. मुख्य जेनरेशन लॉजिक
+    // 7. मुख्य जेनरेशन लॉजिक
     // ----------------------------------------------------
     async function handleGenerate(e) {
       if (e) e.preventDefault();
@@ -539,12 +714,12 @@
       downloadStandaloneBtn.disabled = false;
 
       runTypewriter(activeTool.html, () => {
-        // प्लेसहोल्डर को पूरी तरह से हटाना
+        // प्लेसहोल्डर पूरी तरह गायब
         previewPlaceholder.hidden = true;
         previewPlaceholder.classList.add('is-hidden');
         previewPlaceholder.style.display = 'none';
 
-        // आईफ्रेम रेंडर करना
+        // आईफ्रेम चालू
         toolFrame.hidden = false;
         toolFrame.style.display = 'block';
         toolFrame.srcdoc = activeTool.html;
@@ -569,29 +744,45 @@
     });
 
     // ----------------------------------------------------
-    // 7. डाउनलोड, अलग टैब में फुलस्क्रीन और सेविंग
+    // 8. इन-ऐप फुलस्क्रीन व्यू (No Blank Page Error)
     // ----------------------------------------------------
-    function openFullPage() {
-      if (!activeTool) return;
-      const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      showToast('टूल अलग पूरे पेज में खुल गया! ↗');
-    }
-    openFullTabBtn?.addEventListener('click', openFullPage);
+    openFullModalBtn?.addEventListener('click', () => {
+      if (!activeTool || !activeTool.html) return;
+      fullModalTitle.textContent = activeTool.name;
+      fullFrame.srcdoc = activeTool.html;
+      fullPreviewModal.classList.add('is-active');
+    });
 
-    function downloadCurrent() {
-      if (!activeTool) return;
+    closeFullModalBtn?.addEventListener('click', () => {
+      fullPreviewModal.classList.remove('is-active');
+      fullFrame.srcdoc = '';
+    });
+
+    // ----------------------------------------------------
+    // 9. शुद्ध टूल HTML डाउनलोडर (100% वर्किंग)
+    // ----------------------------------------------------
+    function downloadCurrentTool() {
+      if (!activeTool || !activeTool.html) {
+        showToast('पहले कोई टूल बनाइए!');
+        return;
+      }
+      // केवल जनरेट किए गए टूल का शुद्ध HTML कोड डाउनलोड करना
       const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = `${activeTool.name.replace(/\s+/g, '_')}.html`;
+      document.body.appendChild(a);
       a.click();
-      showToast('टूल HTML डाउनलोड हो गया!');
+      a.remove();
+      showToast('टूल सफलतापूर्वक डाउनलोड हो गया! 📥');
     }
-    downloadStandaloneBtn.addEventListener('click', downloadCurrent);
-    downloadToolBtn.addEventListener('click', downloadCurrent);
 
+    downloadStandaloneBtn.addEventListener('click', downloadCurrentTool);
+    downloadToolBtn.addEventListener('click', downloadCurrentTool);
+
+    // ----------------------------------------------------
+    // 10. स्टोरेज व लाइब्रेरी
+    // ----------------------------------------------------
     function getSavedTools() {
       return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     }
@@ -619,7 +810,7 @@
     });
 
     // ----------------------------------------------------
-    // 8. वॉइस पहचान (Speech Recognition)
+    // 11. वॉइस पहचान
     // ----------------------------------------------------
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -662,7 +853,7 @@
     }
 
     // ----------------------------------------------------
-    // 9. साइड मेन्यू ड्रॉअर और PWA
+    // 12. साइड ड्रॉअर और PWA
     // ----------------------------------------------------
     function toggleDrawer(open) {
       siteDrawer.classList.toggle('open', open);
