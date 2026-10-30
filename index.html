@@ -7,10 +7,12 @@
   <meta name="description" content="बोलकर या लिखकर अपने लिए काम का वेब टूल बनाइए—Nischay Forge AI में।">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg">
-  <title>Nischay Forge AI — Heavy Duty Tool Studio</title>
+  <title>Nischay Forge AI — Multi-Tab Code Studio</title>
 
   <style>
-    /* 1. कलर्स और थीम वेरिएबल्स */
+    /* ===================================================
+       1. कलर्स और थीम वेरिएबल्स
+       =================================================== */
     :root {
       --bg: #070a13;
       --surface: #0f172a;
@@ -24,6 +26,10 @@
       --input-bg: #070a13;
       --nav-link: #94a3b8;
       --danger: #ef4444;
+      
+      --c-html: #f97316;
+      --c-css: #38bdf8;
+      --c-js: #facc15;
     }
 
     body.light-theme {
@@ -44,7 +50,9 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background 0.25s ease, color 0.25s ease; }
 
-    /* 2. वेलकम स्क्रीन */
+    /* ===================================================
+       2. वेलकम स्क्रीन
+       =================================================== */
     #welcomeScreen {
       position: fixed;
       inset: 0;
@@ -114,7 +122,9 @@
     }
     .btn-start-now:active { transform: scale(0.96); }
 
-    /* 3. टॉपबार */
+    /* ===================================================
+       3. टॉपबार
+       =================================================== */
     .topbar {
       height: 60px;
       background: var(--surface);
@@ -159,7 +169,9 @@
     }
     .lib-pill span { background: var(--accent); color: #000; border-radius: 10px; padding: 1px 6px; font-size: 11px; }
 
-    /* 4. साइड मेन्यू */
+    /* ===================================================
+       4. साइड मेन्यू ड्रॉअर
+       =================================================== */
     .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; }
     .drawer-overlay.active { display: block; }
     .menu-drawer {
@@ -190,7 +202,9 @@
     .nav-item.active { background: var(--surface-elevated); color: var(--accent) !important; }
     .drawer-foot { padding: 14px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
 
-    /* 5. मुख्य स्टूडियो */
+    /* ===================================================
+       5. मुख्य स्टूडियो और इनपुट
+       =================================================== */
     main { max-width: 900px; margin: 0 auto; padding: 20px 14px 120px; display: flex; flex-direction: column; gap: 20px; }
     
     .glass-box {
@@ -204,7 +218,6 @@
     .prompt-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .prompt-label { font-size: 14px; font-weight: 700; color: var(--text); }
     
-    /* रीसेट बटन */
     .btn-reset-prompt {
       background: rgba(239, 68, 68, 0.1);
       border: 1px solid rgba(239, 68, 68, 0.3);
@@ -258,21 +271,64 @@
     .chip { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; padding: 6px 12px; border-radius: 20px; white-space: nowrap; cursor: pointer; }
     .chip:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* टर्मिनल स्क्रीन */
+    /* ===================================================
+       6. नया मल्टी-टैब कोड टर्मिनल (HTML, CSS, JS अलग-अलग)
+       =================================================== */
     .terminal-box {
       background: #040711;
       border: 1px solid var(--border);
       border-radius: 14px;
       overflow: hidden;
-      color: #22c55e;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 12px;
     }
-    .terminal-head { background: #0b1120; border-bottom: 1px solid var(--border); padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; color: #64748b; font-size: 11px; font-weight: 700; }
-    .terminal-head-left { display: flex; align-items: center; gap: 8px; }
-    .terminal-dots { display: flex; gap: 5px; }
-    .terminal-dots i { width: 8px; height: 8px; border-radius: 50%; background: #334155; display: inline-block; }
+    .terminal-header {
+      background: #0b1120;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
     
+    /* HTML, CSS, JS टैब्स */
+    .code-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .code-tab-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid transparent;
+      color: #94a3b8;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .code-tab-btn.active[data-tab="html"] {
+      background: rgba(249, 115, 22, 0.15);
+      color: var(--c-html);
+      border-color: var(--c-html);
+    }
+    .code-tab-btn.active[data-tab="css"] {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--c-css);
+      border-color: var(--c-css);
+    }
+    .code-tab-btn.active[data-tab="js"] {
+      background: rgba(250, 204, 21, 0.15);
+      color: var(--c-js);
+      border-color: var(--c-js);
+    }
+
     .btn-copy-code {
       background: var(--surface-elevated);
       border: 1px solid var(--border);
@@ -285,7 +341,14 @@
     }
     .btn-copy-code:hover { background: #38bdf8; color: #040814; }
 
-    .terminal-code { padding: 12px; max-height: 160px; overflow-y: auto; white-space: pre-wrap; line-height: 1.5; color: #4ade80; }
+    .terminal-code { 
+      padding: 12px; 
+      max-height: 180px; 
+      overflow-y: auto; 
+      white-space: pre-wrap; 
+      line-height: 1.5; 
+      color: #4ade80; 
+    }
 
     /* प्रीव्यू कार्ड */
     .preview-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
@@ -334,7 +397,7 @@
 
     iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; }
 
-    /* 6. वॉइस बार */
+    /* 7. नीचे का वॉइस डॉक */
     .bottom-dock {
       position: fixed;
       bottom: 14px;
@@ -370,7 +433,7 @@
     .dock-mic-btn.is-active { background: #16a34a; animation: pulse 1s infinite alternate; }
     @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
-    /* 7. फुलस्क्रीन इन-ऐप मोडल */
+    /* 8. फुलस्क्रीन मोडल */
     #fullModal { position: fixed; inset: 0; background: #020617; z-index: 10000; display: none; flex-direction: column; }
     #fullModal.is-open { display: flex; }
     .fullmodal-bar { height: 52px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
@@ -474,17 +537,23 @@
       </div>
     </div>
 
-    <!-- टर्मिनल स्क्रीन + कॉपी कोड बटन -->
+    <!-- टर्मिनल स्क्रीन (HTML / CSS / JS अलग-अलग टैब) -->
     <div class="terminal-box" id="terminalBox">
-      <div class="terminal-head">
-        <div class="terminal-head-left">
-          <div class="terminal-dots"><i></i><i></i><i></i></div>
-          <span>FORGE OUTPUT ENGINE</span>
-          <span id="termStatus" style="color: #38bdf8;">IDLE</span>
+      <div class="terminal-header">
+        <div class="code-tabs">
+          <button class="code-tab-btn active" data-tab="html" id="tabBtnHtml">
+            <span style="color:var(--c-html)">🌐</span> HTML
+          </button>
+          <button class="code-tab-btn" data-tab="css" id="tabBtnCss">
+            <span style="color:var(--c-css)">🎨</span> CSS
+          </button>
+          <button class="code-tab-btn" data-tab="js" id="tabBtnJs">
+            <span style="color:var(--c-js)">⚡</span> JavaScript
+          </button>
         </div>
         <button class="btn-copy-code" id="btnCopyCode" type="button">📋 कोड कॉपी करें</button>
       </div>
-      <div class="terminal-code" id="termOutput">// आपका बनाया हुआ टूल यहाँ आकार लेगा...</div>
+      <div class="terminal-code" id="termOutput">// आपका बनाया हुआ कोड यहाँ आकार लेगा...</div>
     </div>
 
     <!-- लाइव टूल प्रीव्यू कार्ड -->
@@ -525,7 +594,7 @@
 
   <div class="toast" id="toastBox"></div>
 
-  <!-- 8. जावास्क्रिप्ट लॉजिक (No-JSON, Multi-Part Parser) -->
+  <!-- जावास्क्रिप्ट इंजन -->
   <script>
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
@@ -542,6 +611,9 @@
     const STORAGE_KEY_LEGACY = 'nischay-forge-tools-v1';
 
     let activeTool = null;
+    let currentCodeModules = { html: "", css: "", js: "" };
+    let currentActiveTab = "html";
+
     let currentLang = localStorage.getItem('nischay_lang') || 'hi';
     let currentTheme = localStorage.getItem('nischay_theme') || 'dark';
 
@@ -657,12 +729,10 @@
     $('drawerCloseBtn').addEventListener('click', closeDrawer);
     $('drawerOverlay').addEventListener('click', closeDrawer);
 
-    // कैरेक्टर काउंटर
     $('promptInput').addEventListener('input', (e) => {
       $('charCount').textContent = `${e.target.value.length} / 10000`;
     });
 
-    // क्विक चिप्स
     document.querySelectorAll('.chip').forEach(c => {
       c.addEventListener('click', () => {
         $('promptInput').value = c.dataset.q;
@@ -671,21 +741,40 @@
       });
     });
 
-    // कोड कॉपी बटन
+    // ----------------------------------------------------
+    // 7. HTML, CSS, JS टैब स्विचिंग लॉजिक
+    // ----------------------------------------------------
+    function switchTab(tab) {
+      currentActiveTab = tab;
+      document.querySelectorAll('.code-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      
+      const code = currentCodeModules[tab] || `// कोई ${tab.toUpperCase()} कोड नहीं है`;
+      $('termOutput').textContent = code;
+      $('termOutput').scrollTop = 0;
+    }
+
+    $('tabBtnHtml').addEventListener('click', () => switchTab('html'));
+    $('tabBtnCss').addEventListener('click', () => switchTab('css'));
+    $('tabBtnJs').addEventListener('click', () => switchTab('js'));
+
+    // कॉपी बटन (जो टैब खुला है, केवल उसी का कोड कॉपी करेगा)
     $('btnCopyCode').addEventListener('click', () => {
-      if (!activeTool || !activeTool.html) {
+      const codeToCopy = currentCodeModules[currentActiveTab];
+      if (!codeToCopy) {
         showToast('पहले कोई टूल बनने दीजिए!');
         return;
       }
-      navigator.clipboard.writeText(activeTool.html).then(() => {
-        showToast('पूरा HTML कोड क्लिपबोर्ड पर कॉपी हो गया! 📋');
+      navigator.clipboard.writeText(codeToCopy).then(() => {
+        showToast(`${currentActiveTab.toUpperCase()} कोड कॉपी हो गया! 📋`);
       }).catch(() => {
         showToast('कॉपी नहीं हो सका, कृपया दोबारा प्रयास करें।');
       });
     });
 
     // ----------------------------------------------------
-    // 7. भारी काम के लिए AI इंजन (No JSON Escape, Multi-Part Parser)
+    // 8. भारी काम के लिए AI इंजन (Clean Multi-Part)
     // ----------------------------------------------------
     async function requestGeminiRaw(modelName, query) {
       const key = getApiKey();
@@ -697,11 +786,11 @@ DO NOT RETURN JSON! Output strictly formatted plain text with these exact delimi
 ===NAME===
 [A short 2-4 word Title of the tool]
 ===HTML===
-[Pure HTML markup with elements, inputs, containers]
+[Pure HTML markup with elements, inputs, containers. Do NOT include <style> or <script> tags here]
 ===CSS===
-[Pure CSS styling, modern responsive dark theme, animations]
+[Pure CSS styling, modern responsive dark theme, animations. Do NOT include <style> tags]
 ===JS===
-[Pure JavaScript logic, state management, event listeners, LocalStorage if required]
+[Pure JavaScript logic, state management, event listeners. Do NOT include <script> tags]
 
 RULES:
 1. Never wrap with markdown json tags.
@@ -732,7 +821,6 @@ RULES:
       return data.candidates[0].content.parts[0].text;
     }
 
-    // रॉ टेक्स्ट को शुद्ध वर्किंग HTML5 में असेंबल करना
     function assembleMultiPartCode(rawText) {
       let name = "Web Tool";
       let html = "";
@@ -741,22 +829,25 @@ RULES:
 
       if (rawText.includes("===NAME===")) {
         const parts = rawText.split(/===[A-Z]+===/);
-        // split करने पर: 0=pre, 1=NAME, 2=HTML, 3=CSS, 4=JS
         name = (parts[1] || "Web Tool").trim().replace(/[\r\n]+/g, " ");
         html = (parts[2] || "").trim();
         css = (parts[3] || "").trim();
         js = (parts[4] || "").trim();
       } else {
-        // फॉलबैक अगर AI ने सीधे HTML कोड दिया हो
         html = rawText.replace(/```html|```/gi, "").trim();
       }
 
-      // क्लीनअप
       html = html.replace(/^```html|^```|```$/gim, '').trim();
       css = css.replace(/^```css|^```|```$/gim, '').trim();
       js = js.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
 
-      // अगर पूरा कोड अलग-अलग भागों में है, तो उसे सिंगल HTML5 फ़ाइल में पिरोएँ
+      // अलग-अलग टैब के लिए सेव करना
+      currentCodeModules = {
+        html: html,
+        css: css,
+        js: js
+      };
+
       let fullDocument = "";
       if (html.includes("<!DOCTYPE html>") || html.includes("<html")) {
         fullDocument = html;
@@ -785,10 +876,9 @@ RULES:
       return { cleanName: name, htmlCode: fullDocument };
     }
 
-    // 8. टाइपराइटर इफ़ेक्ट
+    // टाइपराइटर (सिर्फ पहले एक्टिव टैब का कोड टाइप करेगा)
     function typewriter(code, cb) {
       const out = $('termOutput');
-      $('termStatus').textContent = 'FORGING';
       out.textContent = '';
       let i = 0;
       const step = Math.max(20, Math.floor(code.length / 80));
@@ -801,14 +891,13 @@ RULES:
           requestAnimationFrame(loop);
         } else {
           out.textContent = code;
-          $('termStatus').textContent = 'READY';
           cb();
         }
       }
       loop();
     }
 
-    // 9. जेनरेशन प्रोसेस
+    // जेनरेशन प्रोसेस
     async function executeBuild() {
       const q = $('promptInput').value.trim();
       if (!q) return;
@@ -871,7 +960,9 @@ RULES:
       $('toolActionBtns').style.display = 'flex';
 
       setTimeout(() => {
-        typewriter(activeTool.html, () => {
+        // डिफ़ॉल्ट रूप से HTML टैब सक्रिय करें
+        switchTab('html');
+        typewriter(currentCodeModules.html, () => {
           loader.classList.remove('is-active');
           $('canvasPlaceholder').style.display = 'none';
           const frame = $('toolFrame');
@@ -886,7 +977,7 @@ RULES:
 
     $('generateBtn').addEventListener('click', executeBuild);
 
-    // 10. फुलस्क्रीन व्यू
+    // फुलस्क्रीन व्यू
     $('btnOpenFull').addEventListener('click', () => {
       if (!activeTool) return;
       $('fullModalTitle').textContent = activeTool.name;
@@ -898,7 +989,7 @@ RULES:
       $('fullFrame').srcdoc = '';
     });
 
-    // 11. HTML डाउनलोडर
+    // डाउनलोडर
     $('btnDownloadTool').addEventListener('click', () => {
       if (!activeTool) return;
       const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
@@ -911,7 +1002,7 @@ RULES:
       showToast('टूल HTML डाउनलोड हो गया! 📥');
     });
 
-    // 12. डुअल-सिंक स्टोरेज
+    // स्टोरेज
     function getStoredTools() {
       const list1 = JSON.parse(localStorage.getItem(STORAGE_KEY_MAIN) || '[]');
       const list2 = JSON.parse(localStorage.getItem(STORAGE_KEY_LEGACY) || '[]');
@@ -942,7 +1033,7 @@ RULES:
       showToast('लाइब्रेरी में सुरक्षित सेव हो गया! ⭐');
     });
 
-    // 13. वॉइस पहचान
+    // वॉइस पहचान
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SR) {
       const rec = new SR();
