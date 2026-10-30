@@ -215,7 +215,327 @@
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <!-- जावास्क्रिप्ट एंट्री पॉइंट -->
-  <script type="module" src="./js/app.js"></script>
+  <!-- पूरा वर्किंग जावास्क्रिप्ट इंजन -->
+  <script>
+    // ----------------------------------------------------
+    // 1. कॉन्फ़िगरेशन और स्टेट
+    // ----------------------------------------------------
+    const API_KEY = "AQ.Ab8RN6Iox73qaj7V0QpVqxdUmAnAv8Qjhleb7oPVMGCrUQ_10g";
+    const PRIMARY_MODEL = "gemini-3.8";
+    const BACKUP_MODEL = "gemini-3.5-flash-lite";
+
+    const STORAGE_KEY = 'nischay-forge-tools-v1';
+    let activeTool = null;
+    let isBusy = false;
+    let toastTimer = null;
+
+    // एलिमेंट्स का चयन
+    const $ = (id) => document.getElementById(id);
+    const promptInput = $('promptInput');
+    const promptCount = $('promptCount');
+    const promptForm = $('promptForm');
+    const generateBtn = $('generateBtn');
+    const toolFrame = $('toolFrame');
+    const previewPlaceholder = $('previewPlaceholder');
+    const toolTitle = $('toolTitle');
+    const toolEyebrow = $('toolEyebrow');
+    const toolActions = $('toolActions');
+    const downloadStandaloneBtn = $('downloadStandaloneBtn');
+    const saveToolBtn = $('saveToolBtn');
+    const downloadToolBtn = $('downloadToolBtn');
+    const terminalStatus = $('terminalStatus');
+    const terminalProgress = $('terminalProgress');
+    const previewStatus = $('previewStatus');
+    const codeOutput = $('codeOutput');
+    const terminalCard = $('terminalCard');
+    const chatResponse = $('chatResponse');
+    const chatMessage = $('chatMessage');
+    const toast = $('toast');
+    const libraryCount = $('libraryCount');
+    const micButton = $('micButton');
+    const dockMic = $('dockMic');
+    const voiceDock = $('voiceDock');
+    const voiceState = $('voiceState');
+    const dockStatus = $('dockStatus');
+    const drawerBackdrop = $('drawerBackdrop');
+    const siteDrawer = $('siteDrawer');
+    const drawerToggleBtn = $('drawerToggleBtn');
+    const drawerCloseBtn = $('drawerCloseBtn');
+
+    // ----------------------------------------------------
+    // 2. टोस्ट और यूटिलिटी फ़ंक्शंस
+    // ----------------------------------------------------
+    function showToast(msg) {
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function updateCount() {
+      if (promptInput && promptCount) {
+        promptCount.textContent = `${promptInput.value.length} / 4000`;
+      }
+    }
+    promptInput.addEventListener('input', updateCount);
+
+    function flyPromptTag(text) {
+      const layer = $('flyingLayer');
+      if (!layer) return;
+      const tag = document.createElement('span');
+      tag.className = 'flying-tag show';
+      tag.textContent = text;
+      layer.appendChild(tag);
+      setTimeout(() => tag.remove(), 2500);
+    }
+
+    // ----------------------------------------------------
+    // 3. AI रिक्वेस्ट इंजन (Gemini 3.8 + बैकअप 3.5 Flash Lite)
+    // ----------------------------------------------------
+    async function callGemini(modelName, query) {
+      const sys = `आप Nischay Forge के मुख्य AI इंजन हैं। यूज़र की मांग समझकर तय करें कि उन्हें एक वर्किंग वेब टूल चाहिए या वे सिर्फ सामान्य बातचीत कर रहे हैं।
+सख्त नियम:
+1. हर टूल के <head> में <meta charset="UTF-8"> और <meta name="viewport" content="width=device-width, initial-scale=1.0"> अनिवार्य रूप से हो।
+2. कोई बाहरी CSS मत लगाएं। पूरी CSS <style> में और JS <script> में रखें। डार्क थीम (#0b1120) बनाएं।
+3. केवल और केवल शुद्ध JSON उत्तर दें:
+{"intent": "tool" या "chat", "cleanName": "टूल का नाम", "htmlCode": "<!DOCTYPE html>...", "message": "मित्रवत हिंदी संदेश"}`;
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: `${sys}\n\nमांग: ${query}` }] }],
+          generationConfig: { response_mime_type: "application/json" }
+        })
+      });
+
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message || 'API एरर');
+      return JSON.parse(data.candidates[0].content.parts[0].text);
+    }
+
+    // ----------------------------------------------------
+    // 4. टाइपराइटर एनीमेशन
+    // ----------------------------------------------------
+    function runTypewriter(code, onComplete) {
+      terminalCard.classList.add('is-writing');
+      terminalStatus.innerHTML = '<i></i> FORGING';
+      terminalProgress.textContent = 'COMPILING HTML + CSS + JS';
+      codeOutput.textContent = '';
+
+      let idx = 0;
+      const step = Math.max(1, Math.floor(code.length / 70));
+      const clipped = code.length > 3000 ? code.slice(0, 3000) + '\n\n// ...कोड पूरा तैयार है।' : code;
+
+      function frame() {
+        if (idx < clipped.length) {
+          codeOutput.textContent = clipped.slice(0, idx + step);
+          idx += step;
+          requestAnimationFrame(frame);
+        } else {
+          codeOutput.textContent = clipped;
+          terminalStatus.innerHTML = '<i></i> READY';
+          terminalProgress.textContent = 'TOOL LIVE';
+          terminalCard.classList.remove('is-writing');
+          onComplete();
+        }
+      }
+      frame();
+    }
+
+    // ----------------------------------------------------
+    // 5. मुख्य जेनरेशन लॉजिक
+    // ----------------------------------------------------
+    async function handleGenerate(e) {
+      if (e) e.preventDefault();
+      const q = promptInput.value.trim();
+      if (!q || isBusy) return;
+
+      isBusy = true;
+      generateBtn.disabled = true;
+      generateBtn.querySelector('span').textContent = 'बन रहा है…';
+      flyPromptTag(q);
+      chatResponse.hidden = true;
+      previewStatus.textContent = 'टूल का कोड तैयार हो रहा है…';
+
+      let payload = null;
+      try {
+        payload = await callGemini(PRIMARY_MODEL, q);
+      } catch (err) {
+        console.warn('प्राइमरी मॉडल फेल, बैकअप पर स्विच:', err);
+        try {
+          payload = await callGemini(BACKUP_MODEL, q);
+        } catch (bErr) {
+          chatMessage.textContent = 'त्रुटि: ' + bErr.message;
+          chatResponse.hidden = false;
+          generateBtn.disabled = false;
+          generateBtn.querySelector('span').textContent = 'बनाइए';
+          previewStatus.textContent = 'कैनवस तैयार है';
+          isBusy = false;
+          return;
+        }
+      }
+
+      if (payload.intent === 'chat' || !payload.htmlCode) {
+        chatMessage.textContent = payload.message || 'नमस्ते! बताइए आज कौन सा टूल बनाऊँ?';
+        chatResponse.hidden = false;
+        generateBtn.disabled = false;
+        generateBtn.querySelector('span').textContent = 'बनाइए';
+        isBusy = false;
+        return;
+      }
+
+      activeTool = {
+        id: 'tool-' + Date.now(),
+        name: `Nischay ${payload.cleanName || 'Tool'}`,
+        html: payload.htmlCode,
+        prompt: q,
+        createdAt: Date.now()
+      };
+
+      toolTitle.textContent = activeTool.name;
+      toolEyebrow.textContent = 'GENERATED TOOL';
+      toolActions.hidden = false;
+      downloadStandaloneBtn.disabled = false;
+
+      runTypewriter(activeTool.html, () => {
+        toolFrame.srcdoc = activeTool.html;
+        toolFrame.hidden = false;
+        previewPlaceholder.hidden = true;
+        previewStatus.textContent = 'टूल तैयार है — sandbox में चल रहा है';
+        generateBtn.disabled = false;
+        generateBtn.querySelector('span').textContent = 'बनाइए';
+        isBusy = false;
+        showToast(`${activeTool.name} तैयार हो गया! 🚀`);
+      });
+    }
+
+    promptForm.addEventListener('submit', handleGenerate);
+
+    // चिप्स क्लिक
+    document.querySelectorAll('.prompt-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        promptInput.value = btn.dataset.prompt;
+        updateCount();
+        promptInput.focus();
+      });
+    });
+
+    // ----------------------------------------------------
+    // 6. डाउनलोड और सेविंग
+    // ----------------------------------------------------
+    function downloadCurrent() {
+      if (!activeTool) return;
+      const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${activeTool.name.replace(/\s+/g, '_')}.html`;
+      a.click();
+      showToast('टूल HTML डाउनलोड हो गया!');
+    }
+    downloadStandaloneBtn.addEventListener('click', downloadCurrent);
+    downloadToolBtn.addEventListener('click', downloadCurrent);
+
+    function getSavedTools() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    }
+
+    function syncLibraryBadge() {
+      const list = getSavedTools();
+      if (libraryCount) libraryCount.textContent = list.length;
+    }
+
+    saveToolBtn.addEventListener('click', () => {
+      if (!activeTool) return;
+      const list = getSavedTools();
+      const idx = list.findIndex(x => x.id === activeTool.id);
+      if (idx > -1) {
+        list.splice(idx, 1);
+        saveToolBtn.textContent = '♡';
+        showToast('लाइब्रेरी से हटा दिया गया।');
+      } else {
+        list.unshift(activeTool);
+        saveToolBtn.textContent = '♥';
+        showToast('टूल आपकी लाइब्रेरी में सेव हो गया! ⭐');
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      syncLibraryBadge();
+    });
+
+    // ----------------------------------------------------
+    // 7. वॉइस पहचान (Speech Recognition)
+    // ----------------------------------------------------
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const rec = new SpeechRecognition();
+      rec.lang = 'hi-IN';
+      rec.interimResults = false;
+
+      function setMicActive(active) {
+        micButton.setAttribute('aria-pressed', String(active));
+        dockMic.setAttribute('aria-pressed', String(active));
+        voiceDock.classList.toggle('active', active);
+        if (active) {
+          dockStatus.innerHTML = '<i></i> LISTENING — बोलिए...';
+          voiceState.textContent = 'सुन रहा हूँ… अपना टूल आइडिया बताइए।';
+        } else {
+          dockStatus.innerHTML = '<i></i> READY WHEN YOU ARE';
+          voiceState.textContent = 'माइक केवल आपकी अनुमति और टैप के बाद चालू होता है।';
+        }
+      }
+
+      rec.onstart = () => setMicActive(true);
+      rec.onresult = (e) => {
+        let txt = e.results[0][0].transcript;
+        txt = txt.replace(/कर कोड|क्युर कोड|क्यूआर/gi, 'QR Code');
+        promptInput.value = txt;
+        updateCount();
+      };
+      rec.onend = () => {
+        setMicActive(false);
+        if (promptInput.value.trim().length > 1) {
+          handleGenerate();
+        }
+      };
+
+      const toggleMic = () => {
+        try { rec.start(); } catch(e) { rec.stop(); }
+      };
+      micButton.addEventListener('click', toggleMic);
+      dockMic.addEventListener('click', toggleMic);
+    }
+
+    // ----------------------------------------------------
+    // 8. साइड मेन्यू ड्रॉअर और PWA
+    // ----------------------------------------------------
+    function toggleDrawer(open) {
+      siteDrawer.classList.toggle('open', open);
+      drawerBackdrop.classList.toggle('show', open);
+      drawerBackdrop.classList.toggle('active', open);
+    }
+    drawerToggleBtn.addEventListener('click', () => toggleDrawer(true));
+    drawerCloseBtn.addEventListener('click', () => toggleDrawer(false));
+    drawerBackdrop.addEventListener('click', () => toggleDrawer(false));
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      $('installPwaBtn').style.display = 'inline-flex';
+    });
+    $('installPwaBtn').addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+      } else {
+        showToast('ब्राउज़र मेन्यू से "Add to Home Screen" चुनें।');
+      }
+    });
+
+    // लोड होते ही इनिशियलाइज़
+    syncLibraryBadge();
+  </script>
 </body>
 </html>
