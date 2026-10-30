@@ -147,18 +147,18 @@
     .btn-refine { background: var(--accent); color: #000; border: none; font-size: 12px; font-weight: 800; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
 
     /* ===================================================
-       अल्ट्रा-मॉडर्न साइबर-मैट्रिक्स रिएक्टर लोडर (Non-Spinning)
+       अल्ट्रा-मॉडर्न साइबर-मैट्रिक्स रिएक्टर लोडर + लाइव टाइमर
        =================================================== */
     .forge-loader {
       position: absolute;
       inset: 0;
-      background: rgba(4, 7, 17, 0.96);
-      backdrop-filter: blur(12px);
+      background: rgba(4, 7, 17, 0.97);
+      backdrop-filter: blur(14px);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
       z-index: 25;
       overflow: hidden;
     }
@@ -182,8 +182,8 @@
 
     .matrix-reactor {
       position: relative;
-      width: 100px;
-      height: 100px;
+      width: 110px;
+      height: 110px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -191,49 +191,65 @@
     .reactor-grid {
       position: absolute;
       inset: 0;
-      border: 1px dashed rgba(56, 189, 248, 0.3);
-      border-radius: 20px;
-      animation: rotateFrame 12s linear infinite;
+      border: 1px dashed rgba(56, 189, 248, 0.35);
+      border-radius: 24px;
+      animation: rotateFrame 14s linear infinite;
     }
     .reactor-grid-inner {
       position: absolute;
-      inset: 12px;
-      border: 1px solid rgba(129, 140, 248, 0.4);
-      border-radius: 14px;
-      animation: rotateFrameRev 8s linear infinite;
+      inset: 14px;
+      border: 1px solid rgba(129, 140, 248, 0.45);
+      border-radius: 16px;
+      animation: rotateFrameRev 9s linear infinite;
     }
     @keyframes rotateFrame { 100% { transform: rotate(360deg); } }
     @keyframes rotateFrameRev { 100% { transform: rotate(-360deg); } }
 
     .reactor-core {
-      width: 44px;
-      height: 44px;
-      background: radial-gradient(circle, #38bdf8 0%, #0369a1 70%, transparent 100%);
+      width: 48px;
+      height: 48px;
+      background: radial-gradient(circle, #38bdf8 0%, #0284c7 70%, transparent 100%);
       border-radius: 50%;
-      box-shadow: 0 0 25px var(--accent), inset 0 0 10px #ffffff;
+      box-shadow: 0 0 30px var(--accent), inset 0 0 10px #ffffff;
       animation: corePulse 1.2s ease-in-out infinite alternate;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #040814;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 900;
     }
     @keyframes corePulse {
       0% { transform: scale(0.85); box-shadow: 0 0 15px var(--accent); }
-      100% { transform: scale(1.15); box-shadow: 0 0 35px #818cf8, 0 0 60px var(--accent-glow); }
+      100% { transform: scale(1.15); box-shadow: 0 0 40px #818cf8, 0 0 70px var(--accent-glow); }
+    }
+
+    /* लाइव टाइमर बैज */
+    .loader-timer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 13px;
+      font-weight: 800;
+      color: #facc15;
+      background: rgba(250, 204, 21, 0.1);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      padding: 4px 14px;
+      border-radius: 20px;
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.2);
     }
 
     .matrix-code-stream {
       font-family: ui-monospace, SFMono-Regular, monospace;
       font-size: 11px;
       color: #4ade80;
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.85);
       border: 1px solid var(--border);
       padding: 6px 14px;
       border-radius: 20px;
       letter-spacing: 0.5px;
-      min-width: 260px;
+      min-width: 270px;
       text-align: center;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
@@ -244,9 +260,11 @@
       color: var(--accent);
       text-shadow: 0 0 10px var(--accent-glow);
       letter-spacing: 0.5px;
+      text-align: center;
+      max-width: 340px;
     }
     .loader-progress-bar {
-      width: 240px;
+      width: 250px;
       height: 6px;
       background: rgba(255,255,255,0.08);
       border-radius: 6px;
@@ -401,7 +419,7 @@
       </div>
 
       <div class="canvas-container">
-        <!-- नया साइबर-रिएक्टर लोडर (गोल घूमने वाले पहिये की जगह) -->
+        <!-- साइबर-रिएक्टर लोडर + लाइव टाइमर -->
         <div class="forge-loader" id="forgeLoader">
           <div class="laser-scanner"></div>
           <div class="matrix-reactor">
@@ -409,8 +427,14 @@
             <div class="reactor-grid-inner"></div>
             <div class="reactor-core">⚡</div>
           </div>
-          <div class="matrix-code-stream" id="matrixCodeStream">INITIALIZING NEURAL FORGE...</div>
-          <div class="loader-step-text" id="loaderStepText">⚡ 1/4: आर्किटेक्चर व 3D इंजन तैयार हो रहा है...</div>
+          
+          <div class="loader-timer-badge">
+            <span>⏱️ बीता समय:</span>
+            <span id="elapsedTimerText">00:00s</span>
+          </div>
+
+          <div class="matrix-code-stream" id="matrixCodeStream">INITIALIZING DEEP SYNTHESIS...</div>
+          <div class="loader-step-text" id="loaderStepText">⚡ 1/4: भारी आर्किटेक्चर व 3D पाइपलाइन तैयार हो रही है...</div>
           <div class="loader-progress-bar">
             <div class="loader-progress-fill" id="loaderFill"></div>
           </div>
@@ -440,7 +464,7 @@
 
   <div class="toast" id="toastBox"></div>
 
-  <!-- स्मार्ट जावास्क्रिप्ट इंजन -->
+  <!-- स्मार्ट जावास्क्रिप्ट इंजन (Autonomous Self-Healing Loop + Live Timer) -->
   <script>
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
@@ -553,7 +577,35 @@
     });
 
     // ==================================================================
-    // स्मार्ट और सेफ़ एक्सट्रैक्टर: शुद्ध कोड बिना काटे अलग करना
+    // 1. डीप सिंटैक्स व पूर्णता चेकर (Check if Code is Complete)
+    // ==================================================================
+    function checkCodeCompleteness(rawText) {
+      if (!rawText.includes("===JS===")) return { complete: false, reason: "Missing ===JS=== section" };
+
+      const jsPart = rawText.split("===JS===")[1] || "";
+      const trimmed = jsPart.trim();
+
+      // क्या JS लूप या फंक्शन के बीच में ही कट गई?
+      const openBraces = (trimmed.match(/\{/g) || []).length;
+      const closeBraces = (trimmed.match(/\}/g) || []).length;
+      const openParens = (trimmed.match(/\(/g) || []).length;
+      const closeParens = (trimmed.match(/\)/g) || []).length;
+
+      // अगर ब्रैकेट्स में 2 से ज्यादा का अंतर है तो कोड निश्चित रूप से अधूरा है
+      if (openBraces > closeBraces + 1 || openParens > closeParens + 1) {
+        return { complete: false, reason: "Unclosed function/loop braces in JavaScript" };
+      }
+
+      // अगर आख़िरी लाइन अधूरी है (उदा: if (a या const x =)
+      if (/[+\-*\/=<>(,]\s*$/.test(trimmed) || /if\s*\([^)]*$/.test(trimmed)) {
+        return { complete: false, reason: "Truncated statement at the end of code" };
+      }
+
+      return { complete: true };
+    }
+
+    // ==================================================================
+    // 2. स्मार्ट एक्सट्रैक्टर: शुद्ध कोड बिना काटे अलग करना
     // ==================================================================
     function parseAndExtractModules(rawOutput) {
       let name = "Web Tool";
@@ -590,9 +642,12 @@
       pureCss = pureCss.replace(/^```css|^```|```$/gim, '').trim();
       pureJs = pureJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
 
-      // अगर JS बीच में किसी ब्रैकेट से कटी हो तो उसे सुरक्षित क्लोज़ करना
-      if (pureJs && !pureJs.trim().endsWith("}") && !pureJs.trim().endsWith(";")) {
-        pureJs += "\n/* Auto-recovered closure */\n});";
+      // ऑटो-रिकवरी ब्रैकेट क्लोजर
+      let openB = (pureJs.match(/\{/g) || []).length;
+      let closeB = (pureJs.match(/\}/g) || []).length;
+      while (openB > closeB) {
+        pureJs += "\n}";
+        closeB++;
       }
 
       let cleanHtmlTab = pureHtml;
@@ -689,14 +744,11 @@ ${pureHtml}
       });
     });
 
-    // ----------------------------------------------------
-    // लाइव टाइपराइटर इफ़ेक्ट (तेज़ और स्मूथ टाइपिंग)
-    // ----------------------------------------------------
     function runLiveTypewriter(text, onComplete) {
       const editor = $('termOutput');
       editor.value = '';
       let cursor = 0;
-      const chunkSize = Math.max(30, Math.floor(text.length / 70));
+      const chunkSize = Math.max(35, Math.floor(text.length / 65));
 
       function typeLoop() {
         if (cursor < text.length) {
@@ -713,13 +765,13 @@ ${pureHtml}
     }
 
     // ==================================================================
-    // ऑटो-स्टिच जनरेटर (Never-Truncate Infinite Engine)
+    // 3. सेल्फ-हीलिंग ऑटो-स्टिच इंजन (Auto-Checking & Infinite Continuation)
     // ==================================================================
-    async function callGeminiAutoStitch(modelName, query) {
+    async function callGeminiSelfHealing(modelName, query) {
       const key = getApiKey();
       const sys = `You are Nischay Forge Pro Engine. Build single-file 100% complete, fully working modern HTML5 web tools.
 CRITICAL HEAVY-DUTY RULES:
-1. When building 3D, physics, or complex interactive apps, you MUST use CDN libraries like Three.js ('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js') to avoid bloat.
+1. When building 3D, physics, games or complex interactive apps, you MUST use CDN libraries like Three.js ('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js') to avoid token exhaustion.
 2. Keep the code compact, production-grade, and free of unnecessary filler comments.
 3. Ensure JavaScript handles all controls (Keyboard, Touch/Swipe, Resizing) and closes every function cleanly.
 4. Strictly separate code using these exact delimiter tags:
@@ -734,53 +786,71 @@ CRITICAL HEAVY-DUTY RULES:
 
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
 
-      let conversationHistory = [
+      let conversation = [
         { role: 'user', parts: [{ text: `${sys}\n\nUser Demand: ${query}` }] }
       ];
 
-      const res = await fetch(endpoint, {
+      $('matrixCodeStream').textContent = 'PHASE 1: SYNTHESIZING BASE PIPELINE...';
+
+      let res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({
-          contents: conversationHistory,
+          contents: conversation,
           generationConfig: { maxOutputTokens: 8192, temperature: 0.15 }
         })
       });
 
-      const data = await res.json();
+      let data = await res.json();
       if (data.error) throw new Error(data.error.message || 'API Error');
 
-      const candidate = data.candidates[0];
+      let candidate = data.candidates[0];
       let fullText = candidate.content.parts[0].text;
+      let iterations = 0;
 
-      // अगर आउटपुट टोकन सीमा के कारण कटा हो, तो बैकग्राउंड में आगे का कोड मंगाकर जोड़ें
-      if (candidate.finishReason === 'MAX_TOKENS' || candidate.finishReason === 'LENGTH') {
-        $('matrixCodeStream').textContent = 'EXPANDING CODE BUFFER (STITCHING)...';
-        conversationHistory.push({ role: 'model', parts: [{ text: fullText }] });
-        conversationHistory.push({ role: 'user', parts: [{ text: 'Your response hit the token limit and was cut off. Continue writing the exact remaining code from the very last character. Do not repeat previous parts. Maintain tags.' }] });
+      // 4. बैकग्राउंड में गहराई से चेक करें: क्या कोड कटा है?
+      let check = checkCodeCompleteness(fullText);
+
+      while ((candidate.finishReason === 'MAX_TOKENS' || candidate.finishReason === 'LENGTH' || !check.complete) && iterations < 3) {
+        iterations++;
+        $('matrixCodeStream').textContent = `RECOVERY LOOP ACTIVE [${iterations}/3]: CONTINUING UNFINISHED CODE...`;
+        $('loaderStepText').textContent = `⚡ कोड का गहरा विश्लेषण हो रहा है... अधूरा हिस्सा जोड़ा जा रहा है (${iterations})`;
+
+        conversation.push({ role: 'model', parts: [{ text: fullText }] });
+        conversation.push({
+          role: 'user',
+          parts: [{ text: `WARNING: The generated code was cut off (${check.reason || 'Token Limit'}). Continue writing the EXACT remaining JavaScript code starting precisely from the very last character. Do NOT restart. Close all open loops and event listeners completely.` }]
+        });
 
         try {
           const contRes = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
             body: JSON.stringify({
-              contents: conversationHistory,
+              contents: conversation,
               generationConfig: { maxOutputTokens: 8192, temperature: 0.15 }
             })
           });
           const contData = await contRes.json();
           if (contData.candidates && contData.candidates[0].content.parts[0].text) {
+            candidate = contData.candidates[0];
             fullText += contData.candidates[0].content.parts[0].text;
+            check = checkCodeCompleteness(fullText);
+          } else {
+            break;
           }
-        } catch(contErr) {
-          console.warn('Auto-stitch continuation error:', contErr);
+        } catch (err) {
+          console.warn('Continuation error:', err);
+          break;
         }
       }
 
       return fullText;
     }
 
-    // मुख्य जेनरेशन प्रोसेस
+    // ==================================================================
+    // मुख्य बिल्ड प्रोसेस (लाइव टाइमर + ऑटो वेरिफिकेशन)
+    // ==================================================================
     async function executeBuild(customPrompt) {
       const q = customPrompt || $('promptInput').value.trim();
       if (!q) return;
@@ -798,34 +868,46 @@ CRITICAL HEAVY-DUTY RULES:
       const stepText = $('loaderStepText');
       const fill = $('loaderFill');
       const streamText = $('matrixCodeStream');
+      const timerEl = $('elapsedTimerText');
       loader.classList.add('is-active');
 
-      stepText.textContent = '⚡ 1/4: 3D आर्किटेक्चर व शेडर्स तैयार हो रहे हैं...';
-      fill.style.width = '25%';
-      streamText.textContent = 'LOADING PIPELINE :: THREE.JS & CANVASES';
+      // ⏱️ लाइव टाइमर शुरू
+      let secondsPassed = 0;
+      timerEl.textContent = '00:00s';
+      const liveTimerInterval = setInterval(() => {
+        secondsPassed++;
+        const mins = String(Math.floor(secondsPassed / 60)).padStart(2, '0');
+        const secs = String(secondsPassed % 60).padStart(2, '0');
+        timerEl.textContent = `${mins}:${secs}s`;
+      }, 1000);
+
+      stepText.textContent = '⚡ 1/4: भारी आर्किटेक्चर व 3D पाइपलाइन तैयार हो रही है...';
+      fill.style.width = '20%';
 
       const codeSnippets = [
-        'PARSING VECTORS & DEPTH BUFFER...',
-        'COMPUTING LIGHTING & RAYCASTING...',
-        'CONFIGURING TOUCH & SENSORS...',
-        'FINALIZING NEURAL REFINEMENT...'
+        'PARSING SHADERS & THREE.JS DEPTH...',
+        'INITIALIZING PHYSICS COLLISION BUFFERS...',
+        'CHECKING COMPLETENESS & SYNTAX STITCHING...',
+        'VERIFYING EVENT LISTENERS & TOUCH CONTROLS...',
+        'RUNNING AUTONOMOUS QUALITY CHECKS...'
       ];
       let snipIdx = 0;
       const streamInterval = setInterval(() => {
         snipIdx = (snipIdx + 1) % codeSnippets.length;
         streamText.textContent = codeSnippets[snipIdx];
-      }, 900);
+      }, 1200);
 
-      setTimeout(() => { stepText.textContent = '⚙️ 2/4: HTML, CSS और JS अलग-अलग प्रोसेस हो रहे हैं...'; fill.style.width = '55%'; }, 1800);
-      setTimeout(() => { stepText.textContent = '🎨 3/4: रिस्पॉन्सिव कंट्रोल्स और लूप्स तैयार हैं...'; fill.style.width = '80%'; }, 3600);
+      setTimeout(() => { stepText.textContent = '⚙️ 2/4: HTML, CSS और भारी लॉजिक अलग-अलग कंपाइल हो रहा है...'; fill.style.width = '50%'; }, 2500);
+      setTimeout(() => { stepText.textContent = '🎨 3/4: बैकग्राउंड वेरिफिकेशन व कोड सिलाई जारी है...'; fill.style.width = '75%'; }, 6000);
 
       let rawResponse = "";
       try {
-        rawResponse = await callGeminiAutoStitch(PRIMARY_MODEL, q);
+        rawResponse = await callGeminiSelfHealing(PRIMARY_MODEL, q);
       } catch (err) {
         try {
-          rawResponse = await callGeminiAutoStitch(BACKUP_MODEL, q);
+          rawResponse = await callGeminiSelfHealing(BACKUP_MODEL, q);
         } catch (bErr) {
+          clearInterval(liveTimerInterval);
           clearInterval(streamInterval);
           loader.classList.remove('is-active');
           promptBox.classList.remove('building');
@@ -837,6 +919,11 @@ CRITICAL HEAVY-DUTY RULES:
       }
 
       clearInterval(streamInterval);
+      clearInterval(liveTimerInterval);
+
+      stepText.textContent = '✨ 4/4: 100% पूरा कोड असेंबल हो चुका है! लाइव टाइप हो रहा है...';
+      fill.style.width = '100%';
+      streamText.textContent = `VERIFIED COMPLETE IN ${timerEl.textContent} 🚀`;
 
       const extracted = parseAndExtractModules(rawResponse);
 
@@ -856,14 +943,8 @@ CRITICAL HEAVY-DUTY RULES:
       $('toolActionBtns').style.display = 'flex';
       $('refineBox').classList.add('is-visible');
 
-      stepText.textContent = '✨ 4/4: लाइव कोड टाइप हो रहा है...';
-      fill.style.width = '100%';
-      streamText.textContent = 'COMPILATION COMPLETE 100%';
-
-      // 1. एक्टिव टैब (HTML) पर स्विच करें
       switchTab('html');
 
-      // 2. कोड को रियल-टाइम लाइव टाइप करवाएँ और फिर स्मूथली कैनवस पर दिखाएँ
       runLiveTypewriter(codeModules.html, () => {
         loader.classList.remove('is-active');
         promptBox.classList.remove('building');
@@ -880,7 +961,7 @@ CRITICAL HEAVY-DUTY RULES:
 
         btn.disabled = false;
         btn.querySelector('span').textContent = 'बनाइए';
-        showToast(activeTool.name + ' पूरी तरह तैयार है! 🚀');
+        showToast(`${activeTool.name} पूरी तरह तैयार (${timerEl.textContent})! 🚀`);
       });
     }
 
