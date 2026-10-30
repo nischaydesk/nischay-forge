@@ -44,7 +44,7 @@
     body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background 0.25s ease, color 0.25s ease; }
 
     /* ===================================================
-       2. फुल-स्क्रीन गेट स्टार्टेड स्क्रीन (Auto-Typewriter)
+       2. फुल-स्क्रीन गेट स्टार्टेड स्क्रीन
        =================================================== */
     #welcomeScreen {
       position: fixed;
@@ -208,7 +208,6 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.06);
     }
 
-    /* प्रॉम्प्ट कार्ड */
     .prompt-label { font-size: 14px; font-weight: 700; color: var(--text); display: block; margin-bottom: 10px; }
     textarea.prompt-text {
       width: 100%;
@@ -246,7 +245,7 @@
     .chip { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; padding: 6px 12px; border-radius: 20px; white-space: nowrap; cursor: pointer; }
     .chip:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* टर्मिनल स्क्रीन और कॉपी बटन */
+    /* टर्मिनल स्क्रीन */
     .terminal-box {
       background: #040711;
       border: 1px solid var(--border);
@@ -273,9 +272,9 @@
     }
     .btn-copy-code:hover { background: #38bdf8; color: #040814; }
 
-    .terminal-code { padding: 12px; max-height: 120px; overflow-y: auto; white-space: pre-wrap; line-height: 1.5; color: #4ade80; }
+    .terminal-code { padding: 12px; max-height: 160px; overflow-y: auto; white-space: pre-wrap; line-height: 1.5; color: #4ade80; }
 
-    /* प्रीव्यू कार्ड और लोडर */
+    /* प्रीव्यू कार्ड */
     .preview-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .preview-title-text { font-size: 15px; font-weight: 800; color: var(--accent); }
     .preview-btn-group { display: flex; gap: 6px; }
@@ -293,7 +292,7 @@
     .empty-canvas { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-muted); text-align: center; padding: 20px; }
     .empty-canvas span { font-size: 34px; }
 
-    /* लाइव साइबरपंक लोडिंग एनीमेशन */
+    /* लाइव लोडर */
     .forge-loader {
       position: absolute;
       inset: 0;
@@ -516,8 +515,7 @@
 
   <!-- ===================================================
        8. जावास्क्रिप्ट लॉजिक
-       =================================================== */
-  -->
+       =================================================== -->
   <script>
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
@@ -658,7 +656,7 @@
       });
     });
 
-    // कोड कॉपी बटन
+    // 7. कोड कॉपी बटन (पूरा 100% कोड कॉपी होगा)
     $('btnCopyCode').addEventListener('click', () => {
       if (!activeTool || !activeTool.html) {
         showToast('पहले कोई टूल बनने दीजिए!');
@@ -671,15 +669,16 @@
       });
     });
 
-    // 7. AI रिक्वेस्ट इंजन (QR / इमेज डाउनलोड के लिए सख्त नियम के साथ)
+    // 8. AI इंजन कॉल (maxOutputTokens: 8192 ताकि कोड कभी अधूरा न छूटे)
     async function requestGemini(modelName, query) {
       const key = getApiKey();
-      const sys = `You are Nischay Forge AI Engine. Create single-file 100% working, modern, complete HTML5 web tools based on user demand.
+      const sys = `You are Nischay Forge AI Engine. Create single-file 100% complete, fully working, modern HTML5 web tools based on user demand.
 CRITICAL RULES:
-1. Include <meta charset="UTF-8"> and <meta name="viewport" content="width=device-width, initial-scale=1.0"> in <head>.
-2. Put all CSS in <style> and JS in <script>. Never link external CSS files.
-3. If the tool generates QR Code or Image or Canvas: The download button MUST download a real PNG image file using canvas.toDataURL('image/png') or Blob, downloading "qrcode.png". NEVER trigger page reload or HTML download for QR code.
-4. Return STRICT JSON ONLY:
+1. Always generate the COMPLETE code down to </html>. Never truncate or leave unclosed tags.
+2. Include <meta charset="UTF-8"> and <meta name="viewport" content="width=device-width, initial-scale=1.0"> in <head>.
+3. Put all CSS in <style> and all JavaScript logic in <script>. Never link external CSS files.
+4. If generating QR Code or Image or Canvas: The download button MUST download a real PNG image file using canvas.toDataURL('image/png') or Blob, downloading "qrcode.png".
+5. Return STRICT JSON ONLY:
 {"cleanName": "Tool Short Name", "htmlCode": "<!DOCTYPE html>..."}`;
 
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
@@ -693,7 +692,10 @@ CRITICAL RULES:
         },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: `${sys}\n\nDemand: ${query}` }] }],
-          generationConfig: { response_mime_type: "application/json" }
+          generationConfig: {
+            response_mime_type: "application/json",
+            maxOutputTokens: 8192
+          }
         })
       });
 
@@ -702,21 +704,23 @@ CRITICAL RULES:
       return JSON.parse(data.candidates[0].content.parts[0].text);
     }
 
-    // 8. टाइपराइटर इफ़ेक्ट
+    // 9. टाइपराइटर इफ़ेक्ट (पूरा 100% कोड बिना काटे टाइप करेगा)
     function typewriter(code, cb) {
       const out = $('termOutput');
       $('termStatus').textContent = 'FORGING';
       out.textContent = '';
       let i = 0;
-      const step = Math.max(1, Math.floor(code.length / 60));
-      const clip = code.length > 2500 ? code.slice(0, 2500) + '\n\n// ...Ready' : code;
+      // बड़े कोड को तेज़ी से और पूरा रेंडर करने के लिए डायनामिक स्टेप
+      const step = Math.max(15, Math.floor(code.length / 90));
+
       function loop() {
-        if (i < clip.length) {
-          out.textContent += clip.slice(i, i + step);
+        if (i < code.length) {
+          out.textContent += code.slice(i, i + step);
           i += step;
+          out.scrollTop = out.scrollHeight; // ऑटो-स्क्रॉल
           requestAnimationFrame(loop);
         } else {
-          out.textContent = clip;
+          out.textContent = code; // पूरा कोड अंतिम रूप से पक्का करें
           $('termStatus').textContent = 'READY';
           cb();
         }
@@ -724,7 +728,7 @@ CRITICAL RULES:
       loop();
     }
 
-    // 9. जेनरेशन प्रोसेस (लाइव 4-स्टेप लोडिंग एनीमेशन)
+    // 10. जेनरेशन प्रोसेस
     async function executeBuild() {
       const q = $('promptInput').value.trim();
       if (!q) return;
@@ -742,7 +746,7 @@ CRITICAL RULES:
       fill.style.width = '25%';
 
       const stepTimer1 = setTimeout(() => {
-        stepText.textContent = '⚙️ 2/4: HTML, CSS और लॉजिक तैयार हो रहा है...';
+        stepText.textContent = '⚙️ 2/4: पूरा HTML, CSS और लॉजिक तैयार हो रहा है...';
         fill.style.width = '55%';
       }, 1500);
 
@@ -792,14 +796,14 @@ CRITICAL RULES:
           frame.srcdoc = activeTool.html;
           btn.disabled = false;
           btn.querySelector('span').textContent = 'बनाइए';
-          showToast(activeTool.name + ' तैयार है! 🚀');
+          showToast(activeTool.name + ' पूरी तरह तैयार है! 🚀');
         });
-      }, 400);
+      }, 300);
     }
 
     $('generateBtn').addEventListener('click', executeBuild);
 
-    // 10. फुलस्क्रीन व्यू
+    // 11. इन-ऐप फुलस्क्रीन व्यू
     $('btnOpenFull').addEventListener('click', () => {
       if (!activeTool) return;
       $('fullModalTitle').textContent = activeTool.name;
@@ -811,7 +815,7 @@ CRITICAL RULES:
       $('fullFrame').srcdoc = '';
     });
 
-    // 11. शुद्ध HTML डाउनलोड
+    // 12. शुद्ध HTML डाउनलोड
     $('btnDownloadTool').addEventListener('click', () => {
       if (!activeTool) return;
       const blob = new Blob([activeTool.html], { type: 'text/html;charset=utf-8' });
@@ -824,7 +828,7 @@ CRITICAL RULES:
       showToast('टूल HTML डाउनलोड हो गया! 📥');
     });
 
-    // 12. लाइब्रेरी स्टोरेज
+    // 13. लाइब्रेरी स्टोरेज
     function getStoredTools() { return JSON.parse(localStorage.getItem('nischay_forge_tools') || '[]'); }
     function syncBadge() { $('libraryCount').textContent = getStoredTools().length; }
     syncBadge();
@@ -838,7 +842,7 @@ CRITICAL RULES:
       showToast('लाइब्रेरी में सेव हो गया! ⭐');
     });
 
-    // 13. वॉइस पहचान (सिर्फ टाइप करेगा, अपने-आप सबमिट नहीं करेगा)
+    // 14. वॉइस पहचान
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SR) {
       const rec = new SR();
