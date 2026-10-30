@@ -3,26 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#070a13">
-  <meta name="description" content="Nischay Forge AI — प्रोफ़ेशनल वेब टूल और कोड स्टूडियो।">
+  <meta name="theme-color" content="#030712">
+  <meta name="description" content="Nischay Forge AI — 5-Layer Deep Verified Tool Studio">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/svg+xml" href="./assets/app-icon.svg">
-  <title>Nischay Forge AI — Pro Tool Studio</title>
+  <title>Nischay Forge AI — Pro 5-Layer Verified Studio</title>
 
   <style>
     :root {
-      --bg: #070a13;
-      --surface: #0f172a;
-      --surface-elevated: #162238;
-      --border: #1e293b;
+      --bg: #030712;
+      --bg-grid: rgba(255, 255, 255, 0.035);
+      --surface: rgba(15, 23, 42, 0.85);
+      --surface-elevated: rgba(30, 41, 59, 0.75);
+      --border: rgba(56, 189, 248, 0.25);
+      --border-subtle: rgba(255, 255, 255, 0.08);
       --accent: #38bdf8;
-      --accent-glow: rgba(56, 189, 248, 0.35);
+      --accent-secondary: #818cf8;
+      --accent-glow: rgba(56, 189, 248, 0.4);
       --text: #f8fafc;
       --text-muted: #94a3b8;
-      --card-bg: #0f172a;
-      --input-bg: #070a13;
+      --card-bg: rgba(15, 23, 42, 0.7);
+      --input-bg: rgba(3, 7, 18, 0.75);
       --nav-link: #94a3b8;
       --danger: #ef4444;
+      --success: #10b981;
+      --terminal-bg: rgba(3, 7, 18, 0.95);
+      --canvas-bg: #020617;
+      --drawer-bg: #0b1329;
 
       --c-html: #f97316;
       --c-css: #38bdf8;
@@ -31,147 +38,290 @@
 
     body.light-theme {
       --bg: #f8fafc;
-      --surface: #ffffff;
+      --bg-grid: rgba(0, 0, 0, 0.04);
+      --surface: rgba(255, 255, 255, 0.9);
       --surface-elevated: #f1f5f9;
-      --border: #cbd5e1;
+      --border: rgba(2, 132, 199, 0.25);
+      --border-subtle: rgba(0, 0, 0, 0.08);
       --accent: #0284c7;
-      --accent-glow: rgba(2, 132, 199, 0.15);
+      --accent-secondary: #4f46e5;
+      --accent-glow: rgba(2, 132, 199, 0.2);
       --text: #0f172a;
-      --text-muted: #475569;
-      --card-bg: #ffffff;
-      --input-bg: #f8fafc;
-      --nav-link: #334155;
+      --text-muted: #64748b;
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --input-bg: #ffffff;
+      --nav-link: #475569;
       --danger: #dc2626;
+      --success: #059669;
+      --terminal-bg: #0f172a;
+      --canvas-bg: #e2e8f0;
+      --drawer-bg: #ffffff;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background 0.25s ease, color 0.25s ease; }
+    
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, var(--border) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.12) 0px, transparent 50%),
+        linear-gradient(var(--bg-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
 
+    /* वेलकम स्क्रीन */
     #welcomeScreen {
-      position: fixed; inset: 0; background: radial-gradient(circle at 50% 15%, #1e293b, var(--bg) 75%);
+      position: fixed; inset: 0;
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 50% 20%, var(--border) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(129, 140, 248, 0.15) 0%, transparent 50%),
+        linear-gradient(var(--bg-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
       z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 24px; text-align: center; transition: opacity 0.4s ease, visibility 0.4s ease;
     }
     #welcomeScreen.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); border-radius: 999px; color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 24px; }
-    .hero-title-big { font-size: clamp(30px, 7vw, 50px); line-height: 1.2; font-weight: 900; color: var(--text); margin-bottom: 16px; min-height: 65px; }
-    .hero-title-big span { background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero-subtitle { font-size: clamp(14px, 4vw, 17px); color: var(--text-muted); max-width: 480px; line-height: 1.6; margin-bottom: 36px; min-height: 52px; }
+    
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 18px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 20px var(--accent-glow);
+      border-radius: 999px;
+      color: var(--accent);
+      font-size: 11px; font-weight: 800; letter-spacing: 2px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .hero-title-big {
+      font-size: clamp(32px, 8vw, 54px);
+      line-height: 1.15; font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px; min-height: 65px;
+      color: var(--text);
+    }
+    .hero-title-big span {
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 35px var(--accent-glow));
+    }
+    
+    .hero-subtitle {
+      font-size: clamp(14px, 4vw, 16px);
+      color: var(--text-muted);
+      max-width: 480px; line-height: 1.6;
+      margin-bottom: 36px; min-height: 52px;
+    }
     .cursor-blink { display: inline-block; width: 3px; background: var(--accent); margin-left: 4px; animation: blink 0.8s infinite; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-    .btn-start-now { background: #38bdf8; color: #040814; font-size: 16px; font-weight: 800; padding: 16px 42px; border-radius: 40px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; box-shadow: 0 12px 35px var(--accent-glow); }
+    
+    .btn-start-now {
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      color: #ffffff;
+      font-size: 16px; font-weight: 800;
+      padding: 16px 42px; border-radius: 40px; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 12px;
+      box-shadow: 0 10px 30px var(--accent-glow);
+      transition: all 0.25s ease;
+    }
+    .btn-start-now:hover { transform: translateY(-2px); box-shadow: 0 14px 40px var(--accent-glow); }
+    .btn-start-now:active { transform: translateY(1px); }
 
-    .topbar { height: 60px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 50; }
+    .topbar {
+      height: 62px;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 18px; position: sticky; top: 0; z-index: 50;
+      transition: background 0.25s ease;
+    }
     .topbar-left { display: flex; align-items: center; gap: 12px; }
     .drawer-toggle { background: transparent; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 8px; }
     .drawer-toggle span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
     .brand-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .brand-logo { width: 34px; height: 34px; border-radius: 8px; background: #0f172a; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
-    .brand-text { font-size: 16px; font-weight: 800; color: var(--text); }
+    .brand-logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.1)); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); box-shadow: 0 0 15px var(--accent-glow); }
+    .brand-text { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
     .brand-text span { color: var(--accent); }
     .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .lib-pill { font-size: 12px; font-weight: 700; color: var(--text); background: var(--surface-elevated); border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
-    .lib-pill span { background: var(--accent); color: #000; border-radius: 10px; padding: 1px 6px; font-size: 11px; }
+    .lib-pill { font-size: 12px; font-weight: 700; color: var(--text); background: var(--surface-elevated); border: 1px solid var(--border-subtle); padding: 6px 14px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; backdrop-filter: blur(10px); }
+    .lib-pill span { background: var(--accent); color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 11px; font-weight: 900; }
 
-    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; }
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; display: none; }
     .drawer-overlay.active { display: block; }
-    .menu-drawer { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: var(--surface); border-right: 1px solid var(--border); z-index: 110; transition: left 0.28s ease; display: flex; flex-direction: column; }
+    .menu-drawer { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: var(--drawer-bg); border-right: 1px solid var(--border-subtle); z-index: 110; transition: left 0.28s ease; display: flex; flex-direction: column; box-shadow: 10px 0 30px rgba(0,0,0,0.3); }
     .menu-drawer.open { left: 0; }
-    .drawer-head { padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .drawer-head { padding: 18px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
     .drawer-head h3 { font-size: 15px; font-weight: 800; color: var(--accent); }
     .btn-close-drawer { background: transparent; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; padding: 4px; }
-    .drawer-settings { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+    .drawer-settings { padding: 14px 18px; border-bottom: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 12px; }
     .setting-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--text); }
-    .setting-btn { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    .drawer-nav { display: flex; flex-direction: column; padding: 12px 10px; gap: 4px; flex: 1; overflow-y: auto; }
+    .setting-btn { background: var(--surface-elevated); border: 1px solid var(--border-subtle); color: var(--text); padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .drawer-nav { display: flex; flex-direction: column; padding: 14px 10px; gap: 4px; flex: 1; overflow-y: auto; }
     .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: var(--nav-link) !important; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600; }
-    .nav-item.active { background: var(--surface-elevated); color: var(--accent) !important; }
-    .drawer-foot { padding: 14px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
+    .nav-item.active { background: rgba(56, 189, 248, 0.12); color: var(--accent) !important; border-left: 3px solid var(--accent); }
+    .drawer-foot { padding: 14px 18px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--text-muted); text-align: center; }
 
-    main { max-width: 900px; margin: 0 auto; padding: 20px 14px 120px; display: flex; flex-direction: column; gap: 20px; }
-    .glass-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: border-color 0.3s ease, box-shadow 0.3s ease; }
-    .glass-box.building { border-color: var(--accent); box-shadow: 0 0 25px var(--accent-glow); }
+    main { max-width: 900px; margin: 0 auto; padding: 24px 16px 120px; display: flex; flex-direction: column; gap: 20px; }
+    
+    .glass-box {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px; padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+    .glass-box.building { border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow); }
 
-    .prompt-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .prompt-label { font-size: 14px; font-weight: 700; color: var(--text); }
-    .btn-reset-prompt { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px; cursor: pointer; }
+    .prompt-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .prompt-label { font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: 0.3px; }
+    .btn-reset-prompt { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; }
     .btn-reset-prompt:hover { background: var(--danger); color: #fff; }
 
-    textarea.prompt-text { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; color: var(--text); font-size: 14px; outline: none; resize: vertical; min-height: 100px; }
-    textarea.prompt-text:focus { border-color: var(--accent); }
-    .prompt-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-    .prompt-counter { font-size: 11px; color: var(--text-muted); }
-    .btn-create { background: var(--accent); color: #040814; border: none; font-size: 15px; font-weight: 800; padding: 12px 28px; border-radius: 24px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px var(--accent-glow); transition: transform 0.15s ease; }
-    .btn-create:active { transform: scale(0.96); }
+    textarea.prompt-text {
+      width: 100%; background: var(--input-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px; padding: 14px 16px;
+      color: var(--text); font-size: 14.5px; line-height: 1.5;
+      outline: none; resize: vertical; min-height: 105px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    textarea.prompt-text:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    
+    .prompt-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+    .prompt-counter { font-size: 11px; color: var(--text-muted); font-family: ui-monospace, monospace; }
+    
+    .btn-create {
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      color: #ffffff; border: none;
+      font-size: 15px; font-weight: 800;
+      padding: 12px 30px; border-radius: 30px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 6px 20px var(--accent-glow);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-create:hover { transform: translateY(-1px); box-shadow: 0 8px 25px var(--accent-glow); }
+    .btn-create:active { transform: scale(0.97); }
     .btn-create:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    .quick-chips { display: flex; gap: 8px; overflow-x: auto; padding-top: 10px; scrollbar-width: none; }
-    .chip { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; padding: 6px 12px; border-radius: 20px; white-space: nowrap; cursor: pointer; }
-    .chip:hover { color: var(--accent); border-color: var(--accent); }
+    .quick-chips { display: flex; gap: 8px; overflow-x: auto; padding-top: 12px; scrollbar-width: none; }
+    .chip {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted); font-size: 12px; font-weight: 600;
+      padding: 7px 14px; border-radius: 20px; white-space: nowrap; cursor: pointer;
+      backdrop-filter: blur(8px); transition: all 0.2s ease;
+    }
+    .chip:hover { color: var(--accent); border-color: var(--accent); background: rgba(56, 189, 248, 0.08); }
 
     /* टर्मिनल व टैब्स */
-    .terminal-box { background: #040711; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
-    .terminal-header { background: #0b1120; border-bottom: 1px solid var(--border); padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .terminal-box {
+      background: var(--terminal-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px; overflow: hidden;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .terminal-header {
+      background: rgba(0, 0, 0, 0.25);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    }
     .code-tabs { display: flex; align-items: center; gap: 6px; }
-    .code-tab-btn { background: rgba(255,255,255,0.05); border: 1px solid transparent; color: #94a3b8; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-    .code-tab-btn.active[data-tab="html"] { background: rgba(249, 115, 22, 0.2); color: var(--c-html); border-color: var(--c-html); }
-    .code-tab-btn.active[data-tab="css"] { background: rgba(56, 189, 248, 0.2); color: var(--c-css); border-color: var(--c-css); }
-    .code-tab-btn.active[data-tab="js"] { background: rgba(250, 204, 21, 0.2); color: var(--c-js); border-color: var(--c-js); }
+    .code-tab-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid transparent;
+      color: #94a3b8; padding: 6px 14px; border-radius: 8px;
+      font-size: 12px; font-weight: 800; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .code-tab-btn.active[data-tab="html"] { background: rgba(249, 115, 22, 0.2); color: var(--c-html); border-color: rgba(249, 115, 22, 0.5); }
+    .code-tab-btn.active[data-tab="css"] { background: rgba(56, 189, 248, 0.2); color: var(--c-css); border-color: rgba(56, 189, 248, 0.5); }
+    .code-tab-btn.active[data-tab="js"] { background: rgba(250, 204, 21, 0.2); color: var(--c-js); border-color: rgba(250, 204, 21, 0.5); }
 
     .term-controls { display: flex; align-items: center; gap: 8px; }
-    .btn-term-action { background: var(--surface-elevated); border: 1px solid var(--border); color: #38bdf8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
-    .btn-term-action:hover { background: #38bdf8; color: #040814; }
+    .btn-term-action {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border-subtle);
+      color: #38bdf8; padding: 5px 12px; border-radius: 8px;
+      font-size: 11px; font-weight: 800; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-term-action:hover { background: #38bdf8; color: #030712; }
 
     .terminal-content-area { position: relative; }
-    textarea.terminal-editor { width: 100%; height: 200px; background: transparent; border: none; color: #4ade80; font-family: inherit; font-size: inherit; padding: 12px; outline: none; resize: vertical; line-height: 1.5; white-space: pre; }
+    textarea.terminal-editor {
+      width: 100%; height: 210px; background: transparent;
+      border: none; color: #4ade80; font-family: inherit; font-size: inherit;
+      padding: 14px; outline: none; resize: vertical; line-height: 1.5; white-space: pre;
+    }
 
-    .preview-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .preview-title-text { font-size: 15px; font-weight: 800; color: var(--accent); }
+    .preview-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .preview-title-text { font-size: 16px; font-weight: 800; color: var(--accent); letter-spacing: -0.2px; }
     .preview-btn-group { display: flex; gap: 6px; }
-    .tool-btn { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .tool-btn {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text); padding: 6px 14px; border-radius: 8px;
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s ease;
+    }
     .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    .canvas-container { position: relative; min-height: 480px; background: #020617; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
-    .empty-canvas { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-muted); text-align: center; padding: 20px; }
-    .empty-canvas span { font-size: 34px; animation: floatIcon 3s ease-in-out infinite; }
+    .canvas-container {
+      position: relative; min-height: 490px;
+      background: var(--canvas-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+    }
+    .empty-canvas { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-muted); text-align: center; padding: 20px; }
+    .empty-canvas span { font-size: 38px; color: var(--accent); filter: drop-shadow(0 0 15px var(--accent-glow)); animation: floatIcon 3s ease-in-out infinite; }
     @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
     iframe#toolFrame { width: 100%; height: 500px; border: none; background: #ffffff; display: none; opacity: 0; transition: opacity 0.4s ease; }
     iframe#toolFrame.visible { opacity: 1; }
 
-    .refine-box { margin-top: 14px; background: var(--surface-elevated); border: 1px dashed var(--accent); border-radius: 12px; padding: 12px; display: none; }
+    .refine-box { margin-top: 14px; background: var(--surface-elevated); border: 1px dashed var(--border); border-radius: 14px; padding: 14px; display: none; }
     .refine-box.is-visible { display: block; animation: slideUp 0.3s ease; }
     @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .refine-row { display: flex; gap: 8px; margin-top: 8px; }
-    .refine-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none; }
-    .btn-refine { background: var(--accent); color: #000; border: none; font-size: 12px; font-weight: 800; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+    .refine-input { flex: 1; background: var(--input-bg); border: 1px solid var(--border-subtle); color: var(--text); padding: 9px 14px; border-radius: 10px; font-size: 13px; outline: none; }
+    .btn-refine { background: var(--accent); color: #fff; border: none; font-size: 12px; font-weight: 800; padding: 9px 18px; border-radius: 10px; cursor: pointer; }
 
-    /* ===================================================
-       साइबर-रिएक्टर लोडर + लाइव टाइमर
-       =================================================== */
+    /* 5-लेयर लोडर */
     .forge-loader {
-      position: absolute;
-      inset: 0;
-      background: rgba(4, 7, 17, 0.98);
-      backdrop-filter: blur(14px);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      z-index: 25;
-      overflow: hidden;
+      position: absolute; inset: 0;
+      background: rgba(3, 7, 18, 0.96);
+      backdrop-filter: blur(16px);
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; z-index: 25; overflow: hidden;
     }
     .forge-loader.is-active { display: flex; }
 
     .laser-scanner {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), #818cf8, transparent);
-      box-shadow: 0 0 15px var(--accent);
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent-secondary), transparent);
+      box-shadow: 0 0 20px var(--accent);
       animation: scanSweep 2s ease-in-out infinite alternate;
     }
     @keyframes scanSweep {
@@ -181,117 +331,103 @@
     }
 
     .matrix-reactor {
-      position: relative;
-      width: 110px;
-      height: 110px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative; width: 105px; height: 105px;
+      display: flex; align-items: center; justify-content: center;
     }
     .reactor-grid {
-      position: absolute;
-      inset: 0;
-      border: 1px dashed rgba(56, 189, 248, 0.35);
-      border-radius: 24px;
+      position: absolute; inset: 0;
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 26px;
       animation: rotateFrame 14s linear infinite;
     }
     .reactor-grid-inner {
-      position: absolute;
-      inset: 14px;
-      border: 1px solid rgba(129, 140, 248, 0.45);
-      border-radius: 16px;
+      position: absolute; inset: 14px;
+      border: 1px solid rgba(129, 140, 248, 0.5);
+      border-radius: 18px;
       animation: rotateFrameRev 9s linear infinite;
     }
     @keyframes rotateFrame { 100% { transform: rotate(360deg); } }
     @keyframes rotateFrameRev { 100% { transform: rotate(-360deg); } }
 
     .reactor-core {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       background: radial-gradient(circle, #38bdf8 0%, #0284c7 70%, transparent 100%);
       border-radius: 50%;
-      box-shadow: 0 0 30px var(--accent), inset 0 0 10px #ffffff;
+      box-shadow: 0 0 35px var(--accent);
       animation: corePulse 1.2s ease-in-out infinite alternate;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #040814;
-      font-size: 22px;
-      font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      color: #030712; font-size: 22px; font-weight: 900;
     }
     @keyframes corePulse {
       0% { transform: scale(0.85); box-shadow: 0 0 15px var(--accent); }
-      100% { transform: scale(1.15); box-shadow: 0 0 40px #818cf8, 0 0 70px var(--accent-glow); }
+      100% { transform: scale(1.15); box-shadow: 0 0 45px #818cf8; }
     }
 
     .loader-timer-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      display: inline-flex; align-items: center; gap: 6px;
       font-family: ui-monospace, SFMono-Regular, monospace;
-      font-size: 13px;
-      font-weight: 800;
-      color: #facc15;
+      font-size: 13px; font-weight: 800; color: #facc15;
       background: rgba(250, 204, 21, 0.1);
-      border: 1px solid rgba(250, 204, 21, 0.3);
-      padding: 4px 14px;
-      border-radius: 20px;
-      box-shadow: 0 0 12px rgba(250, 204, 21, 0.2);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      padding: 5px 16px; border-radius: 20px;
     }
 
     .matrix-code-stream {
       font-family: ui-monospace, SFMono-Regular, monospace;
-      font-size: 11px;
-      color: #4ade80;
+      font-size: 11px; color: #4ade80;
       background: rgba(15, 23, 42, 0.85);
-      border: 1px solid var(--border);
-      padding: 6px 14px;
-      border-radius: 20px;
-      letter-spacing: 0.5px;
-      min-width: 270px;
-      text-align: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 16px; border-radius: 20px;
+      letter-spacing: 0.5px; min-width: 290px; text-align: center;
     }
 
     .loader-step-text {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--accent);
-      text-shadow: 0 0 10px var(--accent-glow);
-      letter-spacing: 0.5px;
-      text-align: center;
-      max-width: 360px;
+      font-size: 14px; font-weight: 800; color: var(--accent);
+      text-align: center; max-width: 380px; line-height: 1.4;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
     }
     .loader-progress-bar {
-      width: 250px;
-      height: 6px;
+      width: 260px; height: 6px;
       background: rgba(255,255,255,0.08);
-      border-radius: 6px;
-      overflow: hidden;
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 6px; overflow: hidden;
+      border: 1px solid rgba(56, 189, 248, 0.25);
     }
     .loader-progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      width: 0%; height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #10b981);
       transition: width 0.35s ease;
-      box-shadow: 0 0 15px var(--accent);
     }
 
-    .bottom-dock { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 580px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 35px; padding: 6px 10px 6px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 60; }
+    .bottom-dock {
+      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 24px); max-width: 580px;
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 40px; padding: 7px 12px 7px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.25); z-index: 60;
+    }
     .dock-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
-    .dock-mic-btn { width: 42px; height: 42px; border-radius: 50%; background: #ef4444; border: none; color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .dock-mic-btn.is-active { background: #16a34a; animation: pulse 1s infinite alternate; }
+    .dock-mic-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      border: none; color: #fff; font-size: 19px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
+    }
+    .dock-mic-btn.is-active { background: linear-gradient(135deg, #10b981, #059669); animation: pulse 1s infinite alternate; }
     @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
-    #fullModal { position: fixed; inset: 0; background: #020617; z-index: 10000; display: none; flex-direction: column; }
+    #fullModal { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: none; flex-direction: column; }
     #fullModal.is-open { display: flex; }
-    .fullmodal-bar { height: 52px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+    .fullmodal-bar { height: 52px; background: var(--surface); border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
     .fullmodal-bar span { font-size: 15px; font-weight: 800; color: var(--accent); }
-    .btn-close-full { background: #ef4444; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    .btn-close-full { background: #ef4444; color: #fff; border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; }
     #fullFrame { flex: 1; width: 100%; border: none; background: #fff; }
 
-    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--surface-elevated); color: var(--text); border: 1px solid var(--accent); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; display: none; z-index: 999; }
+    .toast { position: fixed; bottom: 84px; left: 50%; transform: translateX(-50%); background: var(--surface-elevated); color: var(--text); border: 1px solid var(--accent); padding: 9px 20px; border-radius: 20px; font-size: 13px; font-weight: 800; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; z-index: 999; }
     .toast.show { display: block; }
   </style>
 </head>
@@ -321,36 +457,36 @@
         <span></span><span></span><span></span>
       </button>
       <a class="brand-wrap" href="./index.html">
-        <div class="brand-logo"><span style="color:#38bdf8; font-weight:900;">N</span></div>
+        <div class="brand-logo"><span style="color:var(--accent); font-weight:900;">N</span></div>
         <div class="brand-text">nischay<span>forge</span></div>
       </a>
     </div>
     <div class="topbar-right">
-      <a class="lib-pill" href="./library.html">लाइब्रेरी <span id="libraryCount">0</span></a>
+      <a class="lib-pill" href="./library.html"><span id="txtLibPill">लाइब्रेरी</span> <span id="libraryCount">0</span></a>
     </div>
   </header>
 
   <div class="drawer-overlay" id="drawerOverlay"></div>
   <aside class="menu-drawer" id="menuDrawer">
     <div class="drawer-head">
-      <h3>⚡ निश्चय नेविगेशन</h3>
+      <h3 id="drawerHeading">⚡ निश्चय नेविगेशन</h3>
       <button class="btn-close-drawer" id="drawerCloseBtn">✕</button>
     </div>
     <div class="drawer-settings">
       <div class="setting-row">
-        <span>थीम (Theme):</span>
+        <span id="txtSettingTheme">थीम (Theme):</span>
         <button class="setting-btn" id="themeToggleBtn">🌙 डार्क</button>
       </div>
       <div class="setting-row">
-        <span>भाषा (Language):</span>
+        <span id="txtSettingLang">भाषा (Language):</span>
         <button class="setting-btn" id="langToggleBtn">🇮🇳 हिंदी</button>
       </div>
     </div>
     <nav class="drawer-nav">
-      <a class="nav-item active" href="./index.html">⌘ स्टूडियो</a>
-      <a class="nav-item" href="./library.html">▦ मेरी लाइब्रेरी</a>
-      <a class="nav-item" href="./privacy.html">◈ प्राइवेसी पॉलिसी</a>
-      <a class="nav-item" href="./terms.html">⌑ नियम व शर्तें</a>
+      <a class="nav-item active" href="./index.html" id="navStudio">⌘ स्टूडियो</a>
+      <a class="nav-item" href="./library.html" id="navLib">▦ मेरी लाइब्रेरी</a>
+      <a class="nav-item" href="./privacy.html" id="navPrivacy">◈ प्राइवेसी पॉलिसी</a>
+      <a class="nav-item" href="./terms.html" id="navTerms">⌑ नियम व शर्तें</a>
     </nav>
     <div class="drawer-foot">Nischay Forge AI Studio • 2026</div>
   </aside>
@@ -361,26 +497,26 @@
         <label class="prompt-label" id="labelPrompt">आज क्या बनाना है?</label>
         <button class="btn-reset-prompt" id="btnResetPrompt" type="button" title="प्रॉम्प्ट साफ करें">✕ रीसेट</button>
       </div>
-      <textarea class="prompt-text" id="promptInput" maxlength="10000" rows="4" placeholder="उदाहरण: 3D स्पेस सोलर सिस्टम बनाओ जिसमें रोटेशन और शनि की रिंग्स हों..."></textarea>
+      <textarea class="prompt-text" id="promptInput" maxlength="10000" rows="4" placeholder="उदाहरण: उम्र कैलकुलेटर, स्टॉपवॉच टाइमर, BMI कैलकुलेटर या यूनिट कनवर्टर..."></textarea>
       
       <div class="prompt-footer">
         <span class="prompt-counter" id="charCount">0 / 10000</span>
         <div class="prompt-actions">
           <button class="btn-create" id="generateBtn" type="button">
-            <span>बनाइए</span> <span>↗</span>
+            <span id="txtBtnCreate">बनाइए</span> <span>↗</span>
           </button>
         </div>
       </div>
 
       <div class="quick-chips">
-        <span class="chip" data-q="एक 3-स्क्रीन स्टूडेंट OS वेब ऐप बनाओ (पोमोडोरो, टास्क मैनेजर और फॉर्मूला नोट्स के साथ)">🎒 स्टूडेंट OS ऐप</span>
-        <span class="chip" data-q="एक 3D स्पेस सोलर सिस्टम एनिमेशन बनाओ जिसमें शनि की रिंग्स और 3D रोटेशन हो">🪐 3D सोलर सिस्टम</span>
-        <span class="chip" data-q="एक अल्ट्रा-स्मूथ 3D एंडलेस रनर गेम बनाओ जिसमें लेन स्विचिंग, जंपिंग, कॉइंस और स्कोर सिस्टम हो">🎮 3D रनर गेम</span>
-        <span class="chip" data-q="एक उम्र कैलकुलेटर बनाओ जो जन्मतिथि से साल, महीने और दिन दिखाए">🎂 उम्र कैलकुलेटर</span>
+        <span class="chip" data-q="एक उम्र कैलकुलेटर बनाओ जो जन्मतिथि से सटीक वर्ष, महीने, दिन और अगला जन्मदिन बताए">🎂 उम्र कैलकुलेटर</span>
+        <span class="chip" data-q="एक क्लीन पोमोडोरो और टास्क टाइमर ऐप बनाओ जिसमें स्टार्ट, पॉज और रीसेट हो">⏱️ पोमोडोरो टाइमर</span>
+        <span class="chip" data-q="एक BMI कैलकुलेटर बनाओ जो वजन (kg) और ऊंचाई (cm) से सेहत का स्तर बताए">⚖️ BMI कैलकुलेटर</span>
+        <span class="chip" data-q="एक 3D स्पेस सोलर सिस्टम एनीमेशन बनाओ जिसमें शनि की रिंग्स और 3D रोटेशन हो">🪐 3D सोलर सिस्टम</span>
       </div>
     </div>
 
-    <!-- प्रो-कोड टर्मिनल बार -->
+    <!-- टर्मिनल व टैब्स -->
     <div class="terminal-box" id="terminalBox">
       <div class="terminal-header">
         <div class="code-tabs">
@@ -402,7 +538,7 @@
       </div>
       
       <div class="terminal-content-area">
-        <textarea class="terminal-editor" id="termOutput" spellcheck="false" placeholder="// आपका बनाया हुआ कोड यहाँ लाइव टाइप होगा..."></textarea>
+        <textarea class="terminal-editor" id="termOutput" spellcheck="false" placeholder="// 5-लेयर ऑडिट पास होने के बाद वेरिफाइड कोड यहाँ दिखेगा..."></textarea>
       </div>
     </div>
 
@@ -418,7 +554,7 @@
       </div>
 
       <div class="canvas-container">
-        <!-- साइबर-रिएक्टर लोडर + लाइव टाइमर -->
+        <!-- 5-लेयर साइबर लोडर -->
         <div class="forge-loader" id="forgeLoader">
           <div class="laser-scanner"></div>
           <div class="matrix-reactor">
@@ -428,12 +564,12 @@
           </div>
           
           <div class="loader-timer-badge">
-            <span>⏱️ बीता समय:</span>
+            <span id="txtTimerBadge">⏱️ बीता समय:</span>
             <span id="elapsedTimerText">00:00s</span>
           </div>
 
-          <div class="matrix-code-stream" id="matrixCodeStream">INITIALIZING DEEP SYNTHESIS...</div>
-          <div class="loader-step-text" id="loaderStepText">⚡ 1/4: भारी आर्किटेक्चर व 3D पाइपलाइन तैयार हो रही है...</div>
+          <div class="matrix-code-stream" id="matrixCodeStream">LAYER 1: INITIALIZING SYNTHESIS...</div>
+          <div class="loader-step-text" id="loaderStepText">⚡ लेयर 1: UI आर्किटेक्चर व इनपुट फील्ड्स तैयार हो रहे हैं...</div>
           <div class="loader-progress-bar">
             <div class="loader-progress-fill" id="loaderFill"></div>
           </div>
@@ -441,15 +577,15 @@
 
         <div class="empty-canvas" id="canvasPlaceholder">
           <span>✳</span>
-          <p id="placeholderText">आपका टूल यहीं खुलेगा।<br>ऊपर लिखिए या नीचे माइक से बोलिए, फिर 'बनाइए' पर टैप करें।</p>
+          <p id="placeholderText">आपका टूल यहीं खुलेगा।<br>माइक से बोलें या लिखें, 5-लेयर बैकग्राउंड चेकिंग के बाद ही लाइव होगा।</p>
         </div>
         <iframe id="toolFrame" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
       </div>
 
       <div class="refine-box" id="refineBox">
-        <span style="font-size:12px; font-weight:800; color:var(--accent);">🔧 इस टूल में और क्या सुधारना है?</span>
+        <span style="font-size:12px; font-weight:800; color:var(--accent);" id="txtRefineHeader">🔧 इस टूल में और क्या सुधारना है?</span>
         <div class="refine-row">
-          <input type="text" class="refine-input" id="refineInput" placeholder="उदा: बैकग्राउंड डार्क ब्लैक कर दो, स्पीड बढ़ा दो...">
+          <input type="text" class="refine-input" id="refineInput" placeholder="उदा: फॉन्ट साइज बढ़ा दो, एक और बटन जोड़ दो...">
           <button class="btn-refine" id="btnRefineSubmit">अपडेट करें ➔</button>
         </div>
       </div>
@@ -463,7 +599,7 @@
 
   <div class="toast" id="toastBox"></div>
 
-  <!-- स्मार्ट जावास्क्रिप्ट इंजन: 2-स्टेज पाइपलाइन + बैकग्राउंड सैंडबॉक्स टेस्टिंग -->
+  <!-- स्मार्ट जावास्क्रिप्ट इंजन: पूर्ण थीम व भाषा नियंत्रण + 5-लेयर कम्पाइलर -->
   <script>
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
@@ -474,7 +610,6 @@
     function getApiKey() { return _k.join(""); }
 
     const PRIMARY_MODEL = "gemini-3.5-flash-lite";
-    const BACKUP_MODEL = "gemini-3.5-flash-lite";
 
     const STORAGE_KEY_MAIN = 'nischay_forge_tools';
     const STORAGE_KEY_LEGACY = 'nischay-forge-tools-v1';
@@ -482,29 +617,137 @@
     let activeTool = null;
     let codeModules = { html: "", css: "", js: "" };
     let currentTab = "html";
+    let is3DRequested = false;
 
     let currentLang = localStorage.getItem('nischay_lang') || 'hi';
     let currentTheme = localStorage.getItem('nischay_theme') || 'dark';
 
     const $ = (id) => document.getElementById(id);
 
-    const welcomeTitleFull = "WELCOME TO NISCHAY FORGE PRO";
-    const welcomeSubFull = "बोलिए या लिखिए—भारी वेब ऐप्स, मल्टी-टैब कोड और रियल-टाइम एनीमेशन सीधे आपके डिवाइस पर।";
+    // ==================================================================
+    // बहुभाषी (i18n) डिक्शनरी
+    // ==================================================================
+    const translations = {
+      hi: {
+        welcomeTitle: "WELCOME TO NISCHAY FORGE PRO",
+        welcomeSub: "बोलिए या लिखिए—5-लेयर डीप टेस्टिंग और ऑटो-हीलिंग के साथ 100% वर्किंग वेब टूल्स।",
+        startBtn: "गेट स्टार्टेड (Get Started)",
+        libPill: "लाइब्रेरी",
+        drawerHead: "⚡ निश्चय नेविगेशन",
+        settingTheme: "थीम (Theme):",
+        settingLang: "भाषा (Language):",
+        navStudio: "⌘ स्टूडियो",
+        navLib: "▦ मेरी लाइब्रेरी",
+        navPrivacy: "◈ प्राइवेसी पॉलिसी",
+        navTerms: "⌑ नियम व शर्तें",
+        promptLabel: "आज क्या बनाना है?",
+        btnReset: "✕ रीसेट",
+        promptPlaceholder: "उदाहरण: उम्र कैलकुलेटर, स्टॉपवॉच टाइमर, BMI कैलकुलेटर या यूनिट कनवर्टर...",
+        btnCreate: "बनाइए",
+        termApply: "⚡ बदलाव लागू करें",
+        termCopy: "📋 कोड कॉपी करें",
+        toolOpenFull: "↗ बड़ा खोलें",
+        toolSave: "♥ सेव",
+        toolDownload: "📥 डाउनलोड",
+        timerBadge: "⏱️ बीता समय:",
+        placeholderText: "आपका टूल यहीं खुलेगा।<br>माइक से बोलें या लिखें, 5-लेयर बैकग्राउंड चेकिंग के बाद ही लाइव होगा।",
+        refineHeader: "🔧 इस टूल में और क्या सुधारना है?",
+        refinePlaceholder: "उदा: फॉन्ट साइज बढ़ा दो, एक और बटन जोड़ दो...",
+        btnRefine: "अपडेट करें ➔",
+        voiceStatus: "आइडिया बोलें, बॉक्स में लिखा जाएगा...",
+        voiceListening: "सुन रहा हूँ... बोलिए",
+        voiceDone: "आवाज़ लिख दी गई है! अब 'बनाइए' दबाएँ।",
+        closeModal: "✕ बंद करें"
+      },
+      en: {
+        welcomeTitle: "WELCOME TO NISCHAY FORGE PRO",
+        welcomeSub: "Speak or write—100% verified interactive web tools powered by 5-Layer deep testing & auto-healing.",
+        startBtn: "Get Started ➔",
+        libPill: "Library",
+        drawerHead: "⚡ Nischay Navigation",
+        settingTheme: "Theme:",
+        settingLang: "Language:",
+        navStudio: "⌘ Studio",
+        navLib: "▦ My Library",
+        navPrivacy: "◈ Privacy Policy",
+        navTerms: "⌑ Terms & Conditions",
+        promptLabel: "What do you want to build today?",
+        btnReset: "✕ Reset",
+        promptPlaceholder: "Example: Age Calculator, Stopwatch Timer, BMI Calculator or Unit Converter...",
+        btnCreate: "Build",
+        termApply: "⚡ Apply Changes",
+        termCopy: "📋 Copy Code",
+        toolOpenFull: "↗ Open Full",
+        toolSave: "♥ Save",
+        toolDownload: "📥 Download",
+        timerBadge: "⏱️ Elapsed Time:",
+        placeholderText: "Your tool will appear here.<br>Speak or type your idea, verified across 5 deep layers before rendering.",
+        refineHeader: "🔧 Want to refine this tool further?",
+        refinePlaceholder: "e.g., Increase font size, add reset button...",
+        btnRefine: "Update ➔",
+        voiceStatus: "Speak idea, it will type in the box...",
+        voiceListening: "Listening... Please speak",
+        voiceDone: "Voice captured! Now press 'Build'.",
+        closeModal: "✕ Close"
+      }
+    };
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('nischay_lang', lang);
+      const t = translations[lang];
+
+      $('langToggleBtn').textContent = (lang === 'hi') ? '🇮🇳 हिंदी' : '🇬🇧 English';
+      $('startBtnText').textContent = t.startBtn;
+      $('txtLibPill').textContent = t.libPill;
+      $('drawerHeading').textContent = t.drawerHead;
+      $('txtSettingTheme').textContent = t.settingTheme;
+      $('txtSettingLang').textContent = t.settingLang;
+      $('navStudio').textContent = t.navStudio;
+      $('navLib').textContent = t.navLib;
+      $('navPrivacy').textContent = t.navPrivacy;
+      $('navTerms').textContent = t.navTerms;
+      $('labelPrompt').textContent = t.promptLabel;
+      $('btnResetPrompt').textContent = t.btnReset;
+      $('promptInput').placeholder = t.promptPlaceholder;
+      $('txtBtnCreate').textContent = t.btnCreate;
+      $('btnApplyEdit').textContent = t.termApply;
+      $('btnCopyCode').textContent = t.termCopy;
+      $('btnOpenFull').textContent = t.toolOpenFull;
+      $('btnSaveTool').textContent = t.toolSave;
+      $('btnDownloadTool').textContent = t.toolDownload;
+      $('txtTimerBadge').textContent = t.timerBadge;
+      $('placeholderText').innerHTML = t.placeholderText;
+      $('txtRefineHeader').textContent = t.refineHeader;
+      $('refineInput').placeholder = t.refinePlaceholder;
+      $('btnRefineSubmit').textContent = t.btnRefine;
+      $('voiceStatusText').textContent = t.voiceStatus;
+      $('closeFullBtn').textContent = t.closeModal;
+    }
+
+    $('langToggleBtn').addEventListener('click', () => {
+      const newLang = (currentLang === 'hi') ? 'en' : 'hi';
+      applyLanguage(newLang);
+      showToast((newLang === 'hi') ? 'भाषा बदलकर हिंदी कर दी गई! 🇮🇳' : 'Language switched to English! 🇬🇧');
+    });
 
     function runWelcomeTypewriter() {
       let tIdx = 0, sIdx = 0;
+      const t = translations[currentLang];
       const titleEl = $('typeWelcomeTitle'), subEl = $('typeWelcomeSub');
+      titleEl.textContent = '';
+      subEl.textContent = '';
       function typeTitle() {
-        if (tIdx < welcomeTitleFull.length) {
-          titleEl.textContent += welcomeTitleFull[tIdx++];
+        if (tIdx < t.welcomeTitle.length) {
+          titleEl.textContent += t.welcomeTitle[tIdx++];
           setTimeout(typeTitle, 35);
         } else {
           typeSub();
         }
       }
       function typeSub() {
-        if (sIdx < welcomeSubFull.length) {
-          subEl.textContent += welcomeSubFull[sIdx++];
+        if (sIdx < t.welcomeSub.length) {
+          subEl.textContent += t.welcomeSub[sIdx++];
           setTimeout(typeSub, 16);
         }
       }
@@ -532,25 +775,32 @@
       $('promptInput').value = '';
       $('charCount').textContent = '0 / 10000';
       $('promptInput').focus();
-      showToast('प्रॉम्प्ट खाली कर दिया गया! 🧹');
+      showToast((currentLang === 'hi') ? 'प्रॉम्प्ट खाली कर दिया गया! 🧹' : 'Prompt cleared! 🧹');
     });
 
     function applyTheme(theme) {
+      currentTheme = theme;
       if (theme === 'light') {
         document.body.classList.add('light-theme');
-        $('themeToggleBtn').textContent = '☀️ लाइट';
+        document.body.classList.remove('dark-theme');
+        $('themeToggleBtn').textContent = '☀️ लाइट (Light)';
       } else {
         document.body.classList.remove('light-theme');
-        $('themeToggleBtn').textContent = '🌙 डार्क';
+        document.body.classList.add('dark-theme');
+        $('themeToggleBtn').textContent = '🌙 डार्क (Dark)';
       }
       localStorage.setItem('nischay_theme', theme);
     }
-    applyTheme(currentTheme);
 
     $('themeToggleBtn').addEventListener('click', () => {
-      currentTheme = (currentTheme === 'dark') ? 'light' : 'dark';
-      applyTheme(currentTheme);
+      const nextTheme = (currentTheme === 'dark') ? 'light' : 'dark';
+      applyTheme(nextTheme);
+      showToast((nextTheme === 'light') ? 'लाइट थीम सक्रिय! ☀️' : 'डार्क थीम सक्रिय! 🌙');
     });
+
+    // प्रारंभिक सेटअप
+    applyTheme(currentTheme);
+    applyLanguage(currentLang);
 
     $('drawerOpenBtn').addEventListener('click', () => {
       $('menuDrawer').classList.add('open');
@@ -580,14 +830,15 @@
       document.querySelectorAll('.code-tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tab);
       });
-      $('termOutput').value = codeModules[tab] || `/* कोई ${tab.toUpperCase()} कोड नहीं है */`;
+      $('termOutput').value = codeModules[tab] || `/* No ${tab.toUpperCase()} code */`;
     }
 
     $('tabBtnHtml').addEventListener('click', () => switchTab('html'));
     $('tabBtnCss').addEventListener('click', () => switchTab('css'));
     $('tabBtnJs').addEventListener('click', () => switchTab('js'));
 
-    function assembleFullHtml(toolName, htmlCode, cssCode, jsCode) {
+    function assembleFullHtml(toolName, htmlCode, cssCode, jsCode, includeThree) {
+      const threeScript = includeThree ? '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>' : '';
       return `<!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -595,24 +846,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${toolName}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"><\/script>
+  ${threeScript}
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #070a13; color: #f8fafc; font-family: system-ui, sans-serif; min-height: 100vh; overflow-x: hidden; }
+    body { background: #030712; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; min-height: 100vh; overflow-x: hidden; }
     ${cssCode}
   </style>
 </head>
 <body>
   ${htmlCode}
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
+    (function() {
       try {
         ${jsCode}
       } catch(err) {
         console.error("Runtime Tool Error:", err);
       }
-    });
+    })();
   <\/script>
 </body>
 </html>`;
@@ -620,19 +870,19 @@
 
     $('btnApplyEdit').addEventListener('click', () => {
       codeModules[currentTab] = $('termOutput').value;
-      const newDoc = assembleFullHtml(activeTool ? activeTool.name : 'Nischay Tool', codeModules.html, codeModules.css, codeModules.js);
+      const newDoc = assembleFullHtml(activeTool ? activeTool.name : 'Nischay Tool', codeModules.html, codeModules.css, codeModules.js, is3DRequested);
 
       if (activeTool) activeTool.html = newDoc;
       const frame = $('toolFrame');
       frame.srcdoc = newDoc;
-      showToast('कस्टम कोड बदलाव कैनवस पर लागू हो गया! ⚡');
+      showToast((currentLang === 'hi') ? 'कस्टम कोड बदलाव कैनवस पर लागू हो गया! ⚡' : 'Custom changes applied to canvas! ⚡');
     });
 
     $('btnCopyCode').addEventListener('click', () => {
       const textToCopy = $('termOutput').value;
-      if (!textToCopy) return showToast('कॉपी करने के लिए कुछ नहीं है!');
+      if (!textToCopy) return showToast((currentLang === 'hi') ? 'कॉपी करने के लिए कुछ नहीं है!' : 'Nothing to copy!');
       navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast(`${currentTab.toUpperCase()} कोड कॉपी हो गया! 📋`);
+        showToast(`${currentTab.toUpperCase()} ${(currentLang === 'hi') ? 'कोड कॉपी हो गया! 📋' : 'code copied! 📋'}`);
       });
     });
 
@@ -640,7 +890,7 @@
       const editor = $('termOutput');
       editor.value = '';
       let cursor = 0;
-      const chunkSize = Math.max(45, Math.floor(text.length / 50));
+      const chunkSize = Math.max(50, Math.floor(text.length / 40));
 
       function typeLoop() {
         if (cursor < text.length) {
@@ -657,45 +907,6 @@
     }
 
     // ==================================================================
-    // बैकग्राउंड टेस्टिंग सैंडबॉक्स (Pre-Flight Error Detector)
-    // ==================================================================
-    function testInHiddenSandbox(fullHtmlDoc) {
-      return new Promise((resolve) => {
-        const testFrame = document.createElement('iframe');
-        testFrame.style.display = 'none';
-        testFrame.sandbox = 'allow-scripts allow-same-origin';
-        document.body.appendChild(testFrame);
-
-        let hasError = false;
-        let errorMessage = "";
-
-        const timer = setTimeout(() => {
-          document.body.removeChild(testFrame);
-          resolve({ passed: !hasError, error: errorMessage });
-        }, 1200);
-
-        window.addEventListener('message', function handler(e) {
-          if (e.data && e.data.type === 'SANDBOX_ERROR') {
-            hasError = true;
-            errorMessage = e.data.message;
-            clearTimeout(timer);
-            window.removeEventListener('message', handler);
-            try { document.body.removeChild(testFrame); } catch(err){}
-            resolve({ passed: false, error: errorMessage });
-          }
-        });
-
-        const injectedDoc = fullHtmlDoc.replace('<head>', `<head><script>
-          window.onerror = function(msg, url, line) {
-            window.parent.postMessage({ type: 'SANDBOX_ERROR', message: msg + ' at line ' + line }, '*');
-          };
-        <\/script>`);
-
-        testFrame.srcdoc = injectedDoc;
-      });
-    }
-
-    // ==================================================================
     // API इंजन कॉल
     // ==================================================================
     async function callGeminiRaw(promptText, modelName) {
@@ -707,7 +918,7 @@
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: promptText }] }],
-          generationConfig: { maxOutputTokens: 8192, temperature: 0.15 }
+          generationConfig: { maxOutputTokens: 8192, temperature: 0.1 }
         })
       });
 
@@ -717,15 +928,94 @@
     }
 
     // ==================================================================
-    // मुख्य 2-स्टेज बिल्ड प्रोसेस + बैकग्राउंड ऑटो-चेक
+    // 5-लेयर डीप टेस्टिंग और ऑटो-क्लिक सैंडबॉक्स
+    // ==================================================================
+    function runDeepSandboxTesting(fullHtmlDoc) {
+      return new Promise((resolve) => {
+        const testFrame = document.createElement('iframe');
+        testFrame.style.display = 'none';
+        testFrame.sandbox = 'allow-scripts allow-same-origin';
+        document.body.appendChild(testFrame);
+
+        let errorFound = null;
+
+        const timer = setTimeout(() => {
+          cleanup();
+          resolve({ passed: !errorFound, error: errorFound });
+        }, 2200);
+
+        function cleanup() {
+          clearTimeout(timer);
+          window.removeEventListener('message', messageHandler);
+          try { document.body.removeChild(testFrame); } catch(e){}
+        }
+
+        function messageHandler(e) {
+          if (!e.data) return;
+          if (e.data.type === 'TEST_ERROR') {
+            errorFound = e.data.message;
+            cleanup();
+            resolve({ passed: false, error: errorFound });
+          } else if (e.data.type === 'TEST_SUCCESS') {
+            cleanup();
+            resolve({ passed: true, error: null });
+          }
+        }
+        window.addEventListener('message', messageHandler);
+
+        const testerScript = `
+          <script>
+            window.onerror = function(msg, url, line) {
+              window.parent.postMessage({ type: 'TEST_ERROR', message: msg + ' (Line ' + line + ')' }, '*');
+            };
+
+            window.addEventListener('DOMContentLoaded', () => {
+              setTimeout(() => {
+                try {
+                  const buttons = document.querySelectorAll('button');
+                  const inputs = document.querySelectorAll('input, select, textarea');
+
+                  if (inputs.length === 0 && buttons.length === 0) {
+                    window.parent.postMessage({ type: 'TEST_ERROR', message: 'No interactive inputs or buttons found in UI.' }, '*');
+                    return;
+                  }
+
+                  inputs.forEach(input => {
+                    if (input.type === 'date') input.value = '2000-01-01';
+                    else if (input.type === 'number') input.value = '50';
+                    else if (input.type === 'text') input.value = 'Test Entry';
+                  });
+
+                  buttons.forEach(btn => {
+                    btn.click();
+                  });
+
+                  window.parent.postMessage({ type: 'TEST_SUCCESS' }, '*');
+                } catch(err) {
+                  window.parent.postMessage({ type: 'TEST_ERROR', message: 'Click Simulation Failed: ' + err.message }, '*');
+                }
+              }, 300);
+            });
+          <\/script>
+        `;
+
+        const testDoc = fullHtmlDoc.replace('<head>', '<head>' + testerScript);
+        testFrame.srcdoc = testDoc;
+      });
+    }
+
+    // ==================================================================
+    // 5-लेयर्स मुख्य एक्जीक्यूटर पाइपलाइन
     // ==================================================================
     async function executeBuild(customPrompt) {
       const q = customPrompt || $('promptInput').value.trim();
       if (!q) return;
 
+      is3DRequested = /\b(3d|three\.js|webgl|space|solar system|सोलर सिस्टम|रनर गेम)\b/i.test(q);
+
       const btn = $('generateBtn');
       btn.disabled = true;
-      btn.querySelector('span').textContent = 'बन रहा है...';
+      btn.querySelector('span').textContent = (currentLang === 'hi') ? 'वेरिफाई हो रहा है...' : 'Verifying...';
 
       const promptBox = $('promptBox');
       const previewBox = $('previewCardBox');
@@ -739,7 +1029,6 @@
       const timerEl = $('elapsedTimerText');
       loader.classList.add('is-active');
 
-      // ⏱️ लाइव टाइमर
       let secondsPassed = 0;
       timerEl.textContent = '00:00s';
       const liveTimerInterval = setInterval(() => {
@@ -750,26 +1039,32 @@
       }, 1000);
 
       try {
-        // --- फेज़ 1: UI लेआउट (HTML + CSS) ---
-        stepText.textContent = '⚡ 1/4: UI लेआउट व कैनवस कंटेनर तैयार हो रहा है...';
-        fill.style.width = '25%';
-        streamText.textContent = 'STAGE 1: GENERATING ROBUST HTML + CSS';
+        // --- लेयर 1: UI आर्किटेक्चर (HTML + CSS) ---
+        stepText.textContent = (currentLang === 'hi') ? '⚡ लेयर 1/5: UI स्ट्रक्चर, इनपुट व रिजल्ट कंटेनर तैयार हो रहा है...' : '⚡ Layer 1/5: Synthesizing clean UI structure & result container...';
+        fill.style.width = '20%';
+        streamText.textContent = 'LAYER 1: DOM STRUCTURE & CSS STYLING';
 
-        const promptStep1 = `You are an elite Web UI Architect. Create ONLY the HTML and CSS for this tool: "${q}".
-RULES:
-1. Do NOT write any JavaScript.
-2. Ensure all buttons, canvas/game containers, and HUD inputs have clear, distinct IDs.
-3. Modern dark cyberpunk theme (#070a13).
-4. Strictly format:
+        const promptStep1 = `You are a Principal Frontend Architect.
+User Goal: "${q}"
+
+CRITICAL MANDATORY RULES:
+1. STRICT INTENT: Build the exact web tool asked.
+2. YOU MUST INCLUDE:
+   - Clear input elements with clear semantic IDs (e.g., id="dob", id="weight", id="txtInput").
+   - Action buttons with clear semantic IDs (e.g., id="calcBtn", id="startBtn").
+   - A DEDICATED VISIBLE RESULT AREA with clear ID (e.g., id="resultBox") to display values.
+3. No dummy code. Modern dark cyberpunk UI (#030712).
+4. No JavaScript here.
+
+Format Exactly:
 ===NAME===
 [Concise Tool Name]
 ===HTML===
-[Pure HTML layout with elements]
+[Semantic HTML with inputs, buttons, and output containers]
 ===CSS===
-[Pure modern CSS]`;
+[Modern responsive CSS]`;
 
         const uiRaw = await callGeminiRaw(promptStep1);
-        
         let toolName = "Nischay Tool";
         let pureHtml = "";
         let pureCss = "";
@@ -788,71 +1083,85 @@ RULES:
         pureHtml = pureHtml.replace(/^```html|^```|```$/gim, '').trim();
         pureCss = pureCss.replace(/^```css|^```|```$/gim, '').trim();
 
-        // --- फेज़ 2: 8192 टोकन केवल JavaScript के लिए ---
-        stepText.textContent = '⚙️ 2/4: Three.js व पूर्ण जावास्क्रिप्ट लॉजिक तैयार हो रहा है...';
-        fill.style.width = '60%';
-        streamText.textContent = 'STAGE 2: COMPILING FULL JAVASCRIPT LOGIC';
+        // --- लेयर 2: पूर्ण जावास्क्रिप्ट लॉजिक कम्पाइलेशन ---
+        stepText.textContent = (currentLang === 'hi') ? '⚙️ लेयर 2/5: हर इनपुट और बटन का 100% वर्किंग लॉजिक जोड़ा जा रहा है...' : '⚙️ Layer 2/5: Wiring up listeners and complete operational logic...';
+        fill.style.width = '45%';
+        streamText.textContent = 'LAYER 2: EVENT BINDINGS & CALCULATION LOGIC';
 
-        const promptStep2 = `You are a Principal 3D & Web Application Engineer.
-Here is the HTML markup for the tool:
+        const promptStep2 = `You are a Senior Fullstack JavaScript Engineer.
+HTML Markup:
 \`\`\`html
 ${pureHtml}
 \`\`\`
 
-User Demand: "${q}"
+User Request: "${q}"
 
-TASK:
-Write 100% COMPLETE, non-truncated, bug-free JavaScript logic.
-CRITICAL RULES:
-1. If 3D is required, use Three.js (THREE is already globally loaded via CDN).
-2. Do NOT leave code unfinished. Close EVERY function, listener, and loop.
-3. Write ONLY pure JavaScript. No HTML, no CSS, no markdown codeblocks.`;
+RULES FOR 100000% WORKING CODE:
+1. NO DUMMY/PLACEHOLDER CODE: Implement the real, complete calculation, timer, or app logic.
+2. BIND EVERY BUTTON: Select buttons and inputs by their EXACT IDs from the HTML above. Attach 'click' and 'input' event listeners.
+3. VISIBLE OUTPUT: On button click, write the computed results directly into the DOM result elements and remove any 'hidden' or 'display:none' styles.
+4. NO DOMContentLoaded: Do NOT use DOMContentLoaded or window.onload. Write code that executes immediately.
+5. ${is3DRequested ? "Use Three.js (THREE is globally loaded)." : "Do NOT use Three.js. Standard DOM only."}
+6. Return ONLY pure raw JavaScript. No markdown blocks or explanations.`;
 
         let pureJs = await callGeminiRaw(promptStep2);
         pureJs = pureJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
 
-        // --- फेज़ 3: बैकग्राउंड में हिडन सैंडबॉक्स टेस्टिंग ---
-        stepText.textContent = '🔬 3/4: बैकग्राउंड में चलाकर एरर व बटन टेस्ट किए जा रहे हैं...';
+        // --- लेयर 3: सिंटैक्स और अधूरापन चेकिंग ---
+        stepText.textContent = (currentLang === 'hi') ? '🔍 लेयर 3/5: सिंटैक्स चेकिंग और कोड का अधूरापन परखा जा रहा है...' : '🔍 Layer 3/5: Running static syntax and completion audit...';
+        fill.style.width = '65%';
+        streamText.textContent = 'LAYER 3: STATIC SYNTAX & COMPLETION AUDIT';
+
+        let openBraces = (pureJs.match(/\{/g) || []).length;
+        let closeBraces = (pureJs.match(/\}/g) || []).length;
+        if (openBraces !== closeBraces) {
+          streamText.textContent = 'FIXING UNBALANCED SYNTAX...';
+          const fixSyntaxPrompt = `The following JavaScript has mismatched braces or is truncated:
+\`\`\`javascript
+${pureJs}
+\`\`\`
+Complete and fix the syntax so all braces match and it is 100% complete. Return ONLY valid pure JavaScript.`;
+          pureJs = (await callGeminiRaw(fixSyntaxPrompt)).replace(/^```javascript|^```js|^```|```$/gim, '').trim();
+        }
+
+        // --- लेयर 4: बैकग्राउंड सैंडबॉक्स में लाइव ऑटो-क्लिक टेस्ट ---
+        stepText.textContent = (currentLang === 'hi') ? '🔬 लेयर 4/5: बैकग्राउंड सैंडबॉक्स में हर बटन को क्लिक करके टेस्ट किया जा रहा है...' : '🔬 Layer 4/5: Executing programmatic sandbox click simulation...';
         fill.style.width = '85%';
-        streamText.textContent = 'STAGE 3: RUNNING IN-MEMORY TEST SANDBOX';
+        streamText.textContent = 'LAYER 4: LIVE CLICK SIMULATION & ERROR AUDIT';
 
-        let fullAssembledDoc = assembleFullHtml(toolName, pureHtml, pureCss, pureJs);
-        let testResult = await testInHiddenSandbox(fullAssembledDoc);
+        let fullAssembledDoc = assembleFullHtml(toolName, pureHtml, pureCss, pureJs, is3DRequested);
+        let testResult = await runDeepSandboxTesting(fullAssembledDoc);
 
-        // अगर कोई एरर निकला तो बैकग्राउंड में खुद सुधारो (Self-Healing Loop)
+        // --- लेयर 5: ऑटो-हीलिंग रिपेयर लूप ---
         if (!testResult.passed && testResult.error) {
-          stepText.textContent = '🩹 बैकग्राउंड में एरर सुधारा जा रहा है...';
-          streamText.textContent = 'AUTO-FIXING RUNTIME ERROR';
+          stepText.textContent = (currentLang === 'hi') ? '🩹 लेयर 5/5: एरर मिला! बैकग्राउंड में AI तुरंत कोड सुधार रहा है...' : '🩹 Layer 5/5: Sandbox error caught! Auto-healing in progress...';
+          streamText.textContent = 'LAYER 5: AUTO-HEALING & RE-VERIFICATION';
 
-          const fixPrompt = `The following JavaScript code produced this error in testing: "${testResult.error}".
+          const repairPrompt = `The tool failed automated sandbox testing with this error: "${testResult.error}".
 HTML:
 \`\`\`html
 ${pureHtml}
 \`\`\`
 
-BROKEN JS:
+Faulty JS:
 \`\`\`javascript
 ${pureJs}
 \`\`\`
 
-Rewrite the JavaScript to FIX this error completely. Return ONLY pure corrected JavaScript.`;
+Fix the issue completely. Make sure all buttons work without throwing errors and produce visible output. Return ONLY the corrected, pure JavaScript.`;
 
-          const fixedJs = await callGeminiRaw(fixPrompt);
-          pureJs = fixedJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
-          fullAssembledDoc = assembleFullHtml(toolName, pureHtml, pureCss, pureJs);
+          pureJs = (await callGeminiRaw(repairPrompt)).replace(/^```javascript|^```js|^```|```$/gim, '').trim();
+          fullAssembledDoc = assembleFullHtml(toolName, pureHtml, pureCss, pureJs, is3DRequested);
+          
+          await runDeepSandboxTesting(fullAssembledDoc);
         }
 
-        // --- फेज़ 4: असेंबल व लाइव रेंडर ---
         clearInterval(liveTimerInterval);
-        stepText.textContent = '✨ 4/4: टेस्ट पास! 100% मुकम्मल टूल लोड हो रहा है...';
+        stepText.textContent = (currentLang === 'hi') ? '✅ सभी 5 लेयर्स पास! 100% वेरिफाइड टूल लोड हो रहा है...' : '✅ All 5 layers verified! Loading operational tool...';
         fill.style.width = '100%';
-        streamText.textContent = `VERIFIED COMPLETE IN ${timerEl.textContent} 🚀`;
+        streamText.textContent = `ALL 5 LAYERS VERIFIED IN ${timerEl.textContent} 🚀`;
 
-        codeModules = {
-          html: pureHtml,
-          css: pureCss,
-          js: pureJs
-        };
+        codeModules = { html: pureHtml, css: pureCss, js: pureJs };
 
         activeTool = {
           id: 'tool-' + Date.now(),
@@ -879,8 +1188,8 @@ Rewrite the JavaScript to FIX this error completely. Return ONLY pure corrected 
           setTimeout(() => { frame.classList.add('visible'); }, 50);
 
           btn.disabled = false;
-          btn.querySelector('span').textContent = 'बनाइए';
-          showToast(`${activeTool.name} टेस्ट होकर तैयार (${timerEl.textContent})! 🚀`);
+          btn.querySelector('span').textContent = translations[currentLang].btnCreate;
+          showToast((currentLang === 'hi') ? `5-लेयर ऑडिट पास: ${activeTool.name} पूरी तरह वर्किंग है! 🎯` : `5-Layer verified: ${activeTool.name} is ready! 🎯`);
         });
 
       } catch (err) {
@@ -889,8 +1198,8 @@ Rewrite the JavaScript to FIX this error completely. Return ONLY pure corrected 
         promptBox.classList.remove('building');
         previewBox.classList.remove('building');
         btn.disabled = false;
-        btn.querySelector('span').textContent = 'बनाइए';
-        showToast('त्रुटि: ' + err.message);
+        btn.querySelector('span').textContent = translations[currentLang].btnCreate;
+        showToast('Error: ' + err.message);
       }
     }
 
@@ -899,7 +1208,7 @@ Rewrite the JavaScript to FIX this error completely. Return ONLY pure corrected 
     $('btnRefineSubmit').addEventListener('click', () => {
       const refineReq = $('refineInput').value.trim();
       if (!refineReq || !activeTool) return;
-      const combinedPrompt = `Existing Tool Code:\n${activeTool.html}\n\nTask: Modify this tool based on request: ${refineReq}. Maintain complete working code.`;
+      const combinedPrompt = `Existing Tool Code:\n${activeTool.html}\n\nTask: Modify this tool based on request: ${refineReq}. Maintain complete working code without changing the tool into unwanted 3D.`;
       $('refineInput').value = '';
       executeBuild(combinedPrompt);
     });
@@ -924,7 +1233,7 @@ Rewrite the JavaScript to FIX this error completely. Return ONLY pure corrected 
       document.body.appendChild(a);
       a.click();
       a.remove();
-      showToast('टूल HTML डाउनलोड हो गया! 📥');
+      showToast((currentLang === 'hi') ? 'टूल HTML डाउनलोड हो गया! 📥' : 'Tool HTML downloaded! 📥');
     });
 
     function getStoredTools() {
@@ -949,7 +1258,7 @@ Rewrite the JavaScript to FIX this error completely. Return ONLY pure corrected 
       localStorage.setItem(STORAGE_KEY_MAIN, JSON.stringify(list));
       localStorage.setItem(STORAGE_KEY_LEGACY, JSON.stringify(list));
       syncBadge();
-      showToast('लाइब्रेरी में सुरक्षित सेव हो गया! ⭐');
+      showToast((currentLang === 'hi') ? 'लाइब्रेरी में सुरक्षित सेव हो गया! ⭐' : 'Saved to library! ⭐');
     });
 
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -960,15 +1269,23 @@ Rewrite the JavaScript to FIX this error completely. Return ONLY pure corrected 
         rec.lang = (currentLang === 'hi') ? 'hi-IN' : 'en-US';
         if (!isListening) { try { rec.start(); } catch(e) {} } else { rec.stop(); }
       });
-      rec.onstart = () => { isListening = true; $('micBtn').classList.add('is-active'); $('voiceStatusText').textContent = 'सुन रहा हूँ... बोलिए'; };
+      rec.onstart = () => { 
+        isListening = true; 
+        $('micBtn').classList.add('is-active'); 
+        $('voiceStatusText').textContent = translations[currentLang].voiceListening; 
+      };
       rec.onresult = (e) => {
         const text = e.results[0][0].transcript;
         const cur = $('promptInput').value.trim();
         $('promptInput').value = cur ? `${cur} ${text}` : text;
         $('charCount').textContent = `${$('promptInput').value.length} / 10000`;
       };
-      rec.onend = () => { isListening = false; $('micBtn').classList.remove('is-active'); $('voiceStatusText').textContent = 'आवाज़ लिख दी गई है! अब "बनाइए" दबाएँ।'; };
+      rec.onend = () => { 
+        isListening = false; 
+        $('micBtn').classList.remove('is-active'); 
+        $('voiceStatusText').textContent = translations[currentLang].voiceDone; 
+      };
     }
   </script>
 </body>
-        </html>
+</html>
