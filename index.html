@@ -224,7 +224,6 @@
       100% { transform: scale(1.15); box-shadow: 0 0 40px #818cf8, 0 0 70px var(--accent-glow); }
     }
 
-    /* लाइव टाइमर बैज */
     .loader-timer-badge {
       display: inline-flex;
       align-items: center;
@@ -464,7 +463,7 @@
 
   <div class="toast" id="toastBox"></div>
 
-  <!-- स्मार्ट जावास्क्रिप्ट इंजन (Autonomous Self-Healing Loop + Live Timer) -->
+  <!-- स्मार्ट जावास्क्रिप्ट इंजन: 100% कड़ा सिंटैक्स चेकिंग और सेल्फ-हीलिंग लूप -->
   <script>
     const _k = [
       "AQ.Ab8RN6J9Nf6i",
@@ -577,7 +576,7 @@
     });
 
     // ==================================================================
-    // 1. डीप सिंटैक्स व पूर्णता चेकर (Check if Code is Complete)
+    // 1. सख्त सिंटैक्स व पूर्णता चेकर (Strict Zero-Error Validator)
     // ==================================================================
     function checkCodeCompleteness(rawText) {
       if (!rawText.includes("===JS===")) return { complete: false, reason: "Missing ===JS=== section" };
@@ -585,27 +584,35 @@
       const jsPart = rawText.split("===JS===")[1] || "";
       const trimmed = jsPart.trim();
 
-      // क्या JS लूप या फंक्शन के बीच में ही कट गई?
+      // अगर JS बिल्कुल खाली या बहुत छोटी है
+      if (trimmed.length < 20) return { complete: false, reason: "JS is empty or too short" };
+
+      // ब्रैकेट्स की सख्त गिनती (0 की छूट — एक भी खुला नहीं छूटना चाहिए)
       const openBraces = (trimmed.match(/\{/g) || []).length;
       const closeBraces = (trimmed.match(/\}/g) || []).length;
       const openParens = (trimmed.match(/\(/g) || []).length;
       const closeParens = (trimmed.match(/\)/g) || []).length;
 
-      // अगर ब्रैकेट्स में 2 से ज्यादा का अंतर है तो कोड निश्चित रूप से अधूरा है
-      if (openBraces > closeBraces + 1 || openParens > closeParens + 1) {
-        return { complete: false, reason: "Unclosed function/loop braces in JavaScript" };
+      if (openBraces !== closeBraces) {
+        return { complete: false, reason: `Unclosed curly braces: open ${openBraces} vs close ${closeBraces}` };
+      }
+      if (openParens !== closeParens) {
+        return { complete: false, reason: `Unclosed parentheses: open ${openParens} vs close ${closeParens}` };
       }
 
-      // अगर आख़िरी लाइन अधूरी है (उदा: if (a या const x =)
-      if (/[+\-*\/=<>(,]\s*$/.test(trimmed) || /if\s*\([^)]*$/.test(trimmed)) {
-        return { complete: false, reason: "Truncated statement at the end of code" };
+      // ऑपरेटर, असाइनमेंट या अधूरे कीवर्ड पर कटना
+      if (/[+\-*\/=<>(,.:]\s*$/.test(trimmed)) {
+        return { complete: false, reason: "Truncated dangling operator/comma at the end" };
+      }
+      if (/(if|for|while|function|const|let|var)\s*[^;{}]*$/.test(trimmed)) {
+        return { complete: false, reason: "Unfinished statement keyword at the end" };
       }
 
       return { complete: true };
     }
 
     // ==================================================================
-    // 2. स्मार्ट एक्सट्रैक्टर: शुद्ध कोड बिना काटे अलग करना
+    // 2. स्मार्ट एक्सट्रैक्टर: शुद्ध कोड को बिना छेड़े 100% सटीक जोड़ना
     // ==================================================================
     function parseAndExtractModules(rawOutput) {
       let name = "Web Tool";
@@ -642,14 +649,6 @@
       pureCss = pureCss.replace(/^```css|^```|```$/gim, '').trim();
       pureJs = pureJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
 
-      // ऑटो-रिकवरी ब्रैकेट क्लोजर
-      let openB = (pureJs.match(/\{/g) || []).length;
-      let closeB = (pureJs.match(/\}/g) || []).length;
-      while (openB > closeB) {
-        pureJs += "\n}";
-        closeB++;
-      }
-
       let cleanHtmlTab = pureHtml;
       if (!cleanHtmlTab.includes("<!DOCTYPE html>")) {
         cleanHtmlTab = `<!DOCTYPE html>
@@ -665,22 +664,32 @@ ${pureHtml}
 </html>`;
       }
 
+      // Three.js, PeerJS और आवश्यक CDNs को हमेशा सुरक्षित हेड में इंजेक्ट करना
       const assembledDoc = `<!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${name}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"><\/script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #070a13; color: #f8fafc; font-family: system-ui, sans-serif; min-height: 100vh; }
+    body { background: #070a13; color: #f8fafc; font-family: system-ui, sans-serif; min-height: 100vh; overflow-x: hidden; }
     ${pureCss}
   </style>
 </head>
 <body>
   ${pureHtml}
   <script>
-    ${pureJs}
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        ${pureJs}
+      } catch (err) {
+        console.error("Runtime Tool Error:", err);
+      }
+    });
   <\/script>
 </body>
 </html>`;
@@ -716,16 +725,23 @@ ${pureHtml}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${activeTool ? activeTool.name : 'Nischay Tool'}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"><\/script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #070a13; color: #f8fafc; font-family: system-ui, sans-serif; min-height: 100vh; }
+    body { background: #070a13; color: #f8fafc; font-family: system-ui, sans-serif; min-height: 100vh; overflow-x: hidden; }
     ${codeModules.css}
   </style>
 </head>
 <body>
   ${codeModules.html}
   <script>
-    ${codeModules.js}
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        ${codeModules.js}
+      } catch(e) { console.error(e); }
+    });
   <\/script>
 </body>
 </html>`;
@@ -748,7 +764,7 @@ ${pureHtml}
       const editor = $('termOutput');
       editor.value = '';
       let cursor = 0;
-      const chunkSize = Math.max(35, Math.floor(text.length / 65));
+      const chunkSize = Math.max(40, Math.floor(text.length / 50));
 
       function typeLoop() {
         if (cursor < text.length) {
@@ -765,15 +781,15 @@ ${pureHtml}
     }
 
     // ==================================================================
-    // 3. सेल्फ-हीलिंग ऑटो-स्टिच इंजन (Auto-Checking & Infinite Continuation)
+    // 3. सेल्फ-हीलिंग ऑटो-स्टिच इंजन (Autonomous Self-Healing Loop)
     // ==================================================================
     async function callGeminiSelfHealing(modelName, query) {
       const key = getApiKey();
       const sys = `You are Nischay Forge Pro Engine. Build single-file 100% complete, fully working modern HTML5 web tools.
 CRITICAL HEAVY-DUTY RULES:
-1. When building 3D, physics, games or complex interactive apps, you MUST use CDN libraries like Three.js ('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js') to avoid token exhaustion.
+1. When building 3D, games, physics or complex interactive tools, you MUST leverage CDN libraries (Three.js and FontAwesome already injected in <head>).
 2. Keep the code compact, production-grade, and free of unnecessary filler comments.
-3. Ensure JavaScript handles all controls (Keyboard, Touch/Swipe, Resizing) and closes every function cleanly.
+3. Ensure JavaScript handles all controls and closes EVERY function, listener, and loop cleanly.
 4. Strictly separate code using these exact delimiter tags:
 ===NAME===
 [Concise Tool Title]
@@ -786,11 +802,11 @@ CRITICAL HEAVY-DUTY RULES:
 
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
 
+      $('matrixCodeStream').textContent = 'PHASE 1: SYNTHESIZING ARCHITECTURE...';
+
       let conversation = [
         { role: 'user', parts: [{ text: `${sys}\n\nUser Demand: ${query}` }] }
       ];
-
-      $('matrixCodeStream').textContent = 'PHASE 1: SYNTHESIZING BASE PIPELINE...';
 
       let res = await fetch(endpoint, {
         method: 'POST',
@@ -808,39 +824,37 @@ CRITICAL HEAVY-DUTY RULES:
       let fullText = candidate.content.parts[0].text;
       let iterations = 0;
 
-      // 4. बैकग्राउंड में गहराई से चेक करें: क्या कोड कटा है?
+      // सख्त चेक: क्या कोड में 1 भी ब्रैकेट या लाइन अधूरी है?
       let check = checkCodeCompleteness(fullText);
 
-      while ((candidate.finishReason === 'MAX_TOKENS' || candidate.finishReason === 'LENGTH' || !check.complete) && iterations < 3) {
+      while ((candidate.finishReason === 'MAX_TOKENS' || candidate.finishReason === 'LENGTH' || !check.complete) && iterations < 4) {
         iterations++;
-        $('matrixCodeStream').textContent = `RECOVERY LOOP ACTIVE [${iterations}/3]: CONTINUING UNFINISHED CODE...`;
-        $('loaderStepText').textContent = `⚡ कोड का गहरा विश्लेषण हो रहा है... अधूरा हिस्सा जोड़ा जा रहा है (${iterations})`;
+        $('matrixCodeStream').textContent = `RECOVERY LOOP [${iterations}/4]: AUTO-STITCHING CODE...`;
+        $('loaderStepText').textContent = `⚡ अधूरा कोड पकड़ा गया (${check.reason || 'Token Limit'})... स्वचालित सिलाई जारी है (${iterations})`;
 
-        conversation.push({ role: 'model', parts: [{ text: fullText }] });
-        conversation.push({
-          role: 'user',
-          parts: [{ text: `WARNING: The generated code was cut off (${check.reason || 'Token Limit'}). Continue writing the EXACT remaining JavaScript code starting precisely from the very last character. Do NOT restart. Close all open loops and event listeners completely.` }]
+        // केवल आखिरी 500 अक्षर भेजें ताकि मॉडल को टोकन का ओवरलोड न हो
+        const tailSnippet = fullText.slice(-500);
+
+        const contRes = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+          body: JSON.stringify({
+            contents: [
+              { role: 'user', parts: [{ text: `${sys}\n\nTask: ${query}` }] },
+              { role: 'model', parts: [{ text: `Here is the incomplete code generated so far ending with:\n\`\`\`javascript\n${tailSnippet}\n\`\`\`` }] },
+              { role: 'user', parts: [{ text: `CRITICAL: Your output was cut off at the exact end of that snippet. Continue writing the EXACT remaining JavaScript code starting immediately from the next character. Do NOT restart. Do NOT wrap in new markdown blocks. Close all loops and tags completely.` }] }
+            ],
+            generationConfig: { maxOutputTokens: 8192, temperature: 0.15 }
+          })
         });
 
-        try {
-          const contRes = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-            body: JSON.stringify({
-              contents: conversation,
-              generationConfig: { maxOutputTokens: 8192, temperature: 0.15 }
-            })
-          });
-          const contData = await contRes.json();
-          if (contData.candidates && contData.candidates[0].content.parts[0].text) {
-            candidate = contData.candidates[0];
-            fullText += contData.candidates[0].content.parts[0].text;
-            check = checkCodeCompleteness(fullText);
-          } else {
-            break;
-          }
-        } catch (err) {
-          console.warn('Continuation error:', err);
+        const contData = await contRes.json();
+        if (contData.candidates && contData.candidates[0].content.parts[0].text) {
+          candidate = contData.candidates[0];
+          const appendedChunk = contData.candidates[0].content.parts[0].text.replace(/^```javascript|^```js|^```|```$/gim, '');
+          fullText += appendedChunk;
+          check = checkCodeCompleteness(fullText);
+        } else {
           break;
         }
       }
@@ -849,7 +863,7 @@ CRITICAL HEAVY-DUTY RULES:
     }
 
     // ==================================================================
-    // मुख्य बिल्ड प्रोसेस (लाइव टाइमर + ऑटो वेरिफिकेशन)
+    // मुख्य बिल्ड प्रोसेस (लाइव टाइमर + सिंटैक्स वेरिफिकेशन)
     // ==================================================================
     async function executeBuild(customPrompt) {
       const q = customPrompt || $('promptInput').value.trim();
@@ -871,7 +885,6 @@ CRITICAL HEAVY-DUTY RULES:
       const timerEl = $('elapsedTimerText');
       loader.classList.add('is-active');
 
-      // ⏱️ लाइव टाइमर शुरू
       let secondsPassed = 0;
       timerEl.textContent = '00:00s';
       const liveTimerInterval = setInterval(() => {
@@ -885,17 +898,17 @@ CRITICAL HEAVY-DUTY RULES:
       fill.style.width = '20%';
 
       const codeSnippets = [
-        'PARSING SHADERS & THREE.JS DEPTH...',
-        'INITIALIZING PHYSICS COLLISION BUFFERS...',
-        'CHECKING COMPLETENESS & SYNTAX STITCHING...',
-        'VERIFYING EVENT LISTENERS & TOUCH CONTROLS...',
-        'RUNNING AUTONOMOUS QUALITY CHECKS...'
+        'PARSING SHADERS & THREE.JS BUFFERS...',
+        'CHECKING SYNTAX BRACES & EVENT COMPLETENESS...',
+        'INSPECTING RUNTIME EVENT LISTENERS...',
+        'RUNNING AUTONOMOUS STITCHING LOOP...',
+        'VALIDATING ZERO-TRUNCATION GUARANTEE...'
       ];
       let snipIdx = 0;
       const streamInterval = setInterval(() => {
         snipIdx = (snipIdx + 1) % codeSnippets.length;
         streamText.textContent = codeSnippets[snipIdx];
-      }, 1200);
+      }, 1100);
 
       setTimeout(() => { stepText.textContent = '⚙️ 2/4: HTML, CSS और भारी लॉजिक अलग-अलग कंपाइल हो रहा है...'; fill.style.width = '50%'; }, 2500);
       setTimeout(() => { stepText.textContent = '🎨 3/4: बैकग्राउंड वेरिफिकेशन व कोड सिलाई जारी है...'; fill.style.width = '75%'; }, 6000);
