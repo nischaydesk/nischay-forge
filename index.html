@@ -249,7 +249,7 @@
       </div>
     </div>
 
-    <!-- प्रो-कोड टर्मिनल बार (HTML, CSS, JS अलग-अलग) -->
+    <!-- प्रो-कोड टर्मिनल बार -->
     <div class="terminal-box" id="terminalBox">
       <div class="terminal-header">
         <div class="code-tabs">
@@ -432,7 +432,7 @@
     });
 
     // ==================================================================
-    // स्मार्ट एक्सट्रैक्टर: जो HTML, CSS और JS को बिना काटे 100% अलग करे
+    // स्मार्ट और सेफ़ एक्सट्रैक्टर: जो कोड के टुकड़ों को सुरक्षित जोड़ता है
     // ==================================================================
     function parseAndExtractModules(rawOutput) {
       let name = "Web Tool";
@@ -441,11 +441,15 @@
       let pureJs = "";
 
       if (rawOutput.includes("===NAME===") || rawOutput.includes("===HTML===")) {
-        const parts = rawOutput.split(/===[A-Z]+===/);
-        name = (parts[1] || "Web Tool").trim().replace(/[\r\n]+/g, " ");
-        pureHtml = (parts[2] || "").trim();
-        pureCss = (parts[3] || "").trim();
-        pureJs = (parts[4] || "").trim();
+        const nameMatch = rawOutput.match(/===NAME===([\s\S]*?)(?====|$)/i);
+        const htmlMatch = rawOutput.match(/===HTML===([\s\S]*?)(?====|$)/i);
+        const cssMatch  = rawOutput.match(/===CSS===([\s\S]*?)(?====|$)/i);
+        const jsMatch   = rawOutput.match(/===JS===([\s\S]*?)(?====|$)/i);
+
+        if (nameMatch) name = nameMatch[1].trim().replace(/[\r\n]+/g, " ");
+        if (htmlMatch) pureHtml = htmlMatch[1].trim();
+        if (cssMatch)  pureCss  = cssMatch[1].trim();
+        if (jsMatch)   pureJs   = jsMatch[1].trim();
       } else {
         let full = rawOutput.replace(/```html|```/gi, "").trim();
 
@@ -465,7 +469,11 @@
       pureCss = pureCss.replace(/^```css|^```|```$/gim, '').trim();
       pureJs = pureJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
 
-      // अगर शुद्ध HTML में DOCTYPE नहीं है तो उसे प्रॉपर HTML बना लें
+      // अगर JS बीच में कट गई हो तो उसे सुरक्षित क्लोज़ करना
+      if (pureJs && !pureJs.trim().endsWith("}") && !pureJs.trim().endsWith(";")) {
+        pureJs += "\n/* Auto-recovered closure */\n});";
+      }
+
       let cleanHtmlTab = pureHtml;
       if (!cleanHtmlTab.includes("<!DOCTYPE html>")) {
         cleanHtmlTab = `<!DOCTYPE html>
@@ -481,7 +489,6 @@ ${pureHtml}
 </html>`;
       }
 
-      // कैनवस और डाउनलोड के लिए पूरा कंबाइंड डॉक्यूमेंट
       const assembledDoc = `<!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -512,7 +519,6 @@ ${pureHtml}
       };
     }
 
-    // टैब स्विचिंग (बग फिक्स: अब एक्टिव टैब का कोड गायब नहीं होगा)
     function switchTab(tab) {
       currentTab = tab;
       document.querySelectorAll('.code-tab-btn').forEach(btn => {
@@ -525,7 +531,6 @@ ${pureHtml}
     $('tabBtnCss').addEventListener('click', () => switchTab('css'));
     $('tabBtnJs').addEventListener('click', () => switchTab('js'));
 
-    // बदलाव लागू करें
     $('btnApplyEdit').addEventListener('click', () => {
       codeModules[currentTab] = $('termOutput').value;
       
@@ -562,18 +567,22 @@ ${pureHtml}
       });
     });
 
+    // सख्त सिस्टम प्रॉम्प्ट: कोड को बिना टोकन वेस्ट किए मुकम्मल रखना
     async function callGemini(modelName, query) {
       const key = getApiKey();
       const sys = `You are Nischay Forge Pro Engine. Build single-file 100% complete, fully working modern HTML5 web tools.
-Strictly separate code using these exact markers:
+CRITICAL HEAVY-DUTY RULES:
+1. Keep the code compact, production-grade, and free of unnecessary bloat or long filler comments.
+2. Ensure JavaScript is fully written, handles all DOM events, and closes every function cleanly.
+3. Strictly separate code using these exact delimiter tags:
 ===NAME===
-[Tool Name]
+[Concise Tool Title]
 ===HTML===
-[Pure HTML markup with elements and containers]
+[Pure HTML markup inside <body>]
 ===CSS===
-[Pure CSS styling, modern responsive dark theme #070a13]
+[Pure CSS styling, modern dark theme #070a13, responsive]
 ===JS===
-[Pure JavaScript logic only]`;
+[Pure functional JavaScript code, complete and fully closed]`;
 
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
       const res = await fetch(endpoint, {
@@ -581,7 +590,7 @@ Strictly separate code using these exact markers:
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: `${sys}\n\nUser Demand: ${query}` }] }],
-          generationConfig: { maxOutputTokens: 8192, temperature: 0.2 }
+          generationConfig: { maxOutputTokens: 8192, temperature: 0.15 }
         })
       });
       const data = await res.json();
@@ -624,7 +633,6 @@ Strictly separate code using these exact markers:
 
       const extracted = parseAndExtractModules(rawResponse);
 
-      // तीनों कोड मॉड्यूल्स में तुरंत डेटा भर दिया गया
       codeModules = {
         html: extracted.html,
         css: extracted.css,
@@ -641,7 +649,6 @@ Strictly separate code using these exact markers:
       $('toolActionBtns').style.display = 'flex';
       $('refineBox').classList.add('is-visible');
 
-      // एक्टिव टैब (HTML) का कोड सीधे टर्मिनल में दिखाएँ
       switchTab('html');
 
       loader.classList.remove('is-active');
