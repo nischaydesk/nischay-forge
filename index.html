@@ -371,7 +371,7 @@
       </div>
 
       <div class="quick-chips">
-        <span class="chip" data-q="एक आधुनिक Text to PDF कनवर्टर बनाओ जिसमें फ़ॉन्ट साइज़, मार्जिन सेटिंग्स और एक क्लिक में A4 PDF डाउनलोड हो">📄 Text to PDF कनवर्टर</span>
+        <span class="chip" data-q="एक अल्ट्रा-क्लीन Text to PDF कनवर्टर बनाओ जिसमें फ़ॉन्ट साइज़, मार्जिन सेटिंग्स, A4 प्रीव्यू और एक क्लिक पर PDF डाउनलोड हो">📄 Text to PDF कनवर्टर</span>
         <span class="chip" data-q="एक 3-स्क्रीन स्टूडेंट OS वेब ऐप बनाओ (पोमोडोरो, टास्क मैनेजर और फॉर्मूला नोट्स के साथ)">🎒 स्टूडेंट OS ऐप</span>
         <span class="chip" data-q="एक 3D स्पेस सोलर सिस्टम एनिमेशन बनाओ जिसमें शनि की रिंग्स और 3D रोटेशन हो">🪐 3D सोलर सिस्टम</span>
         <span class="chip" data-q="एक वॉइस बिलिंग कैलकुलेटर बनाओ जो दाम बोलते ही सामान जोड़कर A4 रसीद तैयार करे">🎙️ वॉइस बिलिंग रसीद</span>
@@ -663,7 +663,7 @@
       return new Promise((resolve) => {
         const testFrame = document.createElement('iframe');
         testFrame.style.display = 'none';
-        testFrame.sandbox = 'allow-scripts allow-same-origin';
+        testFrame.sandbox = 'allow-scripts allow-same-origin allow-downloads';
         document.body.appendChild(testFrame);
 
         let hasError = false;
@@ -717,7 +717,7 @@
     }
 
     // ==================================================================
-    // मुख्य 2-स्टेज बिल्ड प्रोसेस (प्रो-लेआउट प्रॉम्प्टिंग)
+    // मुख्य 2-स्टेज बिल्ड प्रोसेस (सख्त और फुल-प्रूफ निर्देश)
     // ==================================================================
     async function executeBuild(customPrompt) {
       const q = customPrompt || $('promptInput').value.trim();
@@ -749,24 +749,27 @@
       }, 1000);
 
       try {
-        // --- फेज़ 1: UI लेआउट (HTML + CSS) - मोबाइल फर्स्ट और क्लीन आर्किटेक्चर ---
-        stepText.textContent = '⚡ 1/4: UI लेआउट व कैनवस कंटेनर तैयार हो रहा है...';
+        // --- फेज़ 1: UI लेआउट (सख्त गैर-ओवरलैपिंग नियम) ---
+        stepText.textContent = '⚡ 1/4: साफ़ मोबाइल-फ़र्स्ट UI लेआउट तैयार हो रहा है...';
         fill.style.width = '25%';
-        streamText.textContent = 'STAGE 1: GENERATING HIGH-QUALITY UI (HTML + CSS)';
+        streamText.textContent = 'STAGE 1: GENERATING ROBUST LAYOUT (HTML + CSS)';
 
         const promptStep1 = `You are a World-Class Frontend Architect. Create ONLY the HTML and CSS for this web tool: "${q}".
-CRITICAL RESPONSIVE RULES:
-1. MOBILE-FIRST RESPONSIVE DESIGN: Absolutely NO overlapping elements! Do NOT use fixed position / absolute positioning for layout cards.
-2. If there are settings/sidebars, use CSS Flexbox (flex-direction: column on mobile, row on desktop) so panels stack neatly without covering textareas or canvas.
-3. Every button, input, textarea, and canvas must have generous padding, high touch-target, modern border-radius, and clear distinct IDs.
+
+STRICT LAYOUT & MOBILE UX RULES:
+1. NO OVERLAPPING ELEMENTS EVER: Do NOT use absolute positioning for major tool wrappers, sidebars, or controls. Use CSS Flexbox or CSS Grid.
+2. MOBILE STACKING: On mobile (screen < 768px), layout MUST be flex-direction: column. Place all settings/controls in clean cards with padding, NEVER floating on top of textarea or canvas!
+3. If this is a Text to PDF or Editor tool:
+   - Provide clean input elements with exact IDs: 'textInput', 'fontSizeInput', 'marginTopInput', 'marginRightInput', 'marginBottomInput', 'marginLeftInput', 'downloadPdfBtn'.
+   - Include a visible white A4 preview sheet card where user can see the text layout live!
 4. Modern cyberpunk dark theme: Background #070a13, Cards #0f172a, Borders #1e293b, Accent #38bdf8.
 5. Strictly format output as:
 ===NAME===
 [Concise Tool Name]
 ===HTML===
-[Pure HTML layout inside body, no <script> tags]
+[Pure HTML markup inside body, NO <script> tags]
 ===CSS===
-[Pure responsive CSS, include media queries for mobile]`;
+[Pure modern responsive CSS with @media queries]`;
 
         const uiRaw = await callGeminiRaw(promptStep1);
         
@@ -788,12 +791,12 @@ CRITICAL RESPONSIVE RULES:
         pureHtml = pureHtml.replace(/^```html|^```|```$/gim, '').trim();
         pureCss = pureCss.replace(/^```css|^```|```$/gim, '').trim();
 
-        // --- फेज़ 2: पूर्ण जावास्क्रिप्ट लॉजिक ---
-        stepText.textContent = '⚙️ 2/4: जावास्क्रिप्ट व फंक्शनल लॉजिक तैयार हो रहा है...';
+        // --- फेज़ 2: जावास्क्रिप्ट लॉजिक (सख्त डाउनलोड व फंक्शनल नियम) ---
+        stepText.textContent = '⚙️ 2/4: 100% मुकम्मल जावास्क्रिप्ट व डाउनलोड इंजन संकलित हो रहा है...';
         fill.style.width = '60%';
-        streamText.textContent = 'STAGE 2: COMPILING FULL JAVASCRIPT LOGIC';
+        streamText.textContent = 'STAGE 2: COMPILING RELIABLE JS & DOWNLOAD LOGIC';
 
-        const promptStep2 = `You are a Principal Web Software Engineer.
+        const promptStep2 = `You are a Principal Software Engineer.
 Here is the HTML layout:
 \`\`\`html
 ${pureHtml}
@@ -802,17 +805,31 @@ ${pureHtml}
 User Demand: "${q}"
 
 TASK:
-Write 100% COMPLETE, bug-free, non-truncated JavaScript logic that makes every button, input, and feature in the HTML work perfectly.
-LIBRARIES GLOBALLY LOADED:
+Write 100% COMPLETE, bug-free, non-truncated JavaScript logic that makes every button, slider, and function work with absolute reliability.
+
+LIBRARIES ALREADY LOADED GLOBALLY:
 - Three.js (THREE)
 - jsPDF (window.jspdf.jsPDF)
-- Canvas-Confetti (confetti)
+- Canvas-Confetti (window.confetti)
 
-RULES:
-1. If the tool is a PDF converter or downloader, use: const { jsPDF } = window.jspdf; const doc = new jsPDF();
-2. Handle all DOM event listeners safely with null checks.
-3. Complete EVERY function. Do NOT use placeholders, comments like "// add logic here", or unclosed braces.
-4. Output ONLY pure JavaScript code. No HTML, no CSS, no markdown blocks.`;
+CRITICAL RULES FOR PDF GENERATION & DOWNLOAD:
+1. SAFE JSPDF ACCESS:
+   const jsPDFClass = window.jspdf ? window.jspdf.jsPDF : null;
+   if (!jsPDFClass) { alert('PDF Library is loading, please try in 2 seconds.'); return; }
+2. NO doc.save() IN IFRAMES! Mobile iframes block doc.save(). ALWAYS use Blob URL:
+   const blob = doc.output('blob');
+   const url = URL.createObjectURL(blob);
+   const a = document.createElement('a');
+   a.href = url;
+   a.download = 'nischay-document.pdf';
+   document.body.appendChild(a);
+   a.click();
+   setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+3. BASELINE & MULTI-PAGE FIX:
+   In jsPDF, y coordinate is baseline. Start cursorY at (marginTop + lineHeight * 0.8).
+   Calculate page overflow: if (cursorY > A4_HEIGHT - marginBottom) { doc.addPage(); cursorY = marginTop + (lineHeight * 0.8); }
+4. Validate that text input is not empty before downloading.
+5. Output ONLY pure JavaScript code. No markdown, no HTML, no unfinished comments!`;
 
         let pureJs = await callGeminiRaw(promptStep2);
         pureJs = pureJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
@@ -841,7 +858,7 @@ BROKEN JS:
 ${pureJs}
 \`\`\`
 
-Rewrite the JavaScript to FIX this error completely. Return ONLY pure corrected JavaScript.`;
+Rewrite the JavaScript to FIX this error completely. Ensure safe null checks and blob-based downloads. Return ONLY pure corrected JavaScript.`;
 
           const fixedJs = await callGeminiRaw(fixPrompt);
           pureJs = fixedJs.replace(/^```javascript|^```js|^```|```$/gim, '').trim();
